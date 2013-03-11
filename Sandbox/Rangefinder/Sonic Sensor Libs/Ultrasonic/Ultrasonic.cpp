@@ -1,41 +1,20 @@
-/*
-  Ultrasonic.cpp - Library for HC-SR04 Ultrasonic Ranging Module.library
-
-  Created by ITead studio. Apr 20, 2010.
-  iteadstudio.com
-  
-  updated by noonv. Feb, 2011
-  http://robocraft.ru
-*/
-
 #include "Ultrasonic.h"
-
-Ultrasonic::Ultrasonic(int TP, int EP)
-{
-   pinMode(TP, OUTPUT);
-   pinMode(EP, INPUT);
-   Trig_pin=TP;
-   Echo_pin=EP;
+               
+Ultrasonic::Ultrasonic(int trigPin, int echoPin)
+{                     
+   mTrig=trigPin;
+   mEcho=echoPin;
+   pinMode(mTrig, OUTPUT);
+   pinMode(mEcho, INPUT);
 }
 
-long Ultrasonic::Timing()
+int Ultrasonic::getRange()
 {
-  digitalWrite(Trig_pin, LOW);
+  digitalWrite(mTrig, LOW);
   delayMicroseconds(2);
-  digitalWrite(Trig_pin, HIGH);
+  digitalWrite(mTrig, HIGH);
   delayMicroseconds(10);
-  digitalWrite(Trig_pin, LOW);
-  duration = pulseIn(Echo_pin, HIGH);
-  return duration;
+  digitalWrite(mTrig, LOW);      
+  return pulseIn(mEcho, HIGH)/58;
 }
-
-long Ultrasonic::Ranging(int sys)
-{
-  Timing();
-  distacne_cm = duration /29 / 2 ;
-  distance_inc = duration / 74 / 2;
-  if (sys)
-    return distacne_cm;
-  else
-    return distance_inc;
-}
+                 

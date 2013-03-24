@@ -7,7 +7,7 @@ UltrasonicArray::UltrasonicArray(int size)
   mTPin = new int[size];
   mEPin = new int[size];
   mSize = size;
-  mIterations = 12000/5/size;
+  mIterations = 20000/5/size;
 }
 
 UltrasonicArray::~UltrasonicArray()
@@ -45,7 +45,7 @@ void UltrasonicArray::Run()
 	  }
 	}
   }
-  for (int i = 0; i < mSize; i++){
+  for (int i = mSize-1; i >= 0; i--){
     mDist[i] = (20*i + Duration[i]*6*mSize)/58;
   }
   delete [] Duration;

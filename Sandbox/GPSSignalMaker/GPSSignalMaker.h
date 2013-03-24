@@ -8,11 +8,11 @@ class GPSSignalMaker
   public:
     GPSSignalMaker(int rxPin, int txPin);
     ~GPSSignalMaker();
-	void ChangeMessage(char *Data);
-	void UseDefaultMessage();
-	void SendMessage();
+    void ChangeMessage(char *Data);
+    void UseDefaultMessage();
+    void SendMessage();
   private:            
-	GPSSignalSender *mSender;  
+    GPSSignalSender *mSender;  
     char *mDataToSend;
 };                                    
 

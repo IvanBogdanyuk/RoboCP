@@ -45,7 +45,7 @@ void UltrasonicArray::Run()
 	  }
 	}
   }
-  for (int i = 0; i < mSize; i++){
+  for (int i = mSize-1; i >= 0; i--){
     mDist[i] = (20*i + Duration[i]*6*mSize)/58;
   }
   delete [] Duration;

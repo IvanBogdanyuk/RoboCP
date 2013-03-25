@@ -1,5 +1,6 @@
 #include "UltrasonicArray.h"
 
+#define DIGITAL_READ_ITERATIONS 10000
 
 UltrasonicArray::UltrasonicArray(int size)
 {
@@ -7,7 +8,7 @@ UltrasonicArray::UltrasonicArray(int size)
   mTPin = new int[size];
   mEPin = new int[size];
   mSize = size;
-  mIterations = 20000/5/size;
+  mIterations = 0;
 }
 
 UltrasonicArray::~UltrasonicArray()
@@ -19,11 +20,13 @@ UltrasonicArray::~UltrasonicArray()
 
 void UltrasonicArray::Run()
 {
-  long *Duration = new long[mSize];
+  unsigned long *startEcho = new unsigned long[mSize];
+  unsigned long *endEcho = new unsigned long[mSize];
   bool *flag = new bool[mSize];
   for (int i = 0; i<mSize; i++){
-    Duration[i] = 0;
-	flag[i] = true;
+    startEcho[i] = 0;
+    endEcho[i] = 0;
+    flag[i] = true;
   }
   for (int i = 0; i<mSize; i++){
     digitalWrite(mTPin[i], HIGH);
@@ -32,23 +35,28 @@ void UltrasonicArray::Run()
   }
   for (int i = 0; i<mIterations; i++){
     for (int j = 0; j<mSize; j++){
-	  if (digitalRead(mEPin[j])==HIGH){
-	    if (Duration[j] == 0){
-		  flag[j] = false;
-		  Duration[j] = i;
-		}
-		if (flag[j] == false){
-		  Duration[j]++;
-		}
-	  }else{
-	    flag[j] = true;
-	  }
-	}
+      if (digitalRead(mEPin[j])==HIGH){
+        if (startEcho[j] == 0){
+        flag[j] = false;
+          startEcho[j] = micros();
+        }
+    	if (flag[j] == false){
+          endEcho[j] = micros();
+        }
+      }else{
+        flag[j] = true;
+      }
+    }
   }
-  for (int i = mSize-1; i >= 0; i--){
-    mDist[i] = (20*i + Duration[i]*6*mSize)/58;
+  for (int i = 0; i < mSize; i++){
+    if ((endEcho[i]-startEcho[i])/58 < 30000){
+      mDist[i] = (int)((endEcho[i]-startEcho[i])/58);
+    }else{
+      mDist[i] = 800;
+    }
   }
-  delete [] Duration;
+  delete [] startEcho;
+  delete [] endEcho;
   delete [] flag;
 }
 
@@ -59,6 +67,16 @@ void UltrasonicArray::SetSonic(int id, int trigPin, int echoPin)
   pinMode(trigPin,OUTPUT);
   pinMode(echoPin,INPUT);
   digitalWrite(trigPin,LOW);
+  if (mIterations == 0){
+    int i = 0;
+    unsigned long time = micros();
+    while (i<DIGITAL_READ_ITERATIONS){	
+      digitalRead(echoPin);
+     i++;
+    }
+    int mTimeToDigitalRead = (int)((micros()-time)/DIGITAL_READ_ITERATIONS);
+    mIterations = 20000/(mTimeToDigitalRead*mSize);
+  }
 }
 
 int *UltrasonicArray::GetDist()

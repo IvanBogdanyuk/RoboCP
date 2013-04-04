@@ -3,6 +3,8 @@
 
 KinectData::KinectData(void)
 {
+  PointCloud<PointXYZRGBA>::Ptr cl (new PointCloud<PointXYZRGBA>);
+  Cloud = cl;
 }
 
 

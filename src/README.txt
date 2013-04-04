@@ -1,0 +1,1 @@
+Copy config.xml to folder where you are running RoboCPRobot.

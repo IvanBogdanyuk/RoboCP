@@ -4,7 +4,7 @@
 KinectSender::KinectSender(XMLConfig * x, KinectBuffer * buf)
 {
   port = atoi(x->KinectPort.c_str() );
-  octreeCoder = new PointCloudCompression<PointXYZRGBA> (x->CompressionProfile, x->ShowStatistics, x->PointResolution,
+  octreeCoder = new PointCloudCompression<PointXYZ> (x->CompressionProfile, x->ShowStatistics, x->PointResolution,
                                                          x->OctreeResolution, x->DoVoxelGridDownDownSampling, x->IFrameRate,
                                                          x->DoColorEncoding, x->ColorBitResolution);
   buffer = buf;
@@ -30,6 +30,8 @@ void KinectSender::Start()
 	while (!socketStream.fail() ) {
 	  boost::shared_ptr<KinectData> pdata;
 	  pdata = buffer->Rec();
+	  socketStream << pdata->Time;
+	  socketStream.flush();
 	  octreeCoder->encodePointCloud (pdata->Cloud, socketStream);	
 	}
 

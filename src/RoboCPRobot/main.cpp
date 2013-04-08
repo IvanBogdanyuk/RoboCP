@@ -1,7 +1,9 @@
 #pragma once
 #include <stdarg.h>
 #include "KinectController.h"
+#include "KinectDownsampler.h"
 #include "KinectSender.h"
+#include "ClientReceiver.h"
 #include "XMLConfig.h"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
@@ -17,19 +19,26 @@ int main(char *args[], int count)
 	  ia >> BOOST_SERIALIZATION_NVP(config);
 	}
 	else
-	  cout << "can't find config.xml! Default config used." << endl;
+	  cout << "Can't find config.xml! Default config used." << endl;
   }
 
-
-  KinectBuffer b;
-  KinectController c(&b);
-  KinectSender s (&config, &b);
+  KinectBuffer b1(10);
+  KinectBuffer b2(10);
+  KinectController c(&b1);
+  KinectDownsampler d (&b1, &b2);
+  KinectSender s (&config, &b2);
+  ClientReceiver r (&config);
 
   boost::thread_group tgroup;
 
   tgroup.create_thread ( boost::bind (&KinectController::FakeStart, &c) ); //don't have kinect so made FakeStart func for testing
 
+  tgroup.create_thread ( boost::bind (&KinectDownsampler::Start, &d) );
+
   tgroup.create_thread ( boost::bind (&KinectSender::Start, &s) );
+
+  tgroup.create_thread ( boost::bind (&ClientReceiver::Start, &r) );
+  
 
 
   tgroup.join_all ();

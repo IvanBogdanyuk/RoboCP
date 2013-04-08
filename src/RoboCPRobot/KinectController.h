@@ -20,6 +20,6 @@ public:
   ~KinectController(void);
 private:
   KinectBuffer * buffer;
-  void grabberCallBack (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud);
+  void grabberCallBack (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &cloud);
 };
 

@@ -55,6 +55,8 @@ add_executable (Robot
 	RoboCPRobot/KinectSender.h RoboCPRobot/KinectSender.cpp
 	RoboCPRobot/KinectDownsampler.h RoboCPRobot/KinectDownsampler.cpp
 
+	RoboCPRobot/SerialCom.h RoboCPRobot/SerialCom.cpp 
+	
 	RoboCPRobot/main.cpp
 
 )

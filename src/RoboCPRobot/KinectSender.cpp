@@ -29,7 +29,7 @@ void KinectSender::Start()
 
 	while (!socketStream.fail() ) {
 	  boost::shared_ptr<KinectData> pdata;
-	  pdata = buffer->Rec();
+	  pdata = buffer->Dequeue();
 	  socketStream << pdata->Time;
 	  socketStream.flush();
 	  octreeCoder->encodePointCloud (pdata->Cloud, socketStream);	

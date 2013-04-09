@@ -10,7 +10,7 @@ void KinectDownsampler::Start(void)
 {
   while (true) {
     boost::shared_ptr<KinectData> inputData;
-    inputData = inputBuffer->Rec();
+    inputData = inputBuffer->Dequeue();
 
 	if (!inputData->Cloud->empty() ) {
       boost::shared_ptr<KinectData> outputData (new KinectData);
@@ -18,7 +18,7 @@ void KinectDownsampler::Start(void)
       outputData->Time = inputData->Time;
       downsample (inputData->Cloud, outputData->Cloud);
 
-      outputBuffer->Add (outputData);
+      outputBuffer->Enqueue (outputData);
 	}
   }
 }

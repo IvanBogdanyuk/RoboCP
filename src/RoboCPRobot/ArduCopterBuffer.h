@@ -1,10 +1,10 @@
 #pragma once
 #include "ReceivedBuffer.h"
-class ArduCopterBuffer :
-  public ReceivedBuffer
+#include "ArduCopterReceived.h"
+
+class ArduCopterBuffer : public ReceivedBuffer < boost::shared_ptr<ArduCopterReceived> >
 {
 public:
-  ArduCopterBuffer(void);
-  ~ArduCopterBuffer(void);
+	ArduCopterBuffer (int size) : ReceivedBuffer < boost::shared_ptr<ArduCopterReceived> > (size) {}
 };
 

@@ -9,7 +9,7 @@ void KinectController::grabberCallBack (const pcl::PointCloud<pcl::PointXYZ>::Co
 {
   PointCloud<PointXYZ>::Ptr cld (new PointCloud<PointXYZ> (*cloud) );
   boost::shared_ptr<KinectData> kData (new KinectData (cld, time(NULL) ) );
-  buffer->Add (kData);
+  buffer->Enqueue (kData);
 }
 
 void KinectController::Start(void)
@@ -42,10 +42,10 @@ void KinectController::FakeStart ()
   while (true) {
 	Sleep (2000);
 	boost::shared_ptr<KinectData> kData1 (new KinectData (cloud1, time(NULL) ) );
-	buffer->Add (kData1);
+	buffer->Enqueue (kData1);
 
 	Sleep (2000);
 	boost::shared_ptr<KinectData> kData2 (new KinectData (cloud2, time(NULL) ) );
-	buffer->Add (kData2);
+	buffer->Enqueue (kData2);
   }
 }

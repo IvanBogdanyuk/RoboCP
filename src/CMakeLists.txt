@@ -32,9 +32,10 @@ add_executable (Robot
 	
 	RoboCPCommon/KinectData.h RoboCPCommon/KinectData.cpp
 	RoboCPCommon/KinectBuffer.h RoboCPCommon/KinectBuffer.cpp
-
+	
 	RoboCPCommon/XMLConfig.h RoboCPCommon/XMLConfig.cpp
 
+	RoboCPCommon/Point3d.h RoboCPCommon/Point3d.cpp
 
 
 	RoboCPRobot/Received.h RoboCPRobot/Received.cpp 
@@ -79,6 +80,8 @@ add_executable (Server
 	RoboCPCommon/KinectBuffer.h RoboCPCommon/KinectBuffer.cpp
 
 	RoboCPCommon/XMLConfig.h RoboCPCommon/XMLConfig.cpp
+
+	RoboCPCommon/Point3d.h RoboCPCommon/Point3d.cpp
 
 
 

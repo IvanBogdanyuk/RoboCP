@@ -6,17 +6,17 @@
 class UltrasonicArray
 {
   public:
-    UltrasonicArray(int size);
+    UltrasonicArray(int Size);
     ~UltrasonicArray();
     void Run();
-    void SetSonic(int id, int trigPin, int echoPin);
+    void SetSonic(int Id, int TrigPin, int EchoPin);
     int *GetDist();
   private:
-    int *mTPin;
-    int *mEPin;
-    int *mDist;
-    int mSize;
-    int mIterations;
+    int *tPin;
+    int *ePin;
+    int *dist;
+    int size;
+    int iterations;
 };
 
 #endif

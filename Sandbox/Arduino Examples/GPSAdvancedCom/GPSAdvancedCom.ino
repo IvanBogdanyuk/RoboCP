@@ -7,56 +7,67 @@
 #include <UltrasonicArray.h>
 
 #define SERIAL_BUFF_SIZE 128
+#define FRONT_SONIC_TRIG 3
+#define FRONT_SONIC_ECHO 4
+#define RIGHT_SONIC_TRIG 5
+#define RIGHT_SONIC_ECHO 6
+/*
+#define BACK_SONIC_TRIG 5
+#define BACK_SONIC_ECHO 6
+#define LEFT_SONIC_TRIG 5
+#define LEFT_SONIC_ECHO 6
+#define TOP_SONIC_TRIG 5
+#define TOP_SONIC_ECHO 6
+*/
 
-GPSSignalMaker *M = new GPSSignalMaker(7,8);
-UltrasonicArray *A = new UltrasonicArray(2);
+
+GPSSignalMaker *SignalMaker = new GPSSignalMaker(7,8);
+UltrasonicArray *SonicArray = new UltrasonicArray(2);
 char *NewData = new char[SERIAL_BUFF_SIZE];
-char stage;
-char xor_summ;
-char last_byte;
-char this_byte;
-int next_byte;
-int *distantion;
+char Stage;
+char XorSumm;
+char LastByte;
+char ThisByte;
+int NextByte;
+int *Distantion;
 
 void setup(){
   Serial.begin(9600);
-  stage = 0;
-  A->SetSonic(0,3,4);
-  A->SetSonic(1,5,6);
+  Stage = 0;
+  SonicArray->SetSonic(0,FRONT_SONIC_TRIG,FRONT_SONIC_ECHO);
+  SonicArray->SetSonic(1,RIGHT_SONIC_TRIG,RIGHT_SONIC_ECHO);
 }
 
 void loop(){
   while(Serial.available()){
-    this_byte = Serial.read();
-    if ((this_byte == '$')&&(stage == 0)){
-      stage = 1;
-      next_byte = 0;
-      xor_summ = 0;
-      NewData[next_byte++] = this_byte;  
+    ThisByte = Serial.read();
+    if ((ThisByte == '$')&&(Stage == 0)){
+      Stage = 1;
+      NextByte = 0;
+      XorSumm = 0;
+      NewData[NextByte++] = ThisByte;  
     }else{
-      if ((this_byte == '*')&&(stage == 1)){
-        if (last_byte == xor_summ){
-          M->ChangeMessage(NewData);
+      if ((ThisByte == '*')&&(Stage == 1)){
+        if (LastByte == XorSumm){
+          SignalMaker->ChangeMessage(NewData);
         }
-        stage = 0;
+        Stage = 0;
       }
-      if ((stage == 1)&&(next_byte<SERIAL_BUFF_SIZE)){
-        NewData[next_byte++] = this_byte;
+      if ((Stage == 1)&&(NextByte<SERIAL_BUFF_SIZE)){
+        NewData[NextByte++] = ThisByte;
       }else{
-        stage = 0;
+        Stage = 0;
       }
     }
-    xor_summ ^= last_byte;
-    last_byte = this_byte;
+    XorSumm ^= LastByte;
+    LastByte = ThisByte;
   }
-  M->SendMessage();
-  A->Run();
-  distantion = A->GetDist();
-  Serial.print(distantion[0]);
-  Serial.write(' ');
-  Serial.print(distantion[1]);
-  Serial.write('\r');
-  Serial.write('\n');
-  delay(100);
+  SignalMaker->SendMessage();
+  SonicArray->Run();
+  Distantion = SonicArray->GetDist();
+  Serial.print(Distantion[0]);
+  Serial.print(' ');
+  Serial.print(Distantion[1]);
+  Serial.print('\r');
+  Serial.print('\n');
 }
-

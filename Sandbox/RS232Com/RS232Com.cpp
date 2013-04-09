@@ -1,7 +1,7 @@
 #include "RS232Com.h"
 
-#define bitDelay 21  //baud rate 38400
-#define halfBitDelay 10.5
+#define BIT_DELAY 21  //baud rate 38400
+#define HALF_BIT_DELAY 10.5
                
 RS232Communicator::RS232Communicator(int rxPin, int txPin)
 {                         
@@ -12,22 +12,22 @@ RS232Communicator::RS232Communicator(int rxPin, int txPin)
   tx = txPin; 
 }
                  
-void RS232Communicator::Write(byte data)
+void RS232Communicator::Write(byte Data)
 {
   byte mask;
   digitalWrite(tx,LOW);
-  delayMicroseconds(bitDelay);
+  delayMicroseconds(BIT_DELAY);
   for (mask = 0x01; mask>0; mask <<= 1) {
-    if (data & mask){ 
+    if (Data & mask){ 
      digitalWrite(tx,HIGH); 
     }
     else{
      digitalWrite(tx,LOW); 
     }
-    delayMicroseconds(bitDelay);
+    delayMicroseconds(BIT_DELAY);
   }
   digitalWrite(tx, HIGH);
-  delayMicroseconds(bitDelay);
+  delayMicroseconds(BIT_DELAY);
 }    
 
 byte RS232Communicator::Read()
@@ -35,12 +35,12 @@ byte RS232Communicator::Read()
   byte value = 0;
   while (digitalRead(rx));
   if (digitalRead(rx) == LOW) {
-    delayMicroseconds(halfBitDelay);
+    delayMicroseconds(HALF_BIT_DELAY);
     for (int offset = 0; offset < 8; offset++) {
-     delayMicroseconds(bitDelay);
+     delayMicroseconds(BIT_DELAY);
      value |= digitalRead(rx) << offset;
     }
-    delayMicroseconds(2*bitDelay); 
+    delayMicroseconds(2*BIT_DELAY); 
     return value;
   }
 }

@@ -10,12 +10,12 @@ GPSSignalSender::~GPSSignalSender()
   Comm->~RS232Communicator();
 }
 
-void GPSSignalSender::Send(char *data)
+void GPSSignalSender::Send(char *Data)
 {
   int i = 0;
-  while (data[i]!='\0')
+  while (Data[i]!='\0')
   {
-    Comm->Write(data[i]);
+    Comm->Write(Data[i]);
     i++;
   }
 }

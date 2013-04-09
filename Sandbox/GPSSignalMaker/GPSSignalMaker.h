@@ -12,8 +12,8 @@ class GPSSignalMaker
     void UseDefaultMessage();
     void SendMessage();
   private:            
-    GPSSignalSender *mSender;  
-    char *mDataToSend;
+    GPSSignalSender *sender;  
+    char *dataToSend;
 };                                    
 
 #endif

@@ -8,7 +8,7 @@ class GPSSignalSender
   public:
     GPSSignalSender(int rxPin, int txPin);
     ~GPSSignalSender();
-    void Send(char *data);
+    void Send(char *Data);
   private:                      
     RS232Communicator *Comm;
 };                                    

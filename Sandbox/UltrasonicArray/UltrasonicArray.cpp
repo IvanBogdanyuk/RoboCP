@@ -1,46 +1,47 @@
 #include "UltrasonicArray.h"
 
 #define DIGITAL_READ_ITERATIONS 10000
+#define TIME_TO_LISTEN 20000
 
-UltrasonicArray::UltrasonicArray(int size)
+UltrasonicArray::UltrasonicArray(int Size)
 {
-  mDist = new int[size];
-  mTPin = new int[size];
-  mEPin = new int[size];
-  mSize = size;
-  mIterations = 0;
+  dist = new int[Size];
+  tPin = new int[Size];
+  ePin = new int[Size];
+  size = Size;
+  iterations = 0;
 }
 
 UltrasonicArray::~UltrasonicArray()
 {
-  delete [] mDist;
-  delete [] mTPin;
-  delete [] mEPin;
+  delete [] dist;
+  delete [] tPin;
+  delete [] ePin;
 }
 
 void UltrasonicArray::Run()
 {
-  unsigned long *startEcho = new unsigned long[mSize];
-  unsigned long *endEcho = new unsigned long[mSize];
-  bool *flag = new bool[mSize];
-  for (int i = 0; i<mSize; i++){
+  unsigned long *startEcho = new unsigned long[size];
+  unsigned long *endEcho = new unsigned long[size];
+  bool *flag = new bool[size];
+  for (int i = 0; i<size; i++){
     startEcho[i] = 0;
     endEcho[i] = 0;
     flag[i] = true;
   }
-  for (int i = 0; i<mSize; i++){
-    digitalWrite(mTPin[i], HIGH);
+  for (int i = 0; i<size; i++){
+    digitalWrite(tPin[i], HIGH);
     delayMicroseconds(10);
-    digitalWrite(mTPin[i], LOW);
+    digitalWrite(tPin[i], LOW);
   }
-  for (int i = 0; i<mIterations; i++){
-    for (int j = 0; j<mSize; j++){
-      if (digitalRead(mEPin[j])==HIGH){
+  for (int i = 0; i<iterations; i++){
+    for (int j = 0; j<size; j++){
+      if (digitalRead(ePin[j])==HIGH){
         if (startEcho[j] == 0){
-        flag[j] = false;
+          flag[j] = false;
           startEcho[j] = micros();
         }
-    	if (flag[j] == false){
+        if (flag[j] == false){
           endEcho[j] = micros();
         }
       }else{
@@ -48,11 +49,11 @@ void UltrasonicArray::Run()
       }
     }
   }
-  for (int i = 0; i < mSize; i++){
+  for (int i = 0; i < size; i++){
     if ((endEcho[i]-startEcho[i])/58 < 30000){
-      mDist[i] = (int)((endEcho[i]-startEcho[i])/58);
+      dist[i] = (int)((endEcho[i]-startEcho[i])/58);
     }else{
-      mDist[i] = 800;
+      dist[i] = 800;
     }
   }
   delete [] startEcho;
@@ -60,26 +61,26 @@ void UltrasonicArray::Run()
   delete [] flag;
 }
 
-void UltrasonicArray::SetSonic(int id, int trigPin, int echoPin)
+void UltrasonicArray::SetSonic(int Id, int TrigPin, int EchoPin)
 {
-  mTPin[id] = trigPin;
-  mEPin[id] = echoPin;
-  pinMode(trigPin,OUTPUT);
-  pinMode(echoPin,INPUT);
-  digitalWrite(trigPin,LOW);
-  if (mIterations == 0){
+  tPin[Id] = TrigPin;
+  ePin[Id] = EchoPin;
+  pinMode(TrigPin,OUTPUT);
+  pinMode(EchoPin,INPUT);
+  digitalWrite(TrigPin,LOW);
+  if (iterations == 0){
     int i = 0;
     unsigned long time = micros();
     while (i<DIGITAL_READ_ITERATIONS){	
-      digitalRead(echoPin);
-     i++;
+      digitalRead(EchoPin);
+      i++;
     }
-    int mTimeToDigitalRead = (int)((micros()-time)/DIGITAL_READ_ITERATIONS);
-    mIterations = 20000/(mTimeToDigitalRead*mSize);
+    int timeToDigitalRead = (int)((micros()-time)/DIGITAL_READ_ITERATIONS);
+    iterations = TIME_TO_LISTEN/(timeToDigitalRead*size);
   }
 }
 
 int *UltrasonicArray::GetDist()
 {
-  return mDist;
+  return dist;
 }

@@ -6,15 +6,15 @@ char *DefaultMessage = "$,0000.0005,00000.0005,,,";
 
 GPSSignalMaker::GPSSignalMaker(int rxPin, int txPin)
 {            
-  mSender = new GPSSignalSender(rxPin,txPin);
-  mDataToSend = new char[SENDING_BUFFER_SIZE];
+  sender = new GPSSignalSender(rxPin,txPin);
+  dataToSend = new char[SENDING_BUFFER_SIZE];
   ChangeMessage(DefaultMessage);
 }                        
 
 GPSSignalMaker::~GPSSignalMaker()
 {
-  mSender->~GPSSignalSender();
-  delete [] mDataToSend;
+  sender->~GPSSignalSender();
+  delete [] dataToSend;
 }
 
 char ByteToHex(char num)
@@ -27,7 +27,7 @@ char ByteToHex(char num)
 
 void GPSSignalMaker::SendMessage()
 {
-  mSender->Send(mDataToSend);
+  sender->Send(dataToSend);
 }
 
 void GPSSignalMaker::UseDefaultMessage()
@@ -38,60 +38,60 @@ void GPSSignalMaker::UseDefaultMessage()
 //$UTC,Latitude,Longtitude,GSpeed,SpeedAngle,X*
 void GPSSignalMaker::ChangeMessage(char *Data)
 {
-  mDataToSend[0] = '$';
-  mDataToSend[1] = 'G';
-  mDataToSend[2] = 'P';
-  mDataToSend[3] = 'R';
-  mDataToSend[4] = 'M';
-  mDataToSend[5] = 'C';
-  mDataToSend[6] = ','; 
+  dataToSend[0] = '$';
+  dataToSend[1] = 'G';
+  dataToSend[2] = 'P';
+  dataToSend[3] = 'R';
+  dataToSend[4] = 'M';
+  dataToSend[5] = 'C';
+  dataToSend[6] = ','; 
   int next = 7;
   int i = 1;
   while (Data[i] != ','){  //UTC
-    mDataToSend[next++] = Data[i++];
+    dataToSend[next++] = Data[i++];
   }
   i++;
-  mDataToSend[next++]=',';
-  mDataToSend[next++]='A';  
-  mDataToSend[next++]=',';
+  dataToSend[next++]=',';
+  dataToSend[next++]='A';  
+  dataToSend[next++]=',';
   while (Data[i] != ','){  //Latitude
-    mDataToSend[next++] = Data[i++];
+    dataToSend[next++] = Data[i++];
   }
   i++;
-  mDataToSend[next++]=',';
-  mDataToSend[next++]='N';  
-  mDataToSend[next++]=',';
+  dataToSend[next++]=',';
+  dataToSend[next++]='N';  
+  dataToSend[next++]=',';
   while (Data[i] != ','){  //Longtitude
-    mDataToSend[next++] = Data[i++];
+    dataToSend[next++] = Data[i++];
   }
   i++;
-  mDataToSend[next++]=',';
-  mDataToSend[next++]='E';
-  mDataToSend[next++]=',';
+  dataToSend[next++]=',';
+  dataToSend[next++]='E';
+  dataToSend[next++]=',';
   while (Data[i] != ','){  //Ground speed
-    mDataToSend[next++] = Data[i++];
+    dataToSend[next++] = Data[i++];
   }
   i++;
-  mDataToSend[next++]=',';
+  dataToSend[next++]=',';
   while (Data[i] != ','){  //Velocity angle
-    mDataToSend[next++] = Data[i++];
+    dataToSend[next++] = Data[i++];
   }
   i++;
-  mDataToSend[next++]=',';
+  dataToSend[next++]=',';
   //skipped current date
-  mDataToSend[next++]=',';
+  dataToSend[next++]=',';
   //skipped magnetic variation
-  mDataToSend[next++]=',';
+  dataToSend[next++]=',';
   //skipped E/W for variation
-  mDataToSend[next]='*';
+  dataToSend[next]='*';
   char c = 0;
   for (int i = 1; i<next; i++){
-    c = (c^mDataToSend[i]);
+    c = (c^dataToSend[i]);
   }
   next++;
-  mDataToSend[next++] = ByteToHex(c / 16);
-  mDataToSend[next++] = ByteToHex(c % 16);
-  mDataToSend[next++] = '\r';
-  mDataToSend[next++] = '\n';
-  mDataToSend[next] = '\0';
+  dataToSend[next++] = ByteToHex(c / 16);
+  dataToSend[next++] = ByteToHex(c % 16);
+  dataToSend[next++] = '\r';
+  dataToSend[next++] = '\n';
+  dataToSend[next] = '\0';
 }

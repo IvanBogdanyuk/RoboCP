@@ -3,6 +3,7 @@
 #include "KinectController.h"
 #include "KinectDownsampler.h"
 #include "KinectSender.h"
+#include "NanoController.h"
 #include "ClientReceiver.h"
 #include "XMLConfig.h"
 #include <boost/thread.hpp>
@@ -29,6 +30,9 @@ int main(char *args[], int count)
   KinectSender s (&config, &b2);
   ClientReceiver r (&config);
 
+  NanoReceivedBuffer NanoBuffer(1000);
+  NanoController  NanoControl(&NanoBuffer);
+  
   boost::thread_group tgroup;
 
   tgroup.create_thread ( boost::bind (&KinectController::FakeStart, &c) ); //don't have kinect so made FakeStart func for testing
@@ -39,7 +43,7 @@ int main(char *args[], int count)
 
   tgroup.create_thread ( boost::bind (&ClientReceiver::Start, &r) );
   
-
+  tgroup.create_thread ( boost::bind (&NanoController::Start, &NanoControl) );
 
   tgroup.join_all ();
 

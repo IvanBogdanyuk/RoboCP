@@ -3,6 +3,7 @@
 SerialCom::SerialCom(LPCSTR PortName, int BaudRate)
 {
   out = new char[READ_BUFF_SIZE];
+  outSize = 0;
   hComm = CreateFile(PortName, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
   COMMCONFIG conf;
   conf.dcb.DCBlength = sizeof(DCB);
@@ -53,7 +54,7 @@ char *SerialCom::Read(void)
       toRead = READ_BUFF_SIZE-1;
     }
     ReadFile(hComm,out,toRead, &bytesRead, &osReader);
-    outSize = toRead;
+    outSize = bytesRead;
   }
   return out;
 }

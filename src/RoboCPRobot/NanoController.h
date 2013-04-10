@@ -5,7 +5,7 @@ class NanoController :
   public Controller
 {
 private:
-  NanoReceivedBuffer* buffer;
+  NanoReceivedBuffer *buffer;
 public:
   NanoReceivedBuffer *GetBuffer(void);
   NanoController(void);

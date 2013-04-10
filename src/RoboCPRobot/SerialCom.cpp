@@ -1,13 +1,13 @@
 #include "SerialCom.h"
 
-SerialCom::SerialCom(LPCSTR PortName)
+SerialCom::SerialCom(LPCSTR PortName, int BaudRate)
 {
   out = new char[READ_BUFF_SIZE];
   hComm = CreateFile(PortName, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
   COMMCONFIG conf;
   conf.dcb.DCBlength = sizeof(DCB);
   GetCommState(hComm, &conf.dcb);
-  conf.dcb.BaudRate = 9600;              // Current baud
+  conf.dcb.BaudRate = BaudRate;              // Current baud
   conf.dcb.fBinary = TRUE;               // Binary mode; no EOF check
   conf.dcb.fParity = FALSE;               // Enable parity checking
   conf.dcb.fOutxCtsFlow = FALSE;         // No CTS output flow control
@@ -45,7 +45,7 @@ char *SerialCom::Read(void)
   OVERLAPPED osReader = {0};
   osReader.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
   ClearCommError(hComm, &errors, &status);
-  out[0]='\0';
+  outSize = 0;
   if (status.cbInQue>=1){
     if (status.cbInQue<READ_BUFF_SIZE-1){
       toRead = status.cbInQue;
@@ -53,7 +53,7 @@ char *SerialCom::Read(void)
       toRead = READ_BUFF_SIZE-1;
     }
     ReadFile(hComm,out,toRead, &bytesRead, &osReader);
-    out[toRead] = '\0';
+    outSize = toRead;
   }
   return out;
 }
@@ -62,6 +62,11 @@ void SerialCom::Write(char *Data)
 {
   DWORD dwBytesWritten;
   WriteFile(hComm, &Data,(DWORD) sizeof(Data), &dwBytesWritten, NULL);
+}
+
+int SerialCom::GetOutSize(void)
+{
+  return outSize;
 }
 
 SerialCom::~SerialCom(void)

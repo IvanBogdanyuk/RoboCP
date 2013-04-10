@@ -8,11 +8,13 @@ class SerialCom
 {
 private:
   char *out;
+  int outSize;
   HANDLE hComm;
 public:
   char *Read(void);
   void Write(char *Data);
-  SerialCom(LPCSTR PortName);
+  int GetOutSize();
+  SerialCom(LPCSTR PortName, int BaudRate);
   ~SerialCom(void);
 };
 

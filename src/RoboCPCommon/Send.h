@@ -16,7 +16,18 @@ public:
   float AltitudeSonic;
   float AltitudeBarometer;
   struct Point3d Acceleration;
-
+  
+  bool TopSonicSensorDataExists;
+  bool FrontSonicSensorDataExists;
+  bool LeftSonicSensorDataExists;
+  bool RightSonicSensorDataExists;
+  bool BackSonicSensorDataExists;
+  bool RollDataExists;
+  bool PitchDataExists;
+  bool YawDataExists;
+  bool AltitudeSonicDataExists;
+  bool AltitudeBarometerDataExists;
+  bool AccelerationDataExists;
   time_t Time;
   Send(void);
   ~Send(void);

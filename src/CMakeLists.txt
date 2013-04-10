@@ -28,10 +28,10 @@ add_executable (Robot
 	RoboCPCommon/Command.h RoboCPCommon/Command.cpp
 
 	RoboCPCommon/Send.h RoboCPCommon/Send.cpp
-	RoboCPCommon/SendBuffer.h RoboCPCommon/SendBuffer.cpp
+	RoboCPCommon/SendBuffer.h 
 	
 	RoboCPCommon/KinectData.h RoboCPCommon/KinectData.cpp
-	RoboCPCommon/KinectBuffer.h RoboCPCommon/KinectBuffer.cpp
+	RoboCPCommon/KinectBuffer.h 
 	
 	RoboCPCommon/XMLConfig.h RoboCPCommon/XMLConfig.cpp
 
@@ -44,11 +44,11 @@ add_executable (Robot
 	
 	RoboCPRobot/ArduCopterController.h RoboCPRobot/ArduCopterController.cpp
 	RoboCPRobot/ArduCopterReceived.h RoboCPRobot/ArduCopterReceived.cpp
-	RoboCPRobot/ArduCopterBuffer.h RoboCPRobot/ArduCopterBuffer.cpp
+	RoboCPRobot/ArduCopterBuffer.h 
 	
 	RoboCPRobot/NanoController.h RoboCPRobot/NanoController.cpp
 	RoboCPRobot/NanoReceived.h RoboCPRobot/NanoReceived.cpp
-	RoboCPRobot/NanoReceivedBuffer.h RoboCPRobot/NanoReceivedBuffer.cpp
+	RoboCPRobot/NanoReceivedBuffer.h 
 
 	RoboCPRobot/SendSender.h RoboCPRobot/SendSender.cpp
 	
@@ -74,10 +74,10 @@ add_executable (Server
 	RoboCPCommon/Command.h RoboCPCommon/Command.cpp
 
 	RoboCPCommon/Send.h RoboCPCommon/Send.cpp
-	RoboCPCommon/SendBuffer.h RoboCPCommon/SendBuffer.cpp
+	RoboCPCommon/SendBuffer.h 
 	
 	RoboCPCommon/KinectData.h RoboCPCommon/KinectData.cpp
-	RoboCPCommon/KinectBuffer.h RoboCPCommon/KinectBuffer.cpp
+	RoboCPCommon/KinectBuffer.h 
 
 	RoboCPCommon/XMLConfig.h RoboCPCommon/XMLConfig.cpp
 

@@ -4,11 +4,11 @@
 class NanoReceived : public Received
 {
 public:
-  int TopSonicSensor;
-  int FrontSonicSensor;
-  int LeftSonicSensor;
-  int RightSonicSensor;
-  int BackSonicSensor;
+  unsigned short TopSonicSensor;
+  unsigned short FrontSonicSensor;
+  unsigned short LeftSonicSensor;
+  unsigned short RightSonicSensor;
+  unsigned short BackSonicSensor;
   time_t Time;
   NanoReceived(void);
   ~NanoReceived(void);

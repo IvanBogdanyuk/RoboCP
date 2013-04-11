@@ -4,11 +4,11 @@
 class Send
 {
 public:
-  int TopSonicSensor;
-  int FrontSonicSensor;
-  int LeftSonicSensor;
-  int RightSonicSensor;
-  int BackSonicSensor;
+  unsigned short TopSonicSensor;
+  unsigned short FrontSonicSensor;
+  unsigned short LeftSonicSensor;
+  unsigned short RightSonicSensor;
+  unsigned short BackSonicSensor;
 
   float Roll;
   float Pitch;

@@ -4,7 +4,7 @@
 #include "SerialCom.h"
 #include <time.h>
 
-#define NANO_BAUD_RATE 9600
+#define NANO_BAUD_RATE 115200
 #define NANO_COM_PORT "COM3"
 #define NANO_SECONDS_TO_RECONNECT 5
 

@@ -343,14 +343,30 @@ void ArduCopterController::Start(void)
             if (MsgType == 30){
               PFloatData = ((float *)(&MavPacket[4]));//[0] - roll, [1] - pitch, [2] - yaw, all in radians
               //printf("%f  %f  %f\n",PFloatData[0]*180/3.1416,PFloatData[1]*180/3.1416,PFloatData[2]*180/3.1416);
+              boost::shared_ptr<ArduCopterReceived> CopterReceived (new ArduCopterReceived());
+              CopterReceived->Roll = PFloatData[0];
+              CopterReceived->Pitch = PFloatData[1];
+              CopterReceived->Yaw = PFloatData[2];
+              CopterReceived->Time = time(NULL);
+              buffer->Enqueue(CopterReceived);
             }
             if (MsgType == 74){
               PFloatData = ((float *)(&MavPacket[0]));//[3] - altitude
               //printf("%f\n",PFloatData[3]);
+              boost::shared_ptr<ArduCopterReceived> CopterReceived (new ArduCopterReceived());
+              CopterReceived->AltitudeSonic = PFloatData[3];
+              CopterReceived->Time = time(NULL);
+              buffer->Enqueue(CopterReceived);
             }
             if (MsgType == 27){
               PShortData = ((short *)(&MavPacket[0]));//[4] - x accel, [5] - y accel, [6] - z accel
               //printf("%d %d %d\n",PShortData[4],PShortData[5],PShortData[6]);
+              boost::shared_ptr<ArduCopterReceived> CopterReceived (new ArduCopterReceived());
+              CopterReceived->Acceleration.x = PShortData[4];
+              CopterReceived->Acceleration.y = PShortData[5];
+              CopterReceived->Acceleration.z = PShortData[6];
+              CopterReceived->Time = time(NULL);
+              buffer->Enqueue(CopterReceived);
             }
           }
         }

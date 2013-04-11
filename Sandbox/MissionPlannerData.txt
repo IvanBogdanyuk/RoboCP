@@ -1,0 +1,112 @@
+fe 02 00 ff be 15
+01 01 79 37
+PARAM_REQUEST_LIST
+system ID = 1
+component ID = 1
+
+fe 09 01 ff be 00
+00 00 00 00 06 08 00 00 03 c2 3c
+HEARTBEAT
+
+ƒальше идут сообщени€ типа REQUEST_DATA_STREAM, их всего 14, но некоторые дублируютс€ по смыслу
+‘ормат REQUEST_DATA_STREAM:
+
+The target system requested to send the message stream, uint8_t
+The target component requested to send the message stream, uint8_t
+The ID of the requested data stream, uint8_t
+The requested interval between two messages of this type, uint16_t
+1 to start sending, 0 to stop sending, uint8_t
+
+FE 06 02 FF BE 42
+02 00 01 01 02 01 C0 34
+
+FE 06 03 FF BE 42 
+02 00 01 01 02 01 51 61
+
+FE 06 04 FF BE 42
+03 00 01 01 06 01 03 3D
+
+FE 06 05 FF BE 42
+03 00 01 01 06 01 92 68
+
+FE 06 06 FF BE 42
+0A 00 01 01 0A 01 BB 72
+
+FE 06 07 FF BE 42
+0A 00 01 01 0A 01 2A 27
+
+FE 06 08 FF BE 42
+0A 00 01 01 0B 01 BA 61
+
+FE 06 09 FF BE 42
+0A 00 01 01 0B 01 2B 34 
+
+FE 06 0A FF BE 42
+02 00 01 01 0C 01 71 98
+
+FE 06 0B FF BE 42
+02 00 01 01 0C 01 E0 CD
+
+FE 06 0C FF BE 42 
+02 00 01 01 01 01 79 92
+
+FE 06 0D FF BE 42
+02 00 01 01 01 01 E8 C7
+
+FE 06 0E FF BE 42
+02 00 01 01 03 01 E3 8C
+
+FE 06 0F FF BE 42
+02 00 01 01 03 01 72 D9
+
+ƒальше идут сообщени€ только типа HEARTBEAT
+fe 09 10 ff be 00
+00 00 00 00 06 08 00 00 03 ff 94
+
+fe 09 11 ff be 00
+00 00 00 00 06 08 00 00 03 15 ea
+
+fe 09 12 ff be 00
+00 00 00 00 06 08 00 00 03 2b 69
+
+fe 09 13 ff be 00
+00 00 00 00 06 08 00 00 03 c1 17
+
+fe 09 14 ff be 00
+00 00 00 00 06 08 00 00 03 46 67
+
+fe 09 15 ff be 00
+00 00 00 00 06 08 00 00 03 ac 19
+
+fe 09 16 ff be 00
+00 00 00 00 06 08 00 00 03 92 9a
+
+fe 09 17 ff be 00
+00 00 00 00 06 08 00 00 03 78 e4
+
+fe 09 18 ff be 00
+00 00 00 00 06 08 00 00 03 9c 7b
+
+fe 09 19 ff be 00
+00 00 00 00 06 08 00 00 03 76 05
+
+fe 09 1a ff be 00
+00 00 00 00 06 08 00 00 03 48 86
+
+fe 09 1b ff be 00
+00 00 00 00 06 08 00 00 03 a2 f8
+
+fe 09 1c ff be 00
+00 00 00 00 06 08 00 00 03 25 88
+
+fe 09 1d ff be 00
+00 00 00 00 06 08 00 00 03 cf f6
+
+fe 09 1e ff be 00
+00 00 00 00 06 08 00 00 03 f1 75
+
+fe 09 1f ff be 00
+00 00 00 00 06 08 00 00 03 1b 0b
+
+fe 09 20 ff be 00
+00 00 00 00 06 08 00 00 03 97 e7

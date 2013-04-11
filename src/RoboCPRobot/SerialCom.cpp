@@ -56,13 +56,18 @@ char *SerialCom::Read(void)
     ReadFile(hComm,out,toRead, &bytesRead, &osReader);
     outSize = bytesRead;
   }
+  CloseHandle(osReader.hEvent);
   return out;
 }
 
-void SerialCom::Write(char *Data)
+void SerialCom::Write(char *Data, int DataSize)
 {
   DWORD dwBytesWritten;
-  WriteFile(hComm, &Data,(DWORD) sizeof(Data), &dwBytesWritten, NULL);
+  OVERLAPPED osWriter = {0};
+  osWriter.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+  WriteFile(hComm, &Data[0], DataSize, &dwBytesWritten, &osWriter);
+  WaitForSingleObject(osWriter.hEvent, SERIAL_WRITE_WAIT_MS);
+  CloseHandle(osWriter.hEvent);
 }
 
 int SerialCom::GetOutSize(void)

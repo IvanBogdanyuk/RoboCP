@@ -4,6 +4,7 @@
 #include "KinectDownsampler.h"
 #include "KinectSender.h"
 #include "NanoController.h"
+#include "ArduCopterController.h"
 #include "ClientReceiver.h"
 #include "XMLConfig.h"
 #include <boost/thread.hpp>
@@ -32,6 +33,9 @@ int main(char *args[], int count)
 
   NanoReceivedBuffer NanoBuffer(1000);
   NanoController  NanoControl(&NanoBuffer);
+
+  ArduCopterBuffer CopterBuffer(1000);
+  ArduCopterController CopterControl(&CopterBuffer);
   
   boost::thread_group tgroup;
 
@@ -44,6 +48,8 @@ int main(char *args[], int count)
   tgroup.create_thread ( boost::bind (&ClientReceiver::Start, &r) );
   
   tgroup.create_thread ( boost::bind (&NanoController::Start, &NanoControl) );
+
+  tgroup.create_thread ( boost::bind (&ArduCopterController::Start, &CopterControl) );
 
   tgroup.join_all ();
 

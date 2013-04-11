@@ -16,6 +16,7 @@ NanoController::NanoController(NanoReceivedBuffer *buf)
 
 NanoController::~NanoController(void)
 {
+  nanoCom->~SerialCom();
 }
 
 void NanoController::Start(void)
@@ -24,12 +25,12 @@ void NanoController::Start(void)
   while (true){
     ReadenData = nanoCom->Read();
     if (nanoCom->GetOutSize() > 0){
-      lastReadTime = time(NULL);
       for (int i = 0; i<nanoCom->GetOutSize(); i++){
         printf("%c",ReadenData[i]);
       }
+      lastReadTime = time(NULL);
     }else{
-      if (difftime(time(NULL),lastReadTime)>SECONDS_TO_RECONNECT){
+      if (difftime(time(NULL),lastReadTime)>NANO_SECONDS_TO_RECONNECT){
         nanoCom->~SerialCom();
         nanoCom = new SerialCom(NANO_COM_PORT, NANO_BAUD_RATE);
         lastReadTime = time(NULL);

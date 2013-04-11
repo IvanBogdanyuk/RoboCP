@@ -6,7 +6,7 @@
 
 #define NANO_BAUD_RATE 9600
 #define NANO_COM_PORT "COM3"
-#define SECONDS_TO_RECONNECT 5
+#define NANO_SECONDS_TO_RECONNECT 5
 
 class NanoController :
   public Controller

@@ -45,6 +45,6 @@ public:
   time_t Time;
   
   Send(void);
-  ~Send(void);
+  ~Send(void); 
 };
 

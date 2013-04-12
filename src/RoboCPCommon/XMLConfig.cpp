@@ -7,6 +7,7 @@ XMLConfig::XMLConfig ()
   IP = "127.0.0.1";
   KinectPort = "6666";
   CommandPort = "6667";
+  SendPort = "6668";
   CompressionProfile = pcl::octree::LOW_RES_ONLINE_COMPRESSION_WITHOUT_COLOR;
   ShowStatistics = false;
   PointResolution = 0.001;

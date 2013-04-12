@@ -6,6 +6,7 @@
 #include "NanoController.h"
 #include "ArduCopterController.h"
 #include "ClientReceiver.h"
+#include "SendSender.h"
 #include "XMLConfig.h"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
@@ -36,6 +37,9 @@ int main(char *args[], int count)
 
   ArduCopterBuffer CopterBuffer(1000);
   ArduCopterController CopterControl(&CopterBuffer);
+
+  SendBuffer sendBuffer (50);
+  SendSender sendSender (&config, &sendBuffer);
   
   boost::thread_group tgroup;
 
@@ -50,6 +54,8 @@ int main(char *args[], int count)
   tgroup.create_thread ( boost::bind (&NanoController::Start, &NanoControl) );
 
   tgroup.create_thread ( boost::bind (&ArduCopterController::Start, &CopterControl) );
+
+  tgroup.create_thread ( boost::bind (&SendSender::Start, &sendSender) );
 
   tgroup.join_all ();
 

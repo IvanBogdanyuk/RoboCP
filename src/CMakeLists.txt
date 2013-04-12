@@ -85,6 +85,7 @@ add_executable (Server
 
 
 	RoboCPServer/KinectViewer.h RoboCPServer/KinectViewer.cpp
+	RoboCPServer/SendReceiver.h RoboCPServer/SendReceiver.cpp
 	RoboCPServer/CommandMaker.h RoboCPServer/CommandMaker.cpp
 
 	RoboCPServer/main.cpp

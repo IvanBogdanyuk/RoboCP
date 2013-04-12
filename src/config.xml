@@ -5,6 +5,7 @@
 	<IP>127.0.0.1</IP>
 	<KinectPort>6666</KinectPort>
 	<CommandPort>6667</CommandPort>
+	<SendPort>6668</SendPort>
 	<compressionProfile>0</CompressionProfile>
 	<ShowStatistics>0</ShowStatistics>
 	<PointResolution>0.001</PointResolution>

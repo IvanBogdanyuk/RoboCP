@@ -1,8 +1,33 @@
 #pragma once
 #include <time.h>
 #include "Point3d.h"
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/serialization/nvp.hpp>
+
 class Send
 {
+private:
+  friend class boost::serialization::access;
+
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version) {
+	ar & BOOST_SERIALIZATION_NVP(TopSonicSensor);
+	ar & BOOST_SERIALIZATION_NVP(FrontSonicSensor);
+	ar & BOOST_SERIALIZATION_NVP(LeftSonicSensor);
+	ar & BOOST_SERIALIZATION_NVP(RightSonicSensor);
+	ar & BOOST_SERIALIZATION_NVP(BackSonicSensor);
+
+	ar & BOOST_SERIALIZATION_NVP(Roll);
+	ar & BOOST_SERIALIZATION_NVP(Pitch);
+	ar & BOOST_SERIALIZATION_NVP(Yaw);
+	ar & BOOST_SERIALIZATION_NVP(AltitudeSonic);
+	ar & BOOST_SERIALIZATION_NVP(AltitudeBarometer);
+
+	//ar & BOOST_SERIALIZATION_NVP(Acceleration);
+	ar & BOOST_SERIALIZATION_NVP(Time);
+  }
+
 public:
   unsigned short TopSonicSensor;
   unsigned short FrontSonicSensor;
@@ -15,20 +40,10 @@ public:
   float Yaw;
   float AltitudeSonic;
   float AltitudeBarometer;
-  struct Point3d Acceleration;
   
-  bool TopSonicSensorDataExists;
-  bool FrontSonicSensorDataExists;
-  bool LeftSonicSensorDataExists;
-  bool RightSonicSensorDataExists;
-  bool BackSonicSensorDataExists;
-  bool RollDataExists;
-  bool PitchDataExists;
-  bool YawDataExists;
-  bool AltitudeSonicDataExists;
-  bool AltitudeBarometerDataExists;
-  bool AccelerationDataExists;
+  Point3d Acceleration;
   time_t Time;
+  
   Send(void);
   ~Send(void);
 };

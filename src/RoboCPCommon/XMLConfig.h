@@ -23,6 +23,7 @@ private:
     ar & BOOST_SERIALIZATION_NVP(IP);
     ar & BOOST_SERIALIZATION_NVP(KinectPort);
     ar & BOOST_SERIALIZATION_NVP(CommandPort);
+	ar & BOOST_SERIALIZATION_NVP(SendPort);
     ar & BOOST_SERIALIZATION_NVP(CompressionProfile);
     ar & BOOST_SERIALIZATION_NVP(ShowStatistics);
     ar & BOOST_SERIALIZATION_NVP(PointResolution);
@@ -37,6 +38,7 @@ public:
   string IP;
   string KinectPort;
   string CommandPort;
+  string SendPort;
 
   pcl::octree::compression_Profiles_e CompressionProfile;
 

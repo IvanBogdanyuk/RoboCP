@@ -1,6 +1,7 @@
 #pragma once
 #include <stdarg.h>
 #include "KinectViewer.h"
+#include "SendReceiver.h"
 #include "CommandMaker.h"
 
 #include <boost/thread.hpp>
@@ -8,7 +9,7 @@
 
 int main(char *args[], int count)
 {
-
+	
   XMLConfig config;
   { //deserialization
     std::ifstream ifs("config.xml");
@@ -23,11 +24,16 @@ int main(char *args[], int count)
   KinectViewer v (&config);
   CommandMaker m (&config);
 
+  SendBuffer b (50);
+  SendReceiver s (&config, &b);
+
   boost::thread_group tgroup;
 
   tgroup.create_thread ( boost::bind (&KinectViewer::Start, &v) );
 
   tgroup.create_thread ( boost::bind (&CommandMaker::Start, &m) );
+
+  tgroup.create_thread ( boost::bind (&SendReceiver::Start, &s) );
 
 
   tgroup.join_all ();

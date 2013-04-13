@@ -51,7 +51,8 @@ add_executable (Robot
 	RoboCPRobot/NanoReceivedBuffer.h 
 
 	RoboCPRobot/SendSender.h RoboCPRobot/SendSender.cpp
-	
+	RoboCPRobot/SendProcessing.h RoboCPRobot/SendProcessing.cpp
+
 	RoboCPRobot/KinectController.h RoboCPRobot/KinectController.cpp
 	RoboCPRobot/KinectSender.h RoboCPRobot/KinectSender.cpp
 	RoboCPRobot/KinectDownsampler.h RoboCPRobot/KinectDownsampler.cpp

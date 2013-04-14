@@ -32,14 +32,7 @@ void SendSender::Start ()
 	while (!socketStream.fail() ) {
 	  boost::shared_ptr<Send> sendData;
 	  sendData = buffer->Dequeue();
-
-	  {////////// todo: test and debug
-	  Send sendNotPtr;
-	  sendNotPtr = *sendData;
-	  oa << BOOST_SERIALIZATION_NVP (sendNotPtr );
-	  //socketStream.flush();	
-	  }
-
+	  oa << BOOST_SERIALIZATION_NVP (sendData);
 	}
 
   }

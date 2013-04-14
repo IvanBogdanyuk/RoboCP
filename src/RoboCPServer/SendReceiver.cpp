@@ -25,9 +25,8 @@ void SendReceiver::Start ()
 
 	  while ( true ) {
 
-		Send sendNotPtr;
-		ia >> BOOST_SERIALIZATION_NVP(sendNotPtr);
-		boost::shared_ptr<Send> sendData (&sendNotPtr);
+		boost::shared_ptr<Send> sendData (new Send);
+		ia >> BOOST_SERIALIZATION_NVP(sendData);
 		buffer->Enqueue (sendData);
 
 	  }

@@ -4,6 +4,7 @@
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 class Send
 {
@@ -24,7 +25,7 @@ private:
 	ar & BOOST_SERIALIZATION_NVP(AltitudeSonic);
 	ar & BOOST_SERIALIZATION_NVP(AltitudeBarometer);
 
-	//ar & BOOST_SERIALIZATION_NVP(Acceleration);
+	ar & BOOST_SERIALIZATION_NVP(Acceleration);
 	ar & BOOST_SERIALIZATION_NVP(Time);
   }
 
@@ -48,3 +49,4 @@ public:
   ~Send(void); 
 };
 
+BOOST_SERIALIZATION_SHARED_PTR(Send)

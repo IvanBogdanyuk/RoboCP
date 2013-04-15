@@ -1,14 +1,18 @@
 #pragma once
 #include <Command.h>
 
-Command::Command ()
+Command::Command()
 {
-  sec = 0;
-  angle = 0;
+  ComType = 0;
+  ComCondition = 0;
+  Value = 0;
+  Time = time(NULL);
 }
 
-Command::Command (int s, float a)
+Command::Command (CommandType CType, CommandCondition CCondition, float ConditionValue)
 {
-  sec = s;
-  angle = a;
+  ComType = CType;
+  ComCondition = CCondition;
+  Value = ConditionValue;
+  Time = time(NULL);
 }

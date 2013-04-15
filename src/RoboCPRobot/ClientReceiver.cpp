@@ -31,7 +31,7 @@ void ClientReceiver::Start ()
 	  Command com;
 	  boost::archive::xml_iarchive ia(socketStream);
 	  ia >> BOOST_SERIALIZATION_NVP(com);
-	  cout << "New command: " << com.sec << " " << com.angle << endl; //облака в буфер оттуда отправлять
+    cout << "New command: " << com.ComType << " " << com.ComCondition << " " << com.Value << endl; //облака в буфер оттуда отправлять
 	 }
   
   }

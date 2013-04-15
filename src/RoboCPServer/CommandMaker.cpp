@@ -22,10 +22,12 @@ void CommandMaker::Start ()
 	  
 	  while (!socketStream.fail() ) {
 		Command com;
-		cout << "input sec (int):" << endl;
-		cin >> com.sec;
-		cout << "input angle (float):" << endl;
-		cin >> com.angle;
+		cout << "input command type (int):" << endl;
+		cin >> com.ComType;
+		cout << "input command condition (int):" << endl;
+    cin >> com.ComCondition;
+		cout << "input condition value (float):" << endl;
+    cin >> com.Value;
 		boost::archive::xml_oarchive oa(socketStream);
 		oa << BOOST_SERIALIZATION_NVP(com);
 	  }

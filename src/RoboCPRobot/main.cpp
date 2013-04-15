@@ -5,6 +5,7 @@
 #include "KinectSender.h"
 #include "NanoController.h"
 #include "ArduCopterController.h"
+#include "CameraController.h"
 #include "ClientReceiver.h"
 #include "SendProcessing.h"
 #include "SendSender.h"
@@ -39,6 +40,9 @@ int main(char *args[], int count)
   ArduCopterBuffer CopterBuffer(1000);
   ArduCopterController CopterControl(&CopterBuffer);
 
+  CameraReceivedBuffer CameraBuffer(1000);
+  CameraController CameraControl(&CameraBuffer);
+
   SendBuffer sendBuffer (50);
   SendSender sendSender (&config, &sendBuffer);
 
@@ -55,14 +59,17 @@ int main(char *args[], int count)
   tgroup.create_thread ( boost::bind (&ClientReceiver::Start, &r) );
   
   tgroup.create_thread ( boost::bind (&NanoController::Start, &NanoControl) );
-
+  
   tgroup.create_thread ( boost::bind (&ArduCopterController::Start, &CopterControl) );
+
+  tgroup.create_thread ( boost::bind (&CameraController::Start, &CameraControl) );
 
   tgroup.create_thread ( boost::bind (&SendProcessing::Start, &sendProcessing) );
 
-  tgroup.create_thread ( boost::bind (&SendSender::Start, &sendSender) );
+  tgroup.create_thread ( boost::bind (&SendSender::Start, &sendSender) ); 
 
   tgroup.join_all ();
+  
 
   return 0;
 }

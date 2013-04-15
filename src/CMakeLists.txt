@@ -13,6 +13,7 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 ADD_DEFINITIONS( "-DHAS_BOOST" )
 
+find_package( OpenCV REQUIRED )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(RoboCPRobot)
@@ -50,6 +51,10 @@ add_executable (Robot
 	RoboCPRobot/NanoReceived.h RoboCPRobot/NanoReceived.cpp
 	RoboCPRobot/NanoReceivedBuffer.h 
 
+	RoboCPRobot/CameraController.h RoboCPRobot/CameraController.cpp
+	RoboCPRobot/CameraReceived.h RoboCPRobot/CameraReceived.cpp
+	RoboCPRobot/CameraReceivedBuffer.h
+
 	RoboCPRobot/SendSender.h RoboCPRobot/SendSender.cpp
 	RoboCPRobot/SendProcessing.h RoboCPRobot/SendProcessing.cpp
 
@@ -62,7 +67,7 @@ add_executable (Robot
 	RoboCPRobot/main.cpp
 
 )
-target_link_libraries (Robot ${PCL_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries (Robot ${PCL_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 
 
 
@@ -92,7 +97,7 @@ add_executable (Server
 	RoboCPServer/main.cpp
 
 )
-target_link_libraries (Server ${PCL_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries (Server ${PCL_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 
 
 

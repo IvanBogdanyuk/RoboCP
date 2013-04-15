@@ -8,6 +8,7 @@
 #include "KinectData.h"
 #include "NanoReceived.h"
 #include "ArduCopterReceived.h"
+#include "CameraReceived.h"
 #include "Send.h"
 
 

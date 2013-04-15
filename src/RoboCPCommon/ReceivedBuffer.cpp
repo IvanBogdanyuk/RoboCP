@@ -42,4 +42,5 @@ template class ReceivedBuffer<int>;
 template class ReceivedBuffer< boost::shared_ptr<KinectData> >;
 template class ReceivedBuffer< boost::shared_ptr<NanoReceived> >;
 template class ReceivedBuffer< boost::shared_ptr<ArduCopterReceived> >;
+template class ReceivedBuffer< boost::shared_ptr<CameraReceived> >;
 template class ReceivedBuffer< boost::shared_ptr<Send> >;

@@ -1,15 +1,19 @@
 #pragma once
 #include <stdarg.h>
 #include "KinectViewer.h"
+#include "KinectReceiver.h"
 #include "SendReceiver.h"
 #include "CommandMaker.h"
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/visualization/pcl_visualizer.h>
 
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
 int main(char *args[], int count)
 {
-	
+
   XMLConfig config;
   { //deserialization
     std::ifstream ifs("config.xml");
@@ -21,15 +25,21 @@ int main(char *args[], int count)
 	  cout << "Can't find config.xml! Default config used." << endl;
   }
 
+
   KinectViewer v (&config);
+  
+  KinectReceiver r (&config, &v);
+
   CommandMaker m (&config);
 
-  SendBuffer b (50);
-  SendReceiver s (&config, &b);
+  SendReceiver s (&config, &v);
+
 
   boost::thread_group tgroup;
 
   tgroup.create_thread ( boost::bind (&KinectViewer::Start, &v) );
+
+  tgroup.create_thread ( boost::bind (&KinectReceiver::Start, &r) );
 
   tgroup.create_thread ( boost::bind (&CommandMaker::Start, &m) );
 

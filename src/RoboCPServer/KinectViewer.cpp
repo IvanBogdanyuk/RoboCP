@@ -4,40 +4,50 @@
 
 KinectViewer::KinectViewer (XMLConfig * x)
 {
-  ip = x->IP;
-  port = x->KinectPort;
-  octreeCoder = new PointCloudCompression<PointXYZ> (x->CompressionProfile, x->ShowStatistics, x->PointResolution,
-                                                         x->OctreeResolution, x->DoVoxelGridDownDownSampling, x->IFrameRate,
-                                                         x->DoColorEncoding, x->ColorBitResolution);
 }
 
 KinectViewer::~KinectViewer ()
 {
-  delete (octreeCoder);
+	delete viewer;
 }
 
 void KinectViewer::Start ()
 {
-  try {
-    tcp::iostream socketStream (ip.c_str(), port.c_str() );
+  viewer = new pcl::visualization::PCLVisualizer ("Downsampled point cloud");
 
-    if (!socketStream.fail() ) {
-      cout << "KinectViewer: Connected!" << endl;
+  boost::shared_ptr<KinectData> kData (new KinectData);
+  kData->Time = time (NULL);
+  viewer->addPointCloud (kData->Cloud, "cloud");
+  char buf[50]; 
+  sprintf (buf, "Cloud time: %s", ctime(&kData->Time) );
+  viewer->addText (buf, 5, 20, 10, 1, 1, 1, "CloudTime");
+  kData.reset();
 
-      pcl::visualization::CloudViewer viewer ("Downsampled point cloud");
+  
+  
+  viewer->addText ("Send:", 20, 305, 14, 1, 1, 1, "SendHead");
+  viewer->addText ("Acceleration x:", 5, 290, 10, 1, 1, 1, "AccelerationX");
+  viewer->addText ("Acceleration y:", 5, 278, 10, 1, 1, 1, "AccelerationY");
+  viewer->addText ("Acceleration z:", 5, 268, 10, 1, 1, 1, "AccelerationZ");
 
-	  boost::shared_ptr<KinectData> kData (new KinectData);
+  viewer->addText ("Top sonic:", 5, 248, 10, 1, 1, 1, "TopSonic");
+  viewer->addText ("Left sonic:", 5, 238, 10, 1, 1, 1, "LeftSonic");
+  viewer->addText ("Right sonic:", 5, 224, 10, 1, 1, 1, "RightSonic");
+  viewer->addText ("Front sonic:", 5, 214, 10, 1, 1, 1, "FrontSonic");
+  viewer->addText ("Back sonic:", 5, 202, 10, 1, 1, 1, "BackSonic");
 
-	  while (!viewer.wasStopped() ) {
-		socketStream >> kData->Time;
-		octreeCoder->decodePointCloud (socketStream, kData->Cloud);
-		//cout << ctime (&kData->Time);
-		viewer.showCloud (kData->Cloud);
-	  }
-	
-	}
+  viewer->addText ("Alt barometer:", 5, 186, 10, 1, 1, 1, "AltBarometer");
+  viewer->addText ("Alt sonic:", 5, 174, 10, 1, 1, 1, "AltSonic");
+  viewer->addText ("Pitch:", 5, 162, 10, 1, 1, 1, "Pitch");
+  viewer->addText ("Roll:", 5, 150, 10, 1, 1, 1, "Roll");
+  viewer->addText ("Yaw:", 5, 138, 10, 1, 1, 1, "Yaw");
+
+  viewer->addText ("Time:", 5, 122, 10, 1, 1, 1, "SendTime");
+  
+
+  while (!viewer->wasStopped() ) {
+	viewer->spinOnce(100);
+	Sleep (100);
   }
-  catch (exception& e) {
-    cout << "KinectViewer: Exception: " << e.what () << endl;
-  }
+
 }

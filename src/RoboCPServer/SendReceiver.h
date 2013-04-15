@@ -7,6 +7,7 @@
 #include "XMLConfig.h"
 #include "Send.h"
 #include "SendBuffer.h"
+#include "KinectViewer.h"
 
 #include <boost/asio.hpp>
 
@@ -17,10 +18,11 @@ class SendReceiver
 {
 public:
   void Start ();
-  SendReceiver (XMLConfig * x, SendBuffer * buf);
+  SendReceiver (XMLConfig * x, KinectViewer* v);
   ~SendReceiver (void);
 private:
   string ip;
   string port;
-  SendBuffer * buffer;
+  KinectViewer* kinectViewer;
+  void updateText (boost::shared_ptr<Send> s);
 };

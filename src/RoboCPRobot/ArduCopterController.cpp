@@ -1,10 +1,11 @@
 #include "ArduCopterController.h"
 
 
-ArduCopterController::ArduCopterController(ArduCopterBuffer *buf)
+ArduCopterController::ArduCopterController(XMLConfig *x, ArduCopterBuffer *buf)
 {
   buffer = buf;
-  copterCom = new SerialCom(COPTER_COM_PORT,COPTER_BAUD_RATE);
+  copterPort = x->ArducopterPort;
+  copterCom = new SerialCom(copterPort.c_str(),COPTER_BAUD_RATE);
   lastReadTime = time(NULL);
 }
 
@@ -15,7 +16,6 @@ ArduCopterController::~ArduCopterController(void)
 
 void ArduCopterController::sendInitionalData(void)
 {
-  
   unsigned char DataToSend[32];
   DataToSend[0] = 0xFE;
   DataToSend[1] = 0x02;
@@ -375,7 +375,7 @@ void ArduCopterController::Start(void)
     }else{
       if (difftime(time(NULL),lastReadTime)>COPTER_SECONDS_TO_RECONNECT){
         copterCom->~SerialCom();
-        copterCom = new SerialCom(COPTER_COM_PORT, COPTER_BAUD_RATE);
+        copterCom = new SerialCom(copterPort.c_str(), COPTER_BAUD_RATE);
         sendInitionalData();
         lastReadTime = time(NULL);
       }

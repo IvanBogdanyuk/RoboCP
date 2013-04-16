@@ -2,9 +2,13 @@
 
 
 
-CameraController::CameraController(CameraReceivedBuffer *buf)
+CameraController::CameraController(XMLConfig *x, CameraReceivedBuffer *buf)
 {
   buffer = buf;
+  cameraNum = x->CameraNumber;
+  fps = x->CameraFramesPerSecond;
+  width = x->CameraFrameWidth;
+  height = x->CameraFrameHeight;
 }
 
 CameraReceivedBuffer *CameraController::GetBuffer(void)
@@ -19,11 +23,11 @@ CameraController::~CameraController(void)
 void CameraController::Start(void)
 {
   CameraReceived *DataToStorage;
-  CvCapture *Capture = cvCreateCameraCapture(CAMERA_NUM);
+  CvCapture *Capture = cvCreateCameraCapture(cameraNum);
   IplImage *Frame;
-  cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_WIDTH,320);
-  cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_HEIGHT,240);
-  cvSetCaptureProperty(Capture,CV_CAP_PROP_FPS,180);
+  cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_WIDTH,width);
+  cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_HEIGHT,height);
+  cvSetCaptureProperty(Capture,CV_CAP_PROP_FPS,fps);
   while (true){
     Frame = cvQueryFrame(Capture);
     boost::shared_ptr<CameraReceived> CameraImg(new CameraReceived(Frame));

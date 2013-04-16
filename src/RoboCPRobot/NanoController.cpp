@@ -6,11 +6,12 @@ NanoReceivedBuffer *NanoController::GetBuffer(void)
   return buffer;
 }
 
-NanoController::NanoController(NanoReceivedBuffer *buf)
+NanoController::NanoController(XMLConfig *x, NanoReceivedBuffer *buf)
 {
   buffer = buf;
   lastReadTime = time(NULL);
-  nanoCom = new SerialCom(NANO_COM_PORT, NANO_BAUD_RATE);
+  nanoPort = x->CarduinoPort;
+  nanoCom = new SerialCom(nanoPort.c_str(), NANO_BAUD_RATE);
 }
 
 
@@ -101,7 +102,7 @@ void NanoController::Start(void)
     }else{
       if (difftime(time(NULL),lastReadTime)>NANO_SECONDS_TO_RECONNECT){
         nanoCom->~SerialCom();
-        nanoCom = new SerialCom(NANO_COM_PORT, NANO_BAUD_RATE);
+        nanoCom = new SerialCom(nanoPort.c_str(), NANO_BAUD_RATE);
         lastReadTime = time(NULL);
         stage = -4;
       }

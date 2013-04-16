@@ -23,7 +23,9 @@ private:
     ar & BOOST_SERIALIZATION_NVP(IP);
     ar & BOOST_SERIALIZATION_NVP(KinectPort);
     ar & BOOST_SERIALIZATION_NVP(CommandPort);
-	ar & BOOST_SERIALIZATION_NVP(SendPort);
+	  ar & BOOST_SERIALIZATION_NVP(SendPort);
+	  ar & BOOST_SERIALIZATION_NVP(CarduinoPort);
+	  ar & BOOST_SERIALIZATION_NVP(ArducopterPort);
     ar & BOOST_SERIALIZATION_NVP(CompressionProfile);
     ar & BOOST_SERIALIZATION_NVP(ShowStatistics);
     ar & BOOST_SERIALIZATION_NVP(PointResolution);
@@ -32,6 +34,10 @@ private:
     ar & BOOST_SERIALIZATION_NVP(IFrameRate);
     ar & BOOST_SERIALIZATION_NVP(DoColorEncoding);
     ar & BOOST_SERIALIZATION_NVP(ColorBitResolution);
+    ar & BOOST_SERIALIZATION_NVP(CameraNumber);
+    ar & BOOST_SERIALIZATION_NVP(CameraFramesPerSecond);
+    ar & BOOST_SERIALIZATION_NVP(CameraFrameWidth);
+    ar & BOOST_SERIALIZATION_NVP(CameraFrameHeight);
   }
 
 public:
@@ -39,6 +45,8 @@ public:
   string KinectPort;
   string CommandPort;
   string SendPort;
+  string CarduinoPort;
+  string ArducopterPort;
 
   pcl::octree::compression_Profiles_e CompressionProfile;
 
@@ -49,6 +57,10 @@ public:
   unsigned int IFrameRate;
   bool DoColorEncoding;
   unsigned int ColorBitResolution;
+  int CameraNumber;
+  int CameraFramesPerSecond;
+  int CameraFrameWidth;
+  int CameraFrameHeight;
 
   XMLConfig();
 };

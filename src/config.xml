@@ -6,6 +6,8 @@
 	<KinectPort>6666</KinectPort>
 	<CommandPort>6667</CommandPort>
 	<SendPort>6668</SendPort>
+	<CarduinoPort>"COM3"</CarduinoPort>
+	<ArducopterPort>"COM4"</ArducopterPort>
 	<compressionProfile>0</CompressionProfile>
 	<ShowStatistics>0</ShowStatistics>
 	<PointResolution>0.001</PointResolution>
@@ -14,6 +16,10 @@
 	<IFrameRate>30</IFrameRate>
 	<DoColorEncoding>0</DoColorEncoding>
 	<ColorBitResolution>6</ColorBitResolution>
+	<CameraNumber>1</CameraNumber>
+	<CameraFramesPerSecond>180</CameraFramesPerSecond>
+	<CameraFrameWidth>320</CameraFrameWidth>
+	<CameraFrameHeight>240</CameraFrameHeight>
 </c>
 </boost_serialization>
 

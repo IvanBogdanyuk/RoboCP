@@ -35,13 +35,13 @@ int main(char *args[], int count)
   ClientReceiver r (&config);
 
   NanoReceivedBuffer NanoBuffer(1000);
-  NanoController  NanoControl(&NanoBuffer);
+  NanoController  NanoControl(&config, &NanoBuffer);
 
   ArduCopterBuffer CopterBuffer(1000);
-  ArduCopterController CopterControl(&CopterBuffer);
+  ArduCopterController CopterControl(&config, &CopterBuffer);
 
   CameraReceivedBuffer CameraBuffer(1000);
-  CameraController CameraControl(&CameraBuffer);
+  CameraController CameraControl(&config, &CameraBuffer);
 
   SendBuffer sendBuffer (50);
   SendSender sendSender (&config, &sendBuffer);

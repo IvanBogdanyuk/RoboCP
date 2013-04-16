@@ -65,7 +65,7 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 }
 
 
-//ShowOpticalFlow  (this metod is not necessary, but we could yoused it to debug)
+//ShowOpticalFlow  (this metod is not necessary, but we could used it to debug)
 void ImageFlowProcessing::ShowOpticalFlow(CvCapture * capture)
 {
 	if(capture == NULL){

@@ -5,12 +5,6 @@
 
 #define PI 3.1415  
 
-typedef struct Flow
-{
-	CvPoint2D32f Point, Vector;
-}
-Flow;
-
 
 class ImageFlowProcessing
 {

@@ -54,6 +54,9 @@ add_executable (Robot
 	RoboCPRobot/CameraController.h RoboCPRobot/CameraController.cpp
 	RoboCPRobot/CameraReceived.h RoboCPRobot/CameraReceived.cpp
 	RoboCPRobot/CameraReceivedBuffer.h
+	
+	RoboCPRobot/DisplacementImages.h RoboCPRobot/DisplacementImages.cpp
+	RoboCPRobot/ImageFlowProcessing.h RoboCPRobot/ImageFlowProcessing.cpp
 
 	RoboCPRobot/SendSender.h RoboCPRobot/SendSender.cpp
 	RoboCPRobot/SendProcessing.h RoboCPRobot/SendProcessing.cpp

@@ -1,4 +1,7 @@
 #pragma once
+
+//#define FLOW_TEST
+
 #include <stdarg.h>
 #include "KinectController.h"
 #include "KinectDownsampler.h"
@@ -13,8 +16,22 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
+#ifdef FLOW_TEST
+#include "ImageFlowProcessing.h"
+#endif
+
 int main(char *args[], int count)
 {
+  #ifdef FLOW_TEST
+  CvCapture *Capture = cvCreateCameraCapture(1);//0 - случайная камера, 1 - ps eye в случае ноутбука с вебкой
+  cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_WIDTH,320);
+  cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_HEIGHT,240);
+  cvSetCaptureProperty(Capture,CV_CAP_PROP_FPS,180);//тут можно сменить параметры камеры
+  ImageFlowProcessing *ImgFP = new ImageFlowProcessing();
+  ImgFP->ShowOpticalFlow(Capture);//во время теста в директории с проектом возникают картинки вида Image[n].jpg, их надо удалять самому, так как у программы может не хватать прав на перезапись файлов
+  cvReleaseCapture(&Capture);
+  return 0;
+  #endif
 
   XMLConfig config;
   { //deserialization

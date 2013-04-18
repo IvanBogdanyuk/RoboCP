@@ -13,7 +13,7 @@ Vector;
 class DisplacementImages
 {
 public:
-	Vector * Vectors;
+	Vector *Vectors;
 	int NumVectors;
 	DisplacementImages(void);
 	~DisplacementImages(void);

@@ -5,17 +5,11 @@
 
 #define PI 3.1415  
 
-typedef struct Flow 
-{
-  CvPoint2D32f Point, Vector; 
-} 
-Flow;
-
 class ImageFlowProcessing
 {
 public:
 	void CountDisplacement(IplImage *Img1, IplImage *Img2, DisplacementImages *Displacement);
-	void ShowOpticalFlow(CvCapture * capture);
+	void ShowOpticalFlow(CvCapture *Capture);
 	ImageFlowProcessing(void);
 	~ImageFlowProcessing(void);
 };

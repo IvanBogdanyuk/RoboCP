@@ -1,6 +1,7 @@
 #pragma once
 
 //#define FLOW_TEST
+//#define GPS_TEST
 
 #include <stdarg.h>
 #include "KinectController.h"
@@ -84,6 +85,27 @@ int main(char *args[], int count)
   tgroup.create_thread ( boost::bind (&SendProcessing::Start, &sendProcessing) );
 
   tgroup.create_thread ( boost::bind (&SendSender::Start, &sendSender) ); 
+
+  #ifdef GPS_TEST
+  char *UTC = new char(32);
+  char *Lat = new char(32);
+  char *Lon = new char(32);
+  char *GSp = new char(32);
+  char *GC = new char(32);
+  while (true){
+    int dUTC = 0;
+    sprintf(UTC,"%d",dUTC);
+    float dLat = 0.00053;
+    sprintf(Lat,"000%.5f",dLat);
+    float dLon = 0;
+    sprintf(Lon,"0000%f",dLon);
+    float dGSp = 0;
+    sprintf(GSp,"%f",dGSp);
+    float dGC = 0;
+    sprintf(GC,"%f",dGC);
+    NanoControl.ChangeGPSMessage(UTC,Lat,Lon,GSp,GC);
+  }
+  #endif
 
   tgroup.join_all ();
   

@@ -38,6 +38,9 @@ add_executable (Robot
 
 	RoboCPCommon/Point3d.h
 
+	
+	RoboCPRobot/CommandProcessing.h RoboCPRobot/CommandProcessing.cpp
+	RoboCPRobot/CommandBuffer.h
 
 	RoboCPRobot/Received.h RoboCPRobot/Received.cpp 
 	RoboCPRobot/IReceived.h RoboCPRobot/IReceived.cpp

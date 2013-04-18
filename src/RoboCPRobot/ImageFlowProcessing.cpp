@@ -15,7 +15,7 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	img_sz.height = Img1->height;
 	img_sz.width = Img1->width;
 		 
-    IplImage * eig_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
+  IplImage * eig_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
 	IplImage * tmp_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
 	IplImage * imgA = cvCreateImage( img_sz, IPL_DEPTH_8U, 1);  
 	IplImage * imgB = cvCreateImage( img_sz, IPL_DEPTH_8U, 1);      
@@ -26,7 +26,7 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	int corner_count = MAX_COUNT;  
 	CvPoint2D32f * cornersA = new CvPoint2D32f[ MAX_COUNT ];  
 	CvPoint2D32f * cornersB = new CvPoint2D32f[ MAX_COUNT ];  
-	Flow * corners = new Flow[ MAX_COUNT ];  
+	Vector *corners = new Vector[ MAX_COUNT ];  
 
 	int win_size=20;  
 	
@@ -47,9 +47,9 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	{
 		if (features_found[i] == 0) 
 			continue;
-		corners[i].Point = cornersA[i];
-		corners[i].Vector.x = cornersB[i].x-cornersA[i].x;
-		corners[i].Vector.y = cornersB[i].y-cornersA[i].y;
+    corners[i].Beginning= cornersA[i];
+    corners[i].End.x = cornersB[i].x-cornersA[i].x;
+    corners[i].End.y = cornersB[i].y-cornersA[i].y;
 		Displacement->Vectors[numVectors].Beginning = cornersA[i];
 		Displacement->Vectors[numVectors].End = cornersB[i];
 		numVectors++;
@@ -66,9 +66,9 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 
 
 //ShowOpticalFlow  (this metod is not necessary, but we could used it to debug)
-void ImageFlowProcessing::ShowOpticalFlow(CvCapture * capture)
+void ImageFlowProcessing::ShowOpticalFlow(CvCapture *Capture)
 {
-	if(capture == NULL){
+	if(Capture == NULL){
 		printf("Capture doesn't exist =(\n");
 		return;
 	} 
@@ -80,8 +80,8 @@ void ImageFlowProcessing::ShowOpticalFlow(CvCapture * capture)
 	IplImage * imgB=0;  
      
 	CvSize img_sz;
-	img_sz.height = (int) cvGetCaptureProperty( capture, CV_CAP_PROP_FRAME_HEIGHT );
-	img_sz.width = (int) cvGetCaptureProperty( capture, CV_CAP_PROP_FRAME_WIDTH );
+	img_sz.height = (int) cvGetCaptureProperty( Capture, CV_CAP_PROP_FRAME_HEIGHT );
+	img_sz.width = (int) cvGetCaptureProperty( Capture, CV_CAP_PROP_FRAME_WIDTH );
 
 	IplImage *eig_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
 	IplImage *tmp_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
@@ -105,18 +105,17 @@ void ImageFlowProcessing::ShowOpticalFlow(CvCapture * capture)
 	
 	while(1)
 	{
-		if( cvGrabFrame( capture ) == 0 )  
-			break; 
+		if(cvGrabFrame(Capture) == 0)  break; 
 		if(Old_Img == 0)
 		{
-			image = cvQueryFrame( capture );  
+			image = cvQueryFrame(Capture);  
 			if(image == NULL)  break;
 			current_Img = cvCreateImage(cvSize(image->width, image->height), image->depth, image->nChannels);     
 			Old_Img  = cvCreateImage(cvSize(image->width, image->height), image->depth, image->nChannels);
 		}
 		
     memcpy(Old_Img->imageData, current_Img->imageData, sizeof(char)*image->imageSize );  
-		image = cvQueryFrame( capture );
+		image = cvQueryFrame(Capture);
     if(image == NULL)  break;
 		memcpy(current_Img->imageData, image->imageData, sizeof(char)*image->imageSize );  
 		
@@ -162,7 +161,7 @@ void ImageFlowProcessing::ShowOpticalFlow(CvCapture * capture)
     cvSaveImage(Filename,image);
     current_frame++;
 	}
-	cvReleaseCapture(&capture);   
+	cvReleaseCapture(&Capture);   
 	cvReleaseImage(&Old_Img);
 	cvReleaseImage(&imgA);
 	cvReleaseImage(&imgB);

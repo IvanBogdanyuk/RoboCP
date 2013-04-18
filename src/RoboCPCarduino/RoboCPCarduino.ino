@@ -32,8 +32,6 @@ UltrasonicArray *SonicArray = new UltrasonicArray(2);
 char *NewData = new char[SERIAL_BUFF_SIZE];
 byte *DataToSend;
 char Stage;
-char XorSumm;
-char LastByte;
 char ThisByte;
 int NextByte;
 unsigned int *Distantion;
@@ -54,23 +52,19 @@ void loop(){
     if ((ThisByte == '$')&&(Stage == 0)){
       Stage = 1;
       NextByte = 0;
-      XorSumm = 0;
-      NewData[NextByte++] = ThisByte;  
-    }else{
-      if ((ThisByte == '*')&&(Stage == 1)){
-        if (LastByte == XorSumm){
-          SignalMaker->ChangeMessage(NewData);
-        }
-        Stage = 0;
-      }
-      if ((Stage == 1)&&(NextByte<SERIAL_BUFF_SIZE)){
-        NewData[NextByte++] = ThisByte;
-      }else{
-        Stage = 0;
-      }
+      NewData[NextByte++] = ThisByte;
+      continue;
     }
-    XorSumm ^= LastByte;
-    LastByte = ThisByte;
+    if ((ThisByte == '*')&&(Stage == 1)){
+      SignalMaker->ChangeMessage(NewData);
+      Stage = 0;
+      continue;
+    }
+    if ((Stage == 1)&&(NextByte<SERIAL_BUFF_SIZE)){
+      NewData[NextByte++] = ThisByte;
+    }else{
+      Stage = 0;
+    }
   }
   SignalMaker->SendMessage();
   SonicArray->Run();
@@ -89,4 +83,5 @@ void loop(){
   Serial.write(DataToSend, 2);
   DataToSend = (byte *)&Distantion[1];
   Serial.write(DataToSend, 2);
+  //Serial.print(SignalMaker->dataToSend);
 }

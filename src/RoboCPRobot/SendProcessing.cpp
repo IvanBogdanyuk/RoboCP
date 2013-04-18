@@ -21,13 +21,13 @@ void SendProcessing::Start()
 	boost::shared_ptr <Send> sendData (new Send);
 
 	{
-		sendData->Acceleration = arduData->Acceleration;
+    sendData->Acceleration = arduData->Acceleration;
 		sendData->Roll = arduData->Roll;
 		sendData->Pitch = arduData->Pitch;
 		sendData->Yaw = arduData->Yaw;
 		sendData->AltitudeSonic = arduData->AltitudeSonic;
 		sendData->AltitudeBarometer = arduData->AltitudeBarometer;
-		
+
 		sendData->TopSonicSensor = nanoData->TopSonicSensor;
 		sendData->FrontSonicSensor = nanoData->FrontSonicSensor;
 		sendData->LeftSonicSensor = nanoData->LeftSonicSensor;

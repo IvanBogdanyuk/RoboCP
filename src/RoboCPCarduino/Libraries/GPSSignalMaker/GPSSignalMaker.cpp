@@ -35,7 +35,7 @@ void GPSSignalMaker::UseDefaultMessage()
   ChangeMessage(DefaultMessage);
 }
 
-//$UTC,Latitude,Longtitude,GSpeed,SpeedAngle,X*
+//$UTC,Latitude,Longtitude,GSpeed,SpeedAngle,
 void GPSSignalMaker::ChangeMessage(char *Data)
 {
   dataToSend[0] = '$';

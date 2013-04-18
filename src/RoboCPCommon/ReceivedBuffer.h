@@ -9,6 +9,7 @@
 #include "NanoReceived.h"
 #include "ArduCopterReceived.h"
 #include "CameraReceived.h"
+#include "Command.h"
 #include "Send.h"
 
 

@@ -12,8 +12,25 @@ NanoController::NanoController(XMLConfig *x, NanoReceivedBuffer *buf)
   lastReadTime = time(NULL);
   nanoPort = x->CarduinoPort;
   nanoCom = new SerialCom(nanoPort.c_str(), NANO_BAUD_RATE);
+  dataToSend = new char(TO_SEND_BUFF_SIZE);
+  readyToNewMessage = true;
 }
 
+bool NanoController::SetDefaultGPSMessage()
+{
+  if (readyToNewMessage == false) return false;
+  sprintf(dataToSend,"$,0000.0005,00000.0005,,,*");
+  readyToNewMessage = false;
+  return true;
+}
+
+bool NanoController::ChangeGPSMessage(char *UTC, char *Latitude, char *Longtitude, char *GSpeed, char *SpeedAngle)
+{
+  if (readyToNewMessage == false) return false;
+  sprintf(dataToSend,"$%s,%s,%s,%s,%s,*",UTC,Latitude,Longtitude,GSpeed,SpeedAngle);
+  readyToNewMessage = false;
+  return true;
+}
 
 NanoController::~NanoController(void)
 {
@@ -30,10 +47,22 @@ void NanoController::Start(void)
   unsigned char DataPacket[10];
   int NextByte;
   int stage = -4;
+  int DataLength;
+  unsigned int Counter = 0;
   while (true){
+    Sleep(1);
+    Counter++;
+    if ((readyToNewMessage == false)&&(Counter > 100)){
+      DataLength = 0;
+      while (dataToSend[DataLength] != '\0') DataLength++;
+      nanoCom->Write(dataToSend, DataLength);
+      Counter = 0;
+      readyToNewMessage = true;
+    }
     ReadenData = (unsigned char *)nanoCom->Read();
     if (nanoCom->GetOutSize() > 0){
       for (int i = 0; i<nanoCom->GetOutSize(); i++){
+        //printf("%c",ReadenData[i]);
         if (stage == -4){
           if (ReadenData[i] == 131){
             stage++;

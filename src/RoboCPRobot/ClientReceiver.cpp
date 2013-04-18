@@ -4,7 +4,7 @@
 
 ClientReceiver::ClientReceiver(XMLConfig * x)
 {
-  port = x->CommandPort;
+  port = x->CommandPort; // Reading port from config
 }
 
 
@@ -21,21 +21,22 @@ void ClientReceiver::Start ()
 
     tcp::iostream socketStream;
 
-    std::cout << "ClientReceiver: Waiting for connection.." << std::endl;
+    cout << "ClientReceiver: Waiting for connection.." << endl; //TODO: write in log
 
-    acceptor.accept (*socketStream.rdbuf ());
+    acceptor.accept (*socketStream.rdbuf ()); // waiting from connection from any IP
 
-    std::cout << "ClientReceiver: Connected!" << std::endl;
-	  
+    cout << "ClientReceiver: Connected!" << endl; //TODO: write in log
+
+	boost::archive::xml_iarchive ia(socketStream); // We will receive objects in XML
+	Command com;
+
 	while (!socketStream.fail() ) {
-	  Command com;
-	  boost::archive::xml_iarchive ia(socketStream);
 	  ia >> BOOST_SERIALIZATION_NVP(com);
-    cout << "New command: " << com.ComType << " " << com.ComCondition << " " << com.Value << endl; //облака в буфер оттуда отправлять
-	 }
+      cout << "New command: " << com.ComType << " " << com.ComCondition << " " << com.Value << endl; // TODO: command buffer
+	}
   
   }
   catch (exception& e) {
-    cout << "ClientReceiver: Exception: " << e.what () << endl;
+    cout << "ClientReceiver: Exception: " << e.what () << endl; //TODO: write in log
   }
 }

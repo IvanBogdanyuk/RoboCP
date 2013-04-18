@@ -14,6 +14,7 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
+// Class purpose: receivig Send objects and updating KinectViewer info
 class SendReceiver
 {
 public:

@@ -8,6 +8,7 @@
 using namespace pcl;
 using namespace std;
 
+// Class purpose: downsampling point clouds from 640x480 to 64x48
 class KinectDownsampler
 {
 public:

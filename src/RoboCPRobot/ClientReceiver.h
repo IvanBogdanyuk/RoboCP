@@ -15,6 +15,7 @@ using boost::asio::ip::tcp;
 using namespace std;
 
 
+// Class purpose: Receiving commands from server
 class ClientReceiver
 {
 public:

@@ -8,12 +8,12 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
-
+//Class purpose: taking Send object from buffer and sending it via TCP-IP
 class SendSender :
   public SenderBase
 {
 public:
-  void Start();
+  void Start(); 
   SendSender(XMLConfig * x, SendBuffer * buf);
   ~SendSender(void);
 private:

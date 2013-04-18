@@ -21,6 +21,7 @@ using namespace pcl::octree;
 
 using namespace std;
 
+// Class purpose: receiving KinectData from robot and giving them to KinectViewer
 class KinectReceiver
 {
 public:

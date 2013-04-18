@@ -4,8 +4,8 @@
 
 SendReceiver::SendReceiver (XMLConfig * x, KinectViewer* v)
 {
-  ip = x->IP;
-  port = x->SendPort;
+  ip = x->IP; // Reading IP from config
+  port = x->SendPort; // Reading port from config
   kinectViewer = v;
 }
 
@@ -16,32 +16,33 @@ SendReceiver::~SendReceiver ()
 void SendReceiver::Start ()
 {
   try {
-    tcp::iostream socketStream (ip.c_str(), port.c_str() );
+    tcp::iostream socketStream (ip.c_str(), port.c_str() ); // Trying to connect
 
     if (!socketStream.fail() ) {
-      cout << "SendReceiver: Connected!" << endl;
+      cout << "SendReceiver: Connected!" << endl; // TODO: write in log
 
-	  boost::archive::xml_iarchive ia(socketStream);
-	  boost::shared_ptr<Send> sendData (new Send);
+	  boost::archive::xml_iarchive ia(socketStream); // We will receive Send objects in XML
+	  boost::shared_ptr<Send> sendData (new Send);  // Creating new Send object
 	  Sleep(5000);
 
 	  while ( true ) {
-		ia >> BOOST_SERIALIZATION_NVP(sendData);
-		//buffer->Enqueue (sendData);
-		updateText(sendData);
+		ia >> BOOST_SERIALIZATION_NVP(sendData); // Receiving
+		updateText(sendData); // Updating KinectViewer info
 	  }
 	
 	}
 
   }
   catch (exception& e) {
-    cout << "KinectViewer: Exception: " << e.what () << endl;
+    cout << "KinectViewer: Exception: " << e.what () << endl; // TODO: write in log
   }
 }
 
 void SendReceiver::updateText (boost::shared_ptr<Send> s)
-{  
+{
   char buf[40];
+
+  // Filling buf with sprintf, then updating text in KinectViewer 
 
   sprintf (buf, "Acceleration x: %d", s->Acceleration.x);
   kinectViewer->viewer->updateText (buf, 5, 290, 10, 1, 1, 1, "AccelerationX");

@@ -8,13 +8,13 @@ KinectController::KinectController(KinectBuffer * buf)
 void KinectController::grabberCallBack (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &cloud)
 {
   PointCloud<PointXYZ>::Ptr cld (new PointCloud<PointXYZ> (*cloud) );
-  boost::shared_ptr<KinectData> kData (new KinectData (cld, time(NULL) ) );
-  buffer->Enqueue (kData);
+  boost::shared_ptr<KinectData> kData (new KinectData (cld, time(NULL) ) ); // Creating KinectData
+  buffer->Enqueue (kData); // Adding it to buffer
 }
 
 void KinectController::Start(void)
 {
-  Grabber* interface = new OpenNIGrabber ();
+  Grabber* interface = new OpenNIGrabber (); // Creating new grabber
 
   boost::function<void
   (const PointCloud<PointXYZ>::ConstPtr&)> f = boost::bind (&KinectController::grabberCallBack, this, _1);
@@ -30,16 +30,14 @@ KinectController::~KinectController()
 
 void KinectController::FakeStart ()
 {
-  cout << "KinectController: loading clouds..." << endl;
+  cout << "KinectController: loading clouds..." << endl; //TODO: write in log
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1 (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud2 (new pcl::PointCloud<pcl::PointXYZ>);
-  pcl::io::loadPCDFile<pcl::PointXYZ> ("KinectCloud1.pcd", *cloud1 );
+  pcl::io::loadPCDFile<pcl::PointXYZ> ("KinectCloud1.pcd", *cloud1 ); // loading clouds from HDD
   pcl::io::loadPCDFile<pcl::PointXYZ> ("KinectCloud2.pcd", *cloud2 );
-  //boost::shared_ptr<KinectData> kData1 (new KinectData (cloud1, 0) );
-  //boost::shared_ptr<KinectData> kData2 (new KinectData (cloud2, 0) );
-  cout << "KinectController: ready" << endl;
+  cout << "KinectController: ready" << endl; //TODO: write in log
 
-  while (true) {
+  while (true) { // Making new KinectData every 2 seconds
 	Sleep (2000);
 	boost::shared_ptr<KinectData> kData1 (new KinectData (cloud1, time(NULL) ) );
 	buffer->Enqueue (kData1);

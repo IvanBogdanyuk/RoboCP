@@ -10,16 +10,20 @@
 using namespace pcl;
 using namespace std;
 
+// Kinect grabber in details: http://www.pointclouds.org/documentation/tutorials/openni_grabber.php#openni-grabber
+
+
+// Class purpose: getting point clouds from kinect, creating KinectData objects and placing them to buffer
 class KinectController :
   public Controller
 {
 public:
   void Start ();
-  void FakeStart ();
+  void FakeStart (); // For testing with no kinect
   KinectController(KinectBuffer * buf);
   ~KinectController(void);
 private:
   KinectBuffer * buffer;
-  void grabberCallBack (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &cloud);
+  void grabberCallBack (const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &cloud); // CallBack function for grabber
 };
 

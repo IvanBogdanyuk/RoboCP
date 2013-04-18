@@ -14,7 +14,7 @@ using boost::asio::ip::tcp;
 
 using namespace std;
 
-
+// Class purpose: reading commands from console and sending them to robot
 class CommandMaker
 {
 public:

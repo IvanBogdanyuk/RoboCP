@@ -17,6 +17,7 @@ using namespace pcl;
 
 using namespace std;
 
+// Class purpose: showing point cloud and other info
 class KinectViewer
 {
 public:

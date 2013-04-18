@@ -3,7 +3,10 @@
 
 KinectSender::KinectSender(XMLConfig * x, KinectBuffer * buf)
 {
-  port = atoi(x->KinectPort.c_str() );
+  port = atoi(x->KinectPort.c_str() ); //Reading port from config
+
+  // We will encode point clouds before sending via octreeCoder
+  // Parameters for constructor are taken from config
   octreeCoder = new PointCloudCompression<PointXYZ> (x->CompressionProfile, x->ShowStatistics, x->PointResolution,
                                                          x->OctreeResolution, x->DoVoxelGridDownDownSampling, x->IFrameRate,
                                                          x->DoColorEncoding, x->ColorBitResolution);
@@ -19,25 +22,25 @@ void KinectSender::Start()
 
     tcp::iostream socketStream;
 
-    cout << "KinectSender: Waiting for connection.." << endl;
+    cout << "KinectSender: Waiting for connection.." << endl; //TODO: write in log
 
-    acceptor.accept (*socketStream.rdbuf ());
+    acceptor.accept (*socketStream.rdbuf ()); // waiting from connection from any IP
 
-    cout << "KinectSender: Connected!" << endl;
+    cout << "KinectSender: Connected!" << endl; //TODO: write in log
 
 	
 
 	while (!socketStream.fail() ) {
 	  boost::shared_ptr<KinectData> pdata;
-	  pdata = buffer->Dequeue();
-	  socketStream << pdata->Time;
+	  pdata = buffer->Dequeue(); // Read KinectData from buffer
+	  socketStream << pdata->Time; // Send time
 	  socketStream.flush();
-	  octreeCoder->encodePointCloud (pdata->Cloud, socketStream);	
+	  octreeCoder->encodePointCloud (pdata->Cloud, socketStream); // Then send point cloud	
 	}
 
   }
   catch (exception& e) {
-    cout << "KinectSender: Exception: " << e.what () << endl;
+    cout << "KinectSender: Exception: " << e.what () << endl; //TODO: write in log
   }
 
 }

@@ -10,6 +10,7 @@
 #include "NanoController.h"
 #include "ArduCopterController.h"
 #include "CameraController.h"
+#include "CommandProcessing.h"
 #include "ClientReceiver.h"
 #include "SendProcessing.h"
 #include "SendSender.h"
@@ -24,7 +25,7 @@
 int main(char *args[], int count)
 {
   #ifdef FLOW_TEST
-  CvCapture *Capture = cvCreateCameraCapture(1);//0 - случайная камера, 1 - ps eye в случае ноутбука с вебкой
+  CvCapture *Capture = cvCreateCameraCapture(0);//0 - случайная камера, 1 - ps eye в случае ноутбука с вебкой
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_WIDTH,320);
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_HEIGHT,240);
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FPS,180);//тут можно сменить параметры камеры
@@ -61,6 +62,9 @@ int main(char *args[], int count)
   CameraReceivedBuffer CameraBuffer(1000);
   CameraController CameraControl(&config, &CameraBuffer);
 
+  CommandBuffer ComBuffer(100);
+  CommandProcessing ComProc(&config, &ComBuffer);
+
   SendBuffer sendBuffer (50);
   SendSender sendSender (&config, &sendBuffer);
 
@@ -83,9 +87,11 @@ int main(char *args[], int count)
 
   tgroup.create_thread ( boost::bind (&CameraController::Start, &CameraControl) );
 
+  tgroup.create_thread ( boost::bind (&CommandProcessing::Start, &ComProc) );
+
   tgroup.create_thread ( boost::bind (&SendProcessing::Start, &sendProcessing) );
 
-  tgroup.create_thread ( boost::bind (&SendSender::Start, &sendSender) ); 
+  tgroup.create_thread ( boost::bind (&SendSender::Start, &sendSender) );  
 
   #ifdef GPS_TEST
   char *UTC = new char(32);

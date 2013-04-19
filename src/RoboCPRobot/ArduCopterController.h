@@ -6,6 +6,9 @@
 #include <string.h>
 #include <time.h>
 
+//#define COPTER_MSG_TYPES_TEST
+//#define COPTER_TELEMETRY_TEST
+
 #define COPTER_BAUD_RATE 115200
 #define COPTER_SECONDS_TO_RECONNECT 5
 

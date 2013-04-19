@@ -6,6 +6,10 @@
 #include <string.h>
 #include <time.h>
 
+//#define NANO_FPS_TEST
+//#define NANO_TELEMETRY_TEST
+//#define NANO_INPUT_DATA_TEST
+
 #define NANO_BAUD_RATE 115200
 #define NANO_SECONDS_TO_RECONNECT 5
 #define TO_SEND_BUFF_SIZE 128

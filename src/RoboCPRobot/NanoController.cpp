@@ -39,8 +39,10 @@ NanoController::~NanoController(void)
 
 void NanoController::Start(void)
 {
-  /*int count4 = 0;
-  time_t FirstData;*/
+  #ifdef NANO_FPS_TEST
+  int count4 = 0;
+  time_t FirstData;
+  #endif
 
   unsigned char *ReadenData;
   unsigned short *PShortData;
@@ -62,7 +64,9 @@ void NanoController::Start(void)
     ReadenData = (unsigned char *)nanoCom->Read();
     if (nanoCom->GetOutSize() > 0){
       for (int i = 0; i<nanoCom->GetOutSize(); i++){
-        //printf("%c",ReadenData[i]);
+        #ifdef NANO_INPUT_DATA_TEST
+        printf("%c",ReadenData[i]);
+        #endif
         if (stage == -4){
           if (ReadenData[i] == 131){
             stage++;
@@ -112,7 +116,8 @@ void NanoController::Start(void)
             NanoData->BackSonicSensor = PShortData[2];
             NanoData->LeftSonicSensor = PShortData[3];
             NanoData->TopSonicSensor = PShortData[4];
-            /*if (count4 == 0){
+            #ifdef NANO_FPS_TEST
+            if (count4 == 0){
               FirstData = time(NULL);
             }else{
               if (count4 % 64 == 63){
@@ -120,8 +125,11 @@ void NanoController::Start(void)
                 printf("%f\n",(float)count4/difftime(cur,FirstData));
               }
             }
-            count4++;*/
-            //printf("%d %d %d %d %d\n",PShortData[0],PShortData[1],PShortData[2],PShortData[3],PShortData[4]);
+            count4++;
+            #endif
+            #ifdef NANO_TELEMETRY_TEST
+            printf("%d %d %d %d %d\n",PShortData[0],PShortData[1],PShortData[2],PShortData[3],PShortData[4]);
+            #endif
             NanoData->Time = time(NULL);
             buffer->Enqueue(NanoData);
           }

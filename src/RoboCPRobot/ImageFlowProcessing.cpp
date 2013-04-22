@@ -5,6 +5,8 @@ ImageFlowProcessing::ImageFlowProcessing(void)
 {
 }
 
+void ImageFlowProcessing::Start(){
+}
 void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, DisplacementImages *Displacement)
 {
 	if(Img1 == 0 || Img2 == 0){
@@ -14,8 +16,8 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	CvSize img_sz;
 	img_sz.height = Img1->height;
 	img_sz.width = Img1->width;
-		 
-  IplImage * eig_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
+	 
+	 IplImage * eig_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
 	IplImage * tmp_image = cvCreateImage( img_sz, IPL_DEPTH_32F, 1 );
 	IplImage * imgA = cvCreateImage( img_sz, IPL_DEPTH_8U, 1);  
 	IplImage * imgB = cvCreateImage( img_sz, IPL_DEPTH_8U, 1);      
@@ -26,7 +28,7 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	int corner_count = MAX_COUNT;  
 	CvPoint2D32f * cornersA = new CvPoint2D32f[ MAX_COUNT ];  
 	CvPoint2D32f * cornersB = new CvPoint2D32f[ MAX_COUNT ];  
-	Vector *corners = new Vector[ MAX_COUNT ];  
+//	Vector *corners = new Vector[ MAX_COUNT ];  
 
 	int win_size=20;  
 	
@@ -47,11 +49,12 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	{
 		if (features_found[i] == 0) 
 			continue;
-    corners[i].Beginning= cornersA[i];
-    corners[i].End.x = cornersB[i].x-cornersA[i].x;
-    corners[i].End.y = cornersB[i].y-cornersA[i].y;
+ //   corners[i].Beginning= cornersA[i];
+ //   corners[i].End.x = cornersB[i].x-cornersA[i].x;
+ //   corners[i].End.y = cornersB[i].y-cornersA[i].y;
 		Displacement->Vectors[numVectors].Beginning = cornersA[i];
 		Displacement->Vectors[numVectors].End = cornersB[i];
+		Displacement->Vectors[numVectors].Length = Displacement->Dist(cornersA[i], cornersB[i]);
 		numVectors++;
 	}
 	Displacement->NumVectors = numVectors;
@@ -143,12 +146,12 @@ void ImageFlowProcessing::ShowOpticalFlow(CvCapture *Capture)
 		for(int i=0; i<corner_count; i++){
 			if (features_found[i] == 0) continue;
 			
-      float Length = sqrt((float)((cornersA[i].x-cornersB[i].x)*(cornersA[i].x-cornersB[i].x)+(cornersA[i].y-cornersB[i].y)*(cornersA[i].y-cornersB[i].y)));  
+			float Length = sqrt((float)((cornersA[i].x-cornersB[i].x)*(cornersA[i].x-cornersB[i].x)+(cornersA[i].y-cornersB[i].y)*(cornersA[i].y-cornersB[i].y)));  
 			float Angle  = fabs( atan2((float)(cornersB[i].y-cornersA[i].y), (float)(cornersB[i].x-cornersA[i].x)) * 180/PI );
 			
-      cvLine( image, cvPoint(cornersA[i].x, cornersA[i].y), cvPoint(cornersB[i].x, cornersB[i].y), CV_RGB(0,255,0),1);
+			cvLine( image, cvPoint(cornersA[i].x, cornersA[i].y), cvPoint(cornersB[i].x, cornersB[i].y), CV_RGB(0,255,0),1);
 			
-      if(MaxLength < Length)  MaxLength = Length;
+			if(MaxLength < Length)  MaxLength = Length;
 			if(MaxAngle < Angle)  MaxAngle = Angle;
 		}
 		/*sprintf(Filename,"Frame: %d",current_frame);

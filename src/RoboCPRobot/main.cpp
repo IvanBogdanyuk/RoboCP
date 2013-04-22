@@ -1,7 +1,8 @@
-#pragma once
+ï»¿#pragma once
 
 //#define FLOW_TEST
 //#define GPS_TEST
+//#define MOTION_TEST
 
 #include <stdarg.h>
 #include "KinectController.h"
@@ -21,20 +22,62 @@
 #ifdef FLOW_TEST
 #include "ImageFlowProcessing.h"
 #endif
+#ifdef MOTION_TEST
+#include "ImageFlowProcessing.h"
+#endif
 
 int main(char *args[], int count)
 {
+  #ifdef MOTION_TEST
+    CvCapture *capture = cvCreateCameraCapture(0);//0 - Ã±Ã«Ã³Ã·Ã Ã©Ã­Ã Ã¿ ÃªÃ Ã¬Ã¥Ã°Ã , 1 - ps eye Ã¢ Ã±Ã«Ã³Ã·Ã Ã¥ Ã­Ã®Ã³Ã²Ã¡Ã³ÃªÃ  Ã± Ã¢Ã¥Ã¡ÃªÃ®Ã©
+    cvSetCaptureProperty(capture,CV_CAP_PROP_FRAME_WIDTH,320);
+    cvSetCaptureProperty(capture,CV_CAP_PROP_FRAME_HEIGHT,240);
+    cvSetCaptureProperty(capture,CV_CAP_PROP_FPS,180);//Ã²Ã³Ã² Ã¬Ã®Ã¦Ã­Ã® Ã±Ã¬Ã¥Ã­Ã¨Ã²Ã¼ Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã» ÃªÃ Ã¬Ã¥Ã°Ã»
+  
+    CvCapture *capture2 = cvCreateCameraCapture(0);//0 - Ã±Ã«Ã³Ã·Ã Ã©Ã­Ã Ã¿ ÃªÃ Ã¬Ã¥Ã°Ã , 1 - ps eye Ã¢ Ã±Ã«Ã³Ã·Ã Ã¥ Ã­Ã®Ã³Ã²Ã¡Ã³ÃªÃ  Ã± Ã¢Ã¥Ã¡ÃªÃ®Ã©
+    cvSetCaptureProperty(capture2,CV_CAP_PROP_FRAME_WIDTH,320);
+    cvSetCaptureProperty(capture2,CV_CAP_PROP_FRAME_HEIGHT,240);
+    cvSetCaptureProperty(capture2,CV_CAP_PROP_FPS,180);//Ã²Ã³Ã² Ã¬Ã®Ã¦Ã­Ã® Ã±Ã¬Ã¥Ã­Ã¨Ã²Ã¼ Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã» ÃªÃ Ã¬Ã¥Ã°Ã»
+  
+	if(capture != NULL){
+		ImageFlowProcessing obj;
+		cvSetCaptureProperty( capture2, CV_CAP_PROP_POS_FRAMES, 50 );		
+		IplImage *Img1 = 0, *Img2= 0;
+		Img1 = cvQueryFrame( capture2 );
+	//	cvSetCaptureProperty( capture, CV_CAP_PROP_POS_FRAMES, 200 );
+		Img2 = cvQueryFrame( capture );		
+		DisplacementImages res;
+		obj.CountDisplacement(Img1, Img2, &res);
+		
+		for(int i=0; i< res.NumVectors; i++){
+			cvLine( Img1, cvPoint(res.Vectors[i].Beginning.x, res.Vectors[i].Beginning.y), cvPoint(res.Vectors[i].End.x, res.Vectors[i].End.y), CV_RGB(0,255,0),1);
+		}
+		res.CountMotion();
+		printf("\nMotion: (%.2f  %.2f) - (%.2f  %.2f)  Length == %.2f\n",res.Motion.Beginning.x, res.Motion.Beginning.y, res.Motion.End.x, res.Motion.End.y, res.Motion.Length);
+		cvLine( Img1, cvPoint(res.Motion.Beginning.x, res.Motion.Beginning.y), cvPoint(res.Motion.End.x, res.Motion.End.y), CV_RGB(255,0,0),4);
+		cvShowImage("Image1", Img1);
+		cvShowImage("Image2", Img2);
+		int key_pressed;
+		key_pressed = cvWaitKey(0);
+		res.~DisplacementImages(); 
+	}
+	else{
+		printf("Not Found\n");
+		scanf("%d");
+	}	
+  #endif
+
   #ifdef FLOW_TEST
-  CvCapture *Capture = cvCreateCameraCapture(0);//0 - ñëó÷àéíàÿ êàìåðà, 1 - ps eye â ñëó÷àå íîóòáóêà ñ âåáêîé
+  CvCapture *Capture = cvCreateCameraCapture(0);//0 - Ã±Ã«Ã³Ã·Ã Ã©Ã­Ã Ã¿ ÃªÃ Ã¬Ã¥Ã°Ã , 1 - ps eye Ã¢ Ã±Ã«Ã³Ã·Ã Ã¥ Ã­Ã®Ã³Ã²Ã¡Ã³ÃªÃ  Ã± Ã¢Ã¥Ã¡ÃªÃ®Ã©
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_WIDTH,320);
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_HEIGHT,240);
-  cvSetCaptureProperty(Capture,CV_CAP_PROP_FPS,180);//òóò ìîæíî ñìåíèòü ïàðàìåòðû êàìåðû
+  cvSetCaptureProperty(Capture,CV_CAP_PROP_FPS,180);//Ã²Ã³Ã² Ã¬Ã®Ã¦Ã­Ã® Ã±Ã¬Ã¥Ã­Ã¨Ã²Ã¼ Ã¯Ã Ã°Ã Ã¬Ã¥Ã²Ã°Ã» ÃªÃ Ã¬Ã¥Ã°Ã»
   ImageFlowProcessing *ImgFP = new ImageFlowProcessing();
-  ImgFP->ShowOpticalFlow(Capture);//âî âðåìÿ òåñòà â äèðåêòîðèè ñ ïðîåêòîì âîçíèêàþò êàðòèíêè âèäà Image[n].jpg, èõ íàäî óäàëÿòü ñàìîìó, òàê êàê ó ïðîãðàììû ìîæåò íå õâàòàòü ïðàâ íà ïåðåçàïèñü ôàéëîâ
+  ImgFP->ShowOpticalFlow(Capture);//Ã¢Ã® Ã¢Ã°Ã¥Ã¬Ã¿ Ã²Ã¥Ã±Ã²Ã  Ã¢ Ã¤Ã¨Ã°Ã¥ÃªÃ²Ã®Ã°Ã¨Ã¨ Ã± Ã¯Ã°Ã®Ã¥ÃªÃ²Ã®Ã¬ Ã¢Ã®Ã§Ã­Ã¨ÃªÃ Ã¾Ã² ÃªÃ Ã°Ã²Ã¨Ã­ÃªÃ¨ Ã¢Ã¨Ã¤Ã  Image[n].jpg, Ã¨Ãµ Ã­Ã Ã¤Ã® Ã³Ã¤Ã Ã«Ã¿Ã²Ã¼ Ã±Ã Ã¬Ã®Ã¬Ã³, Ã²Ã Ãª ÃªÃ Ãª Ã³ Ã¯Ã°Ã®Ã£Ã°Ã Ã¬Ã¬Ã» Ã¬Ã®Ã¦Ã¥Ã² Ã­Ã¥ ÃµÃ¢Ã Ã²Ã Ã²Ã¼ Ã¯Ã°Ã Ã¢ Ã­Ã  Ã¯Ã¥Ã°Ã¥Ã§Ã Ã¯Ã¨Ã±Ã¼ Ã´Ã Ã©Ã«Ã®Ã¢
   cvReleaseCapture(&Capture);
   return 0;
   #endif
-
+/*
   XMLConfig config;
   { // Loading config from "config.xml" 
     std::ifstream ifs("config.xml");
@@ -116,6 +159,7 @@ int main(char *args[], int count)
 
   tgroup.join_all ();
   
-
+  */
   return 0;
 }
+

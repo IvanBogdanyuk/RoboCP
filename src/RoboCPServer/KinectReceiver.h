@@ -14,6 +14,10 @@
 
 #include <boost/asio.hpp>
 
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+#include <glog/raw_logging.h>
+
 using boost::asio::ip::tcp;
 
 using namespace pcl;

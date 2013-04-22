@@ -20,6 +20,7 @@ void SendReceiver::Start ()
 
     if (!socketStream.fail() ) {
       cout << "SendReceiver: Connected!" << endl; // TODO: write in log
+	  RAW_LOG (INFO, "SendReceiver: Connected!");
 
 	  boost::archive::xml_iarchive ia(socketStream); // We will receive Send objects in XML
 	  boost::shared_ptr<Send> sendData (new Send);  // Creating new Send object
@@ -35,6 +36,7 @@ void SendReceiver::Start ()
   }
   catch (exception& e) {
     cout << "KinectViewer: Exception: " << e.what () << endl; // TODO: write in log
+	RAW_LOG (INFO, "KinectViewer: Exception: %s", e.what());
   }
 }
 

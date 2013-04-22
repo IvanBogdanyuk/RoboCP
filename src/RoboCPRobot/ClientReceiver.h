@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <string>
 
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+#include <glog/raw_logging.h>
+
 #include <boost/asio.hpp>
 
 

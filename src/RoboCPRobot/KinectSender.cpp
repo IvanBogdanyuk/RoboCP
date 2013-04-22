@@ -23,11 +23,12 @@ void KinectSender::Start()
     tcp::iostream socketStream;
 
     cout << "KinectSender: Waiting for connection.." << endl; //TODO: write in log
+	RAW_LOG (INFO, "KinectSender: Waiting for connection..");
 
     acceptor.accept (*socketStream.rdbuf ()); // waiting from connection from any IP
 
     cout << "KinectSender: Connected!" << endl; //TODO: write in log
-
+	RAW_LOG (INFO, "KinectSender: Connected!");
 	
 
 	while (!socketStream.fail() ) {
@@ -41,6 +42,7 @@ void KinectSender::Start()
   }
   catch (exception& e) {
     cout << "KinectSender: Exception: " << e.what () << endl; //TODO: write in log
+	RAW_LOG (INFO, "KinectSender: Exception: %s", e.what());
   }
 
 }

@@ -7,6 +7,11 @@
 #include <pcl/io/openni_grabber.h>
 #include <pcl/io/pcd_io.h>
 
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+#include <glog/raw_logging.h>
+
+
 using namespace pcl;
 using namespace std;
 

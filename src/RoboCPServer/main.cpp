@@ -11,8 +11,14 @@
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+#include <glog/raw_logging.h>
+
 int main(char *args[], int count)
 {
+  freopen ("log.log", "a", stderr);
+  RAW_LOG (INFO, "MAIN SERVER STARTED");
 
   XMLConfig config;
   { //deserialization

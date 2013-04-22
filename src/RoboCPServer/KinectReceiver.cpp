@@ -26,6 +26,7 @@ void KinectReceiver::Start ()
 
     if (!socketStream.fail() ) {
       cout << "KinectViewer: Connected!" << endl; // TODO: write in log
+	  RAW_LOG (INFO,  "KinectViewer: Connected!");
 
 	  boost::shared_ptr<KinectData> kData (new KinectData); // Creating new KinectData
 	  Sleep (5000);
@@ -45,5 +46,6 @@ void KinectReceiver::Start ()
   }
   catch (exception& e) {
     cout << "KinectViewer: Exception: " << e.what () << endl; // TODO: write in log
+	RAW_LOG (INFO,  "KinectViewer: Exception: %s", e.what());
   }
 }

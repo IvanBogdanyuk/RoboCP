@@ -27,8 +27,7 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	
 	int corner_count = MAX_COUNT;  
 	CvPoint2D32f * cornersA = new CvPoint2D32f[ MAX_COUNT ];  
-	CvPoint2D32f * cornersB = new CvPoint2D32f[ MAX_COUNT ];  
-//	Vector *corners = new Vector[ MAX_COUNT ];  
+	CvPoint2D32f * cornersB = new CvPoint2D32f[ MAX_COUNT ];
 
 	int win_size=20;  
 	
@@ -49,9 +48,6 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	{
 		if (features_found[i] == 0) 
 			continue;
- //   corners[i].Beginning= cornersA[i];
- //   corners[i].End.x = cornersB[i].x-cornersA[i].x;
- //   corners[i].End.y = cornersB[i].y-cornersA[i].y;
 		Displacement->Vectors[numVectors].Beginning = cornersA[i];
 		Displacement->Vectors[numVectors].End = cornersB[i];
 		Displacement->Vectors[numVectors].Length = Displacement->Dist(cornersA[i], cornersB[i]);

@@ -77,7 +77,7 @@ int main(char *args[], int count)
   cvReleaseCapture(&Capture);
   return 0;
   #endif
-/*
+
   XMLConfig config;
   { // Loading config from "config.xml" 
     std::ifstream ifs("config.xml");
@@ -159,7 +159,7 @@ int main(char *args[], int count)
 
   tgroup.join_all ();
   
-  */
+  
   return 0;
 }
 

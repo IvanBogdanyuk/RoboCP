@@ -6,7 +6,9 @@ ImageFlowProcessing::ImageFlowProcessing(void)
 }
 
 void ImageFlowProcessing::Start(){
+
 }
+
 void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, DisplacementImages *Displacement)
 {
 	if(Img1 == 0 || Img2 == 0){

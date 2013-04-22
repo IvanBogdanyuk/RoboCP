@@ -1,0 +1,27 @@
+@startuml
+package "Intel 2800" {
+  CarDuino -down-> [NanoController] : rangefinders
+  [NanoController] -down-> [NanoReceivedBuffer] : NanoReceived
+  ArduCopter -down-> [ArduCopterController] : telemetry
+  [ArduCopterController] -down-> [ArduCopterBuffer] : ArduCopterReceived
+  [NanoReceivedBuffer] -down-> [SendProcessing] : NanoReceived
+  [ArduCopterBuffer] -down-> [SendProcessing] : ArduCopterReceived
+  [SendProcessing] -down-> [SendBuffer] : Send
+  [SendBuffer] -down-> [SendSender] : Send
+  [SendSender] -down-> Server : SerializedSend
+  Kinect -down-> [KinectController] : PointCloud
+  [KinectController] -down-> [KinectBuffer1] : BigPointCloud
+  [KinectBuffer1] -down-> [KinectDownsampler] : BigPointCloud
+  [KinectDownsampler] -down-> [KinectBuffer2] : SmallPointCloud
+  [KinectBuffer2] -down-> [KinectSender] : SmallPointCloud
+  [KinectSender] -down-> Server : SerializedPointCloud
+  Camera -down-> [CameraController] : Image
+  [CameraController] -down-> [CameraReceivedBuffer] : CameraReceived
+  [CameraReceivedBuffer] -down-> [ImageFlowProcessing] : CameraReceived
+  Server -up-> [ClientReceiver] : SerializedCommand
+  [ClientReceiver] -up-> [CommandBuffer] : Command
+  [CommandBuffer] -up-> [CommandProcessing] : Command
+  [CommandProcessing] --> [NanoController] : NewGPS
+  [NanoController] --> CarDuino : NewGPS
+}
+@enduml

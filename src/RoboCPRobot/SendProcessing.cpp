@@ -15,8 +15,10 @@ void SendProcessing::Start()
 	boost::shared_ptr <ArduCopterReceived> arduData;
 	boost::shared_ptr <NanoReceived> nanoData;
 
-	arduData = arduBuffer->Dequeue();
-	nanoData = nanoBuffer->Dequeue();
+	if (arduBuffer->Used > 0)
+	  arduData = arduBuffer->Dequeue();
+	if (nanoBuffer->Used > 0)
+	  nanoData = nanoBuffer->Dequeue();
 
 	boost::shared_ptr <Send> sendData (new Send);
 
@@ -36,6 +38,7 @@ void SendProcessing::Start()
 	}
 
 	sendBuffer->Enqueue (sendData);
+	Sleep (20);
   }
 
 }

@@ -5,6 +5,7 @@
 #include <highgui.h>
 #include "XMLConfig.h"
 #include "CameraReceivedBuffer.h"
+#include "ImageFlowProcessing.h"
 
 class CameraController :
   public Controller

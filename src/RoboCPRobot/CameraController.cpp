@@ -25,13 +25,23 @@ void CameraController::Start(void)
   CameraReceived *DataToStorage;
   CvCapture *Capture = cvCreateCameraCapture(cameraNum);
   IplImage *Frame;
+  IplImage *FrameLast = 0;
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_WIDTH,width);
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_HEIGHT,height);
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FPS,fps);
+  ImageFlowProcessing obj;
+  DisplacementImages Displacement;
   while (true){
     Frame = cvQueryFrame(Capture);
-    boost::shared_ptr<CameraReceived> CameraImg(new CameraReceived(Frame));
-    CameraImg->Time = time(NULL);
+	boost::shared_ptr<CameraReceived> CameraImg(new CameraReceived(Frame));
+    if(FrameLast != 0)
+	{
+		obj.CountDisplacement(FrameLast, Frame, &Displacement);
+		Displacement.CountMotion();
+		CameraImg->Motion = Displacement.Motion;
+	}
+	CameraImg->Time = time(NULL);
     buffer->Enqueue(CameraImg);
+	FrameLast = Frame;
   }
 }

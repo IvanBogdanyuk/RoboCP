@@ -118,7 +118,7 @@ int main(char *args[], int count)
   SendBuffer sendBuffer (50);
   SendSender sendSender (&config, &sendBuffer);
 
-  SendProcessing sendProcessing(&NanoBuffer, &CopterBuffer, &sendBuffer);
+  SendProcessing sendProcessing(&NanoBuffer, &CopterBuffer, &CameraBuffer, &sendBuffer);
   
 
   boost::thread_group tgroup;

@@ -1,6 +1,7 @@
 #pragma once
 #include <time.h>
 #include "Point3d.h"
+#include "DisplacementImages.h"
 #include <boost/archive/xml_iarchive.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -41,10 +42,12 @@ public:
   float Yaw;
   float AltitudeSonic;
   float AltitudeBarometer;
-  
+    
   Point3d Acceleration;
   time_t Time;
-  
+  IplImage *Frame;
+  Vector Motion;
+
   Send(void);
   ~Send(void); 
 };

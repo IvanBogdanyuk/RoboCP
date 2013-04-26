@@ -1,0 +1,287 @@
+@startuml
+skinparam classAttributeIconSize 0
+class Controller{
+  void Start(void);
+  void Stop(void);
+  Controller(void);
+  ~Controller(void);
+}
+class SenderBase{
+  void Start(void);
+  void Stop(void);
+  SenderBase(void);
+  ~SenderBase(void);
+}
+class ReceivedBuffer{
+  BoostInterprocessMutex *mtx;
+  BoostInterprocessSemaphore *Used;
+  BoostInterprocessSemaphore *Vacant;
+  void Enqueue(TemplateType a);
+  TemplateType Dequeue();
+  ReceivedBuffer(int size);
+  ~ReceivedBuffer(void);
+}
+class Command{
+  int ComType;
+  int ComCondition;
+  float Value;
+  time_t Time;
+  Command(CommandType CType, CommandCondition CCondition, float ConditionValue);
+  Command();
+}
+class Send{
+  unsigned short TopSonicSensor;
+  unsigned short FrontSonicSensor;
+  unsigned short LeftSonicSensor;
+  unsigned short RightSonicSensor;
+  unsigned short BackSonicSensor;
+  float Roll;
+  float Pitch;
+  float Yaw;
+  float AltitudeSonic;
+  float AltitudeBarometer;
+  struct Point3d Acceleration;
+  time_t Time;
+  Send(void);
+  ~Send(void);
+}
+class SendBuffer{
+  SendBuffer(int size);
+}
+class KinectData{
+  PointCloud<PointXYZ>Ptr Cloud;
+  time_t Time
+  KinectData(void);
+  KinectData(PointCloud<PointXYZ>Ptr cloud, time_t time);
+  ~KinectData();
+}
+class KinectBuffer{
+  KinectBuffer(int size);
+}
+class XMLConfig{
+  string IP;
+  string KinectPort;
+  string CommandPort;
+  string SendPort;
+  string CarduinoPort;
+  string ArducopterPort;
+  pclCompressionProfile CompressionProfile;
+  bool ShowStatistics;
+  double PointResolution;
+  double OctreeResolution;
+  bool DoVoxelGridDownDownSampling;
+  unsigned int ColorBitResolution;
+  int CameraNumber;
+  int CameraFramesPerSecond;
+  int CameraFrameWidth;
+  int CameraFrameHeight;
+  XMLConfig();
+}
+class CommandProcessing{
+  CommandBuffer *buffer;
+  void Start(void);
+  CommandBuffer *GetBuffer(void);
+  CommandProcessing(XMLConfig *x, CommandBuffer *buf);
+  ~CommandProcessing(void);
+}
+class CommandBuffer{
+  CommandBuffer(int size);
+}
+class Received{
+  Received(void);
+  ~Received(void);
+}
+class IReceived{
+  IReceived(void);
+  ~IReceived(void);
+}
+class ClientReceiver{
+  string port;  
+  void Start();
+  ClientReceiver(XMLConfig *x);
+  ~ClientReceiver(void);
+}
+class ArduCopterController{
+  ArduCopterBuffer *buffer;
+  SerialCom *copterCom;
+  string copterPort;
+  time_t lastReadTime;
+  char stage;
+  void sendInitionalData(void);
+  void Start(void);
+  ArduCopterController(XMLConfig *x, ArduCopterBuffer *buf);
+  ~ArduCopterController(void);
+}
+class ArduCopterReceived{
+  float Roll;
+  float Pitch;
+  float Yaw;
+  float AltitudeSonic;
+  floar AltitudeBarometer;
+  struct Poimt3d Acceleration;
+  time_t Time;
+  ArduCopterReceived(void);
+  ~ArduCopterReceived(void);
+}
+class ArduCopterBuffer{
+  ArduCopterBuffer(int size);
+}
+class NanoController{
+  char *dataToSend;
+  string nanoPort;
+  bool readyToNewMessage;
+  time_t lastReadTime;
+  NanoReceivedBuffer *buffer;
+  SerialCom *nanoCom;
+  void Start(void);
+  bool ChangeGPSMessage(char *UTC, char *Latitude, char *Longtitude, char *GSpeed, char *SpeedAngle);
+  bool SetDefaultGPSMessage();
+  NanoReceivedBuffer *GetBuffer(void)
+  NanoController(XMLConfig *x, NanoReceivedBuffer *buf);
+  ~NanoController(void);  
+}
+class NanoReceived{
+  unsigned short TopSonicSensor;
+  unsigned short FrontSonicSensor;
+  unsigned short LeftSonicSensor;
+  unsigned short RightSonicSensor;
+  unsigned short BackSonicSensor;
+  time_t Time;
+  NanoReceived(void);
+  ~NanoReceived(void);
+}
+class NanoReceivedBuffer{
+  NanoReceivedBuffer(int size);
+}
+class CameraController{
+  int cameraNum;
+  int fps;
+  int width;
+  int height;
+  CameraReceivedBuffer *buffer;
+  void Start(void);
+  CameraReceivedBuffer *GetBuffer(void);
+  CameraController(XMLConfig *x, CameraReceivedBuffer *buf);
+  ~CameraController(void);
+}
+class CameraReceived{
+  IplImage *Frame;
+  time_t Time;
+  CameraReceived(IplImage *ImageToSave);
+  ~CameraReceived(void);
+}
+class CameraReceivedBuffer{
+  CameraReceivedBuffer(int size);
+}
+class DisplacementImages{
+  Vector *Vectors;
+  Vector Motion;
+  int NumVectors;
+  void CountMotion(void);
+  double Dist(CvPoint2D32f Point1, CvPoint2D32f Point2);
+  DisplacementImages(void);
+  ~DisplacementImages(void);
+}
+class ImageFlowProcessing{
+  void Start(void);
+  void CountDisplacement(IplImage *Img1, IplImage *Img2, DisplacementImages *Displacement);
+  void ShowOpticalFlow(CvCapture *Capture);
+  ImageFlowProcessing(void);
+  ~ImageFlowProcessing(void);
+}
+class SendSender{
+  int port;
+  SendBuffer *buffer;
+  void Start();
+  SendSender(XMLConfig *x, SendBuffer *buf);
+  ~SendSender(void);
+}
+class SendProcessing{
+  NanoReceivedBuffer *nanoBuffer;
+  ArduCopterBuffer *arduBuffer;
+  SendBuffer *sendBuffer;
+  void Start();
+  SendProcessing(NanoReceivedBuffer *nano, ArduCopterBuffer *ardu, SendBuffer *send);
+  ~SendProcessing(void);
+}
+class KinectController{
+  KinectBuffer *buffer;
+  void Start();
+  void FakeStart();
+  void grabberCallBack(const PointCloud<PointXYZ>Ptr &cloud);
+  KinectController(KinectBuffer *buf);
+  ~KinectController(void);
+}
+class KinectSender{
+  int port;
+  KinectBuffer *buffer;
+  PointCloudCompression<PointXYZ> *octreeCoder;
+  void Start();
+  KinectSender(XMLConfig *x, KinectBuffer *buf);
+  ~KinectSender(void);
+}
+class KinectDownsampler{
+  KinectBuffer *inputBuffer;
+  KinectBuffer *outputBuffer;
+  void downsample(const PointCloud<PointXYZ>Ptr &CloudIn, PointCloud<PointXYZ>Ptr &CloudOut);
+  void Start();
+  KinectDownsampler(KinectBuffer *inputBuf, KinectBuffer *outputBuf);
+  ~KinectDownsampler(void);
+}
+class SerialCom{
+  char *out;
+  int outSize;
+  HANDLE hComm;
+  int GetOutSize();
+  char *Read(void);
+  void Write(char *Data, int DataSize);
+  SerialCom(LPCSTR PortName, int BaudRate);
+  ~SerialCom(void);
+}
+ArduCopterBuffer --|> ReceivedBuffer
+ArduCopterBuffer *-- ArduCopterReceived
+ArduCopterController -down-|> Controller
+ArduCopterController o-- ArduCopterBuffer
+ArduCopterController o-- XMLConfig
+ArduCopterController *-- SerialCom
+ArduCopterReceived --|> Received
+CameraController -up-|> Controller
+CameraController o-- CameraReceivedBuffer
+CameraController o-- XMLConfig
+CameraReceived --|> Received
+CameraReceivedBuffer --|> ReceivedBuffer
+CameraReceivedBuffer *-- CameraReceived
+ClientReceiver o-- XMLConfig
+CommandBuffer --|> ReceivedBuffer
+CommandBuffer *-- Command
+CommandProcessing -right-|> Controller
+CommandProcessing o-- CommandBuffer
+CommandProcessing o-- XMLConfig
+ImageFlowProcessing -right-|> Controller
+ImageFlowProcessing *-- DisplacementImages
+IReceived --|> Received
+KinectController -left-|> Controller
+KinectController o-- KinectBuffer
+KinectDownsampler o-- KinectBuffer
+KinectSender --|> SenderBase
+KinectSender o-- XMLConfig
+KinectSender o-- KinectBuffer
+NanoController -down-|> Controller
+NanoController o-- XMLConfig
+NanoController *-- SerialCom
+NanoController o-- NanoReceivedBuffer
+NanoReceived --|> Received
+NanoReceivedBuffer --|> ReceivedBuffer
+NanoReceivedBuffer *-- NanoReceived
+SendProcessing o-- NanoReceivedBuffer
+SendProcessing o-- ArduCopterBuffer
+SendProcessing o-- SendBuffer
+SendSender --|> SenderBase
+SendSender o-- XMLConfig
+SendSender o-- SendBuffer
+KinectBuffer --|> ReceivedBuffer
+KinectBuffer *-- KinectData
+ReceivedBuffer *-- Received
+SendBuffer --|> ReceivedBuffer
+SendBuffer *-- Send
+@enduml

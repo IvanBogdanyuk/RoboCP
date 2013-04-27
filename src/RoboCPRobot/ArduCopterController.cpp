@@ -392,3 +392,37 @@ void ArduCopterController::Start(void)
     }
   }
 }
+
+void ArduCopterController::FakeStart(void)
+{
+  int i = 0;
+  while (true){
+    boost::shared_ptr<ArduCopterReceived> CopterReceived (new ArduCopterReceived());
+    if (i % 3 == 0){
+      CopterReceived->Roll = (float)i/180*3.1416;
+      CopterReceived->Pitch = (float)(i+1)/180*3.1416;
+      CopterReceived->Yaw = (float)(i+2)/180*3.1416;
+      CopterReceived->Time = time(NULL);
+      buffer->Enqueue(CopterReceived);
+      Sleep(317);
+      i = (i+1)%360;
+      continue;
+    }
+    if (i % 3 == 1){
+      CopterReceived->Acceleration.x = 100-i;
+      CopterReceived->Acceleration.y = 101-i;
+      CopterReceived->Acceleration.z = 102-i;
+      CopterReceived->Time = time(NULL);
+      buffer->Enqueue(CopterReceived);
+      Sleep(117);
+      i = (i+1)%360;
+      continue;
+    }
+    CopterReceived->AltitudeBarometer = i*2;
+    CopterReceived->AltitudeSonic = i*2 - 1;
+    CopterReceived->Time = time(NULL);
+    buffer->Enqueue(CopterReceived);
+    Sleep(233);
+    i = (i+1)%360;
+  }
+}

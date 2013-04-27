@@ -24,6 +24,7 @@ private:
   void sendInitionalData(void);
 public:
   void Start(void);
+  void FakeStart(void);
   ArduCopterController(XMLConfig *x, ArduCopterBuffer *buf);
   ~ArduCopterController(void);
 };

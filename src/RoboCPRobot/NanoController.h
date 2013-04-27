@@ -25,6 +25,7 @@ private:
   string nanoPort;
   time_t lastReadTime;
 public:
+  void FakeStart(void);
   void Start(void);
   bool ChangeGPSMessage(char *UTC, char *Latitude, char *Longtitude, char *GSpeed, char *SpeedAngle);
   bool SetDefaultGPSMessage();

@@ -146,3 +146,19 @@ void NanoController::Start(void)
     }
   }
 }
+
+void NanoController::FakeStart(void){
+  int i = 0;
+  while (true){
+    boost::shared_ptr<NanoReceived> NanoData (new NanoReceived());
+    NanoData->FrontSonicSensor = (i % 5)*10;
+    NanoData->RightSonicSensor = ((i+1)% 5)*10;
+    NanoData->BackSonicSensor = ((i+2)% 5)*10;
+    NanoData->LeftSonicSensor = ((i+3)% 5)*10;
+    NanoData->TopSonicSensor = ((i+4)% 5)*10;
+    NanoData->Time = time(NULL);
+    buffer->Enqueue(NanoData);
+    i = (i + 1)%5;
+    Sleep(103);
+  }
+}

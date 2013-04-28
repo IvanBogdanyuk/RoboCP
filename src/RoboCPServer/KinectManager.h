@@ -25,16 +25,14 @@ using namespace pcl::octree;
 
 using namespace std;
 
-// Class purpose: receiving KinectData from robot and giving them to KinectBuffer
-class KinectReceiver
+// Class purpose: taking KinectData from buffer and giving them to KinectViewer
+class KinectManager
 {
 public:
   void Start ();
-  KinectReceiver(XMLConfig * x, KinectBuffer* b);
-  ~KinectReceiver(void);
+  KinectManager(KinectBuffer* b, KinectViewer* v);
+  ~KinectManager(void);
 private:
   KinectBuffer* kinectBuffer;
-  PointCloudCompression<PointXYZ>* octreeCoder;
-  string ip;
-  string port;
+  KinectViewer* kinectViewer;
 };

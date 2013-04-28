@@ -2,7 +2,9 @@
 #include <stdarg.h>
 #include "KinectViewer.h"
 #include "KinectReceiver.h"
+#include "KinectManager.h"
 #include "SendReceiver.h"
+#include "SendManager.h"
 #include "CommandMaker.h"
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -31,25 +33,32 @@ int main(char *args[], int count)
 	  cout << "Can't find config.xml! Default config used." << endl;
   }
 
+  KinectBuffer kinectBuffer (10);
+  KinectViewer kinectViewer (&config);
+  KinectReceiver kinectReceiver (&config, &kinectBuffer);
+  KinectManager kinectManager (&kinectBuffer, &kinectViewer);
 
-  KinectViewer v (&config);
-  
-  KinectReceiver r (&config, &v);
+  CommandMaker commandMaker (&config);
 
-  CommandMaker m (&config);
+  SendBuffer sendBuffer (50);
+  SendReceiver sendReceiver (&config, &sendBuffer);
+  SendManager sendManager (&sendBuffer, &kinectViewer);
 
-  SendReceiver s (&config, &v);
 
 
   boost::thread_group tgroup;
 
-  tgroup.create_thread ( boost::bind (&KinectViewer::Start, &v) );
+  tgroup.create_thread ( boost::bind (&KinectViewer::Start, &kinectViewer) );
 
-  tgroup.create_thread ( boost::bind (&KinectReceiver::Start, &r) );
+  tgroup.create_thread ( boost::bind (&KinectReceiver::Start, &kinectReceiver) );
 
-  tgroup.create_thread ( boost::bind (&CommandMaker::Start, &m) );
+  tgroup.create_thread ( boost::bind (&KinectManager::Start, &kinectManager) );
 
-  tgroup.create_thread ( boost::bind (&SendReceiver::Start, &s) );
+  tgroup.create_thread ( boost::bind (&CommandMaker::Start, &commandMaker) );
+
+  tgroup.create_thread ( boost::bind (&SendReceiver::Start, &sendReceiver) );
+
+  tgroup.create_thread ( boost::bind (&SendManager::Start, &sendManager) );
 
 
   tgroup.join_all ();

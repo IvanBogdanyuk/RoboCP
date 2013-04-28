@@ -18,15 +18,15 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
-// Class purpose: receivig Send objects and adding them to buffer
-class SendReceiver
+// Class purpose: taking Send objects from buffer and updating KinectViewer info
+class SendManager
 {
 public:
   void Start ();
-  SendReceiver (XMLConfig * x, SendBuffer* b);
-  ~SendReceiver (void);
+  SendManager (SendBuffer* b, KinectViewer* v);
+  ~SendManager (void);
 private:
-  string ip;
-  string port;
   SendBuffer* sendBuffer;
+  KinectViewer* kinectViewer;
+  void updateText (boost::shared_ptr<Send> s);
 };

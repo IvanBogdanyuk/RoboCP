@@ -2,11 +2,11 @@
 #include "KinectReceiver.h"
 
 
-KinectReceiver::KinectReceiver (XMLConfig * x, KinectViewer* v)
+KinectReceiver::KinectReceiver (XMLConfig * x, KinectBuffer* b)
 {
   ip = x->IP; // Reading IP from config
   port = x->KinectPort; // Reading port from config
-  kinectViewer = v;
+  kinectBuffer = b;
 
   // We will receive encoded point clouds, so we need to decode them
   octreeCoder = new PointCloudCompression<PointXYZ> (x->CompressionProfile, x->ShowStatistics, x->PointResolution,
@@ -25,27 +25,21 @@ void KinectReceiver::Start ()
     tcp::iostream socketStream (ip.c_str(), port.c_str() ); // Trying to connect
 
     if (!socketStream.fail() ) {
-      cout << "KinectViewer: Connected!" << endl; // TODO: write in log
-	  RAW_LOG (INFO,  "KinectViewer: Connected!");
-
-	  boost::shared_ptr<KinectData> kData (new KinectData); // Creating new KinectData
+      cout << "KinectReceiver: Connected!" << endl; // TODO: write in log
+	  RAW_LOG (INFO,  "KinectReceiver: Connected!");
 	  Sleep (5000);
 
 	  while (true ) {
+		boost::shared_ptr<KinectData> kData (new KinectData); // Creating new KinectData
 		socketStream >> kData->Time; // Receivig time
 		octreeCoder->decodePointCloud (socketStream, kData->Cloud); // Then receiving point cloud
-		kinectViewer->viewer->updatePointCloud (kData->Cloud, "cloud"); // updating cloud in KinectViewer
-		
-		// updating CloudTime text line in KinectViewer
-		char buf[50]; 
-	    sprintf (buf, "Cloud time: %s", ctime(&kData->Time) );
-		kinectViewer->viewer->updateText (buf, 10, 20, 10, 1, 1, 1, "CloudTime");
+		kinectBuffer->Enqueue (kData); // adding KinectData in KinectBuffer
 	  }
 	
 	}
   }
   catch (exception& e) {
-    cout << "KinectViewer: Exception: " << e.what () << endl; // TODO: write in log
-	RAW_LOG (INFO,  "KinectViewer: Exception: %s", e.what());
+    cout << "KinectReceiver: Exception: " << e.what () << endl; // TODO: write in log
+	RAW_LOG (INFO,  "KinectReceiver: Exception: %s", e.what());
   }
 }

@@ -11,6 +11,7 @@
 #include <pcl/point_types.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
+#include <boost/interprocess/sync/interprocess_mutex.hpp>
 #include <boost/asio.hpp>
 
 using namespace pcl;
@@ -24,5 +25,6 @@ public:
   void Start ();
   KinectViewer(XMLConfig * x);
   ~KinectViewer(void);
+  boost::interprocess::interprocess_mutex* Mtx; // Mutex for thread safety
   pcl::visualization::PCLVisualizer* viewer;
 };

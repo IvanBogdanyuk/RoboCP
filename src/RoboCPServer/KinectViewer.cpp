@@ -4,6 +4,7 @@
 
 KinectViewer::KinectViewer (XMLConfig * x)
 {
+  Mtx = new boost::interprocess::interprocess_mutex;
 }
 
 KinectViewer::~KinectViewer ()
@@ -13,7 +14,8 @@ KinectViewer::~KinectViewer ()
 
 void KinectViewer::Start ()
 { // Adding some objects to viewer, then we will only update these objects
-	
+  
+  Mtx->lock();
   viewer = new pcl::visualization::PCLVisualizer ("Downsampled point cloud");
 
   boost::shared_ptr<KinectData> kData (new KinectData);
@@ -45,11 +47,14 @@ void KinectViewer::Start ()
   viewer->addText ("Yaw:", 5, 138, 10, 1, 1, 1, "Yaw");
 
   viewer->addText ("Time:", 5, 122, 10, 1, 1, 1, "SendTime");
+  Mtx->unlock();
   
   // main loop
   while (!viewer->wasStopped() ) {
-	viewer->spinOnce(100);
-	Sleep (100);
+	Mtx->lock();
+	viewer->spinOnce();
+	Mtx->unlock();
+	Sleep (20);
   }
 
 }

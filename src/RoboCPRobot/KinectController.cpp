@@ -41,11 +41,11 @@ void KinectController::FakeStart ()
   RAW_LOG (INFO, "KinectController: ready");
 
   while (true) { // Making new KinectData every 2 seconds
-	Sleep (2000);
+	Sleep (100);
 	boost::shared_ptr<KinectData> kData1 (new KinectData (cloud1, time(NULL) ) );
 	buffer->Enqueue (kData1);
 
-	Sleep (2000);
+	Sleep (100);
 	boost::shared_ptr<KinectData> kData2 (new KinectData (cloud2, time(NULL) ) );
 	buffer->Enqueue (kData2);
   }

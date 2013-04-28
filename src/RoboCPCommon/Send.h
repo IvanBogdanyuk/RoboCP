@@ -45,8 +45,8 @@ public:
     
   Point3d Acceleration;
   time_t Time;
-  IplImage *Frame;
-  Vector Motion;
+  //IplImage *Frame;
+  //Vector Motion;
 
   Send(void);
   ~Send(void); 

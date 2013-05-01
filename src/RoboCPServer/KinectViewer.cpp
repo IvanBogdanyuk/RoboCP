@@ -47,6 +47,11 @@ void KinectViewer::Start ()
   viewer->addText ("Yaw:", 5, 138, 10, 1, 1, 1, "Yaw");
 
   viewer->addText ("Time:", 5, 122, 10, 1, 1, 1, "SendTime");
+
+  viewer->addText ("Motion x1:", 5, 112, 10, 1, 1, 1, "BeginningX");
+  viewer->addText ("Motion y1:", 5, 102, 10, 1, 1, 1, "BeginningY");
+  viewer->addText ("Motion x2:", 5, 92, 10, 1, 1, 1, "EndX");
+  viewer->addText ("Motion y2:", 5, 82, 10, 1, 1, 1, "EndY");
   Mtx->unlock();
   
   // main loop

@@ -28,6 +28,7 @@ private:
 
 	ar & BOOST_SERIALIZATION_NVP(Acceleration);
 	ar & BOOST_SERIALIZATION_NVP(Time);
+	ar & BOOST_SERIALIZATION_NVP(Motion);
   }
 
 public:
@@ -46,7 +47,7 @@ public:
   Point3d Acceleration;
   time_t Time;
   //IplImage *Frame;
-  //Vector Motion;
+  Vector Motion;
 
   Send(void);
   ~Send(void); 

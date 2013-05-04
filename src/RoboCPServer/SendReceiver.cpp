@@ -22,10 +22,10 @@ void SendReceiver::Start ()
       cout << "SendReceiver: Connected!" << endl; // TODO: write in log
 	  RAW_LOG (INFO, "SendReceiver: Connected!");
 
-	  boost::archive::xml_iarchive ia(socketStream); // We will receive Send objects in XML
-	  Sleep(5000);
+	  Sleep(6000);
 
 	  while ( true ) {
+		boost::archive::xml_iarchive ia(socketStream); // We will receive Send objects in XML
 		boost::shared_ptr<Send> sendData (new Send);  // Creating new Send object
 		ia >> BOOST_SERIALIZATION_NVP(sendData); // Receiving
 		sendBuffer->Enqueue (sendData); // Adding Send in buffer

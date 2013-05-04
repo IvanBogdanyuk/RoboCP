@@ -28,9 +28,8 @@ void SendSender::Start ()
     cout << "SendSender: Connected!" << endl; //TODO: write in log
 	RAW_LOG (INFO, "SendSender: Connected!");
 
-	boost::archive::xml_oarchive oa (socketStream); // We want to send objects in XML
-
 	while (!socketStream.fail() ) {
+	  boost::archive::xml_oarchive oa (socketStream); // We want to send objects in XML
 	  boost::shared_ptr<Send> sendData;
 	  sendData = buffer->Dequeue(); // Reading Send object from buffer
 	  oa << BOOST_SERIALIZATION_NVP (sendData); // Serializing and sending it

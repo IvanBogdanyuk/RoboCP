@@ -59,7 +59,7 @@ void KinectViewer::Start ()
 	Mtx->lock();
 	viewer->spinOnce();
 	Mtx->unlock();
-	Sleep (20);
+	Sleep (50);
   }
 
 }

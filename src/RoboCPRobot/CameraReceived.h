@@ -11,6 +11,7 @@ public:
   Vector Motion;
   time_t Time;
   CameraReceived(IplImage *ImageToSave);
+  CameraReceived();
   ~CameraReceived(void);
 };
 

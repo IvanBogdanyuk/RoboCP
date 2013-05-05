@@ -61,14 +61,14 @@ void SendManager::updateText (boost::shared_ptr<Send> s)
 
   sprintf (buf, "Time: %s", ctime(&(s->Time)) );
   kinectViewer->viewer->updateText (buf, 5, 122, 10, 1, 1, 1, "SendTime");
-/*
-  sprintf (buf, "Motion x1: %f", s->Motion.Beginning.x);
+
+  sprintf (buf, "Motion x1: %f", s->Motion.BeginningX);
   kinectViewer->viewer->updateText (buf, 5, 112, 10, 1, 1, 1, "BeginningX");
-  sprintf (buf, "Motion y1: %f", s->Motion.Beginning.y);
+  sprintf (buf, "Motion y1: %f", s->Motion.BeginningY);
   kinectViewer->viewer->updateText (buf, 5, 102, 10, 1, 1, 1, "BeginningY");
-  sprintf (buf, "Motion x2: %f", s->Motion.End.x);
+  sprintf (buf, "Motion x2: %f", s->Motion.EndX);
   kinectViewer->viewer->updateText (buf, 5, 92, 10, 1, 1, 1, "EndX");
-  sprintf (buf, "Motion y2: %f", s->Motion.End.y);
+  sprintf (buf, "Motion y2: %f", s->Motion.EndY);
   kinectViewer->viewer->updateText (buf, 5, 82, 10, 1, 1, 1, "EndY");
-*/    
+    
 }

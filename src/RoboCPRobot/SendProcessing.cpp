@@ -13,7 +13,7 @@ void SendProcessing::Start()
 {
 	boost::shared_ptr <ArduCopterReceived> arduData (new ArduCopterReceived);
 	boost::shared_ptr <NanoReceived> nanoData (new NanoReceived);
-	boost::shared_ptr <CameraReceived> cameraData;
+	boost::shared_ptr <CameraReceived> cameraData (new CameraReceived);
   
     while (true){
 	  boost::shared_ptr <Send> sendData(new Send);
@@ -40,7 +40,11 @@ void SendProcessing::Start()
 		sendData->RightSonicSensor = nanoData->RightSonicSensor;
 		sendData->BackSonicSensor = nanoData->BackSonicSensor;
 	  
-	  //if (cameraBuffer->Used > 0) cameraData = cameraBuffer->Dequeue();
+		if (cameraBuffer->Used->try_wait()){
+		  cameraBuffer->Used->post();
+		  cameraData = cameraBuffer->Dequeue();
+		}
+		sendData->Motion = cameraData->Motion;
 
       sendBuffer->Enqueue (sendData);
       Sleep (50); 

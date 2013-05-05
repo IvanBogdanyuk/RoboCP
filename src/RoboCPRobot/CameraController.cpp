@@ -42,6 +42,13 @@ void CameraController::Start(void)
 	}
 	CameraImg->Time = time(NULL);
     buffer->Enqueue(CameraImg);
+/*	cout << (CameraImg->Motion.BeginningX-CameraImg->Motion.BeginningY)*(CameraImg->Motion.BeginningX-CameraImg->Motion.BeginningY) + (CameraImg->Motion.EndX-CameraImg->Motion.EndY)*(CameraImg->Motion.EndX-CameraImg->Motion.EndY) << "    "
+		 << CameraImg->Motion.BeginningX << " "
+		 << CameraImg->Motion.BeginningY << " "
+		 << CameraImg->Motion.EndX << " "
+		 << CameraImg->Motion.EndY << " "
+		 << endl;
+*/
 	FrameLast = Frame;
   }
 }

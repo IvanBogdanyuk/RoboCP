@@ -96,6 +96,9 @@ add_executable (Server
 	RoboCPCommon/Point3d.h
 
 
+	RoboCPRobot/DisplacementImages.h
+
+
 	RoboCPServer/KinectViewer.h RoboCPServer/KinectViewer.cpp
 	RoboCPServer/KinectReceiver.h RoboCPServer/KinectReceiver.cpp
 	RoboCPServer/KinectManager.h RoboCPServer/KinectManager.cpp

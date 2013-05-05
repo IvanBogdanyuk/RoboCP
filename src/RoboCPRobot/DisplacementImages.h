@@ -12,12 +12,13 @@ typedef struct Vector
 	template <typename Archive>
 	void serialize(Archive& ar, const unsigned int version)
 	{
-		ar & BOOST_SERIALIZATION_NVP(Beginning.x);
-		ar & BOOST_SERIALIZATION_NVP(Beginning.y);
-		ar & BOOST_SERIALIZATION_NVP(End.x);
-		ar & BOOST_SERIALIZATION_NVP(End.y);
+		ar & BOOST_SERIALIZATION_NVP(BeginningX);
+		ar & BOOST_SERIALIZATION_NVP(BeginningY);
+		ar & BOOST_SERIALIZATION_NVP(EndX);
+		ar & BOOST_SERIALIZATION_NVP(EndY);
+		ar & BOOST_SERIALIZATION_NVP(Length);
 	}
-	CvPoint2D32f Beginning, End;
+	float BeginningX, EndX, BeginningY, EndY;
 	double Length;
 }
 Vector;

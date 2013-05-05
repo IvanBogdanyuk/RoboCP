@@ -11,7 +11,9 @@ NanoController::NanoController(XMLConfig *x, NanoReceivedBuffer *buf)
   buffer = buf;
   lastReadTime = time(NULL);
   nanoPort = x->CarduinoPort;
-  nanoCom = new SerialCom(nanoPort.c_str(), NANO_BAUD_RATE);
+  char *cstr = new char[nanoPort.length() + 1];
+  strcpy(cstr, nanoPort.c_str());
+  nanoCom = new SerialCom(cstr, NANO_BAUD_RATE);
   dataToSend = new char(TO_SEND_BUFF_SIZE);
   readyToNewMessage = true;
 }
@@ -69,6 +71,7 @@ void NanoController::Start(void)
         #ifdef NANO_INPUT_DATA_TEST
         printf("%c",ReadenData[i]);
         #endif
+        printf("!");
         if (stage == -4){
           if (ReadenData[i] == 131){
             stage++;
@@ -143,7 +146,9 @@ void NanoController::Start(void)
       if (difftime(time(NULL),lastReadTime)>NANO_SECONDS_TO_RECONNECT){
         nanoCom->~SerialCom();
         RAW_LOG(INFO, "NanoController: reconnecting...");
-        nanoCom = new SerialCom(nanoPort.c_str(), NANO_BAUD_RATE);
+        char *cstr = new char[nanoPort.length() + 1];
+        strcpy(cstr, nanoPort.c_str());
+        nanoCom = new SerialCom(cstr, NANO_BAUD_RATE);
         lastReadTime = time(NULL);
         stage = -4;
       }

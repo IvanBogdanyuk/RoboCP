@@ -1,11 +1,12 @@
 #include "SerialCom.h"
 
-SerialCom::SerialCom(LPCSTR PortName, int BaudRate)
+SerialCom::SerialCom(char *PortName, int BaudRate)
 {
+  TCHAR *pcCommPort = TEXT(PortName);
   out = new char[READ_BUFF_SIZE];
   outSize = 0;
   RAW_LOG (INFO, "SerialCom(%s): connecting...",PortName);
-  hComm = CreateFile(PortName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+  hComm = CreateFile(pcCommPort, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
   if (hComm == INVALID_HANDLE_VALUE){
     int err = GetLastError();
     if (err == ERROR_FILE_NOT_FOUND){
@@ -56,6 +57,7 @@ SerialCom::SerialCom(LPCSTR PortName, int BaudRate)
   if (!SetCommTimeouts(hComm,&commTimeouts)){
     RAW_LOG (INFO, "SerialCom(%s): can't set timeouts",PortName);
   }
+  delete [] PortName;
   Sleep(3000);
 }
 

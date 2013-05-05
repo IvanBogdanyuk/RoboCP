@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <WinDef.h>
+#include <tchar.h>
 
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
@@ -19,7 +20,7 @@ public:
   char *Read(void);
   void Write(char *Data, int DataSize);
   int GetOutSize();
-  SerialCom(LPCSTR PortName, int BaudRate);
+  SerialCom(char *PortName, int BaudRate);
   ~SerialCom(void);
 };
 

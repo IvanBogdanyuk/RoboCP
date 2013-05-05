@@ -5,7 +5,9 @@ ArduCopterController::ArduCopterController(XMLConfig *x, ArduCopterBuffer *buf)
 {
   buffer = buf;
   copterPort = x->ArducopterPort;
-  copterCom = new SerialCom(copterPort.c_str(),COPTER_BAUD_RATE);
+  char *cstr = new char[copterPort.length() + 1];
+  strcpy(cstr, copterPort.c_str());
+  copterCom = new SerialCom(cstr,COPTER_BAUD_RATE);
   lastReadTime = time(NULL);
 }
 
@@ -393,7 +395,9 @@ void ArduCopterController::Start(void)
       if (difftime(time(NULL),lastReadTime)>COPTER_SECONDS_TO_RECONNECT){
         copterCom->~SerialCom();
         RAW_LOG(INFO, "ArduCopterController: reconnecting...");
-        copterCom = new SerialCom(copterPort.c_str(), COPTER_BAUD_RATE);
+        char *cstr = new char[copterPort.length() + 1];
+        strcpy(cstr, copterPort.c_str());
+        copterCom = new SerialCom(cstr, COPTER_BAUD_RATE);
         sendInitionalData();
         lastReadTime = time(NULL);
       }

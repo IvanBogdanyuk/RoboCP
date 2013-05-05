@@ -4,7 +4,25 @@ SerialCom::SerialCom(LPCSTR PortName, int BaudRate)
 {
   out = new char[READ_BUFF_SIZE];
   outSize = 0;
-  hComm = CreateFile(PortName, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, 0);
+  RAW_LOG (INFO, "SerialCom(%s): connecting...",PortName);
+  hComm = CreateFile(PortName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
+  if (hComm == INVALID_HANDLE_VALUE){
+    int err = GetLastError();
+    if (err == ERROR_FILE_NOT_FOUND){
+      RAW_LOG (INFO, "SerialCom(%s): can't connect - this com port or device doesn't exist",PortName);
+    }else{
+      if (err = ERROR_ACCESS_DENIED){
+        RAW_LOG (INFO, "SerialCom(%s): can't connect - this com port already in use",PortName);
+      }else{
+        RAW_LOG (INFO, "SerialCom(%s): can't connect - unknown error",PortName);
+      }
+    }
+  }else{
+    RAW_LOG (INFO, "SerialCom(%s): connected!",PortName);
+  }
+  if (!SetupComm(hComm,1024,1024)){
+    RAW_LOG (INFO, "SerialCom(%s): can't setup i/o buffers",PortName);
+  }
   COMMCONFIG conf;
   conf.dcb.DCBlength = sizeof(DCB);
   GetCommState(hComm, &conf.dcb);
@@ -15,7 +33,7 @@ SerialCom::SerialCom(LPCSTR PortName, int BaudRate)
   conf.dcb.fOutxDsrFlow = FALSE;         // No DSR output flow control
   conf.dcb.fDtrControl = DTR_CONTROL_ENABLE; // DTR flow control type
   conf.dcb.fDsrSensitivity = FALSE;      // DSR sensitivity
-  conf.dcb.fTXContinueOnXoff = TRUE;     // XOFF continues Tx
+  conf.dcb.fTXContinueOnXoff = FALSE;     // XOFF continues Tx
   conf.dcb.fOutX = FALSE;                // No XON/XOFF out flow control
   conf.dcb.fInX = FALSE;                 // No XON/XOFF in flow control
   conf.dcb.fErrorChar = FALSE;           // Disable error replacement
@@ -25,15 +43,19 @@ SerialCom::SerialCom(LPCSTR PortName, int BaudRate)
   conf.dcb.ByteSize = 8;                 // Number of bits/byte, 4-8
   conf.dcb.Parity = NOPARITY;            // 0-4=no,odd,even,mark,space
   conf.dcb.StopBits = ONESTOPBIT;
-  SetCommState(hComm, &conf.dcb);
+  if (!SetCommState(hComm, &conf.dcb)){
+    RAW_LOG (INFO, "SerialCom(%s): can't set comm state",PortName);
+  }
   COMMTIMEOUTS commTimeouts;
   GetCommTimeouts(hComm, &commTimeouts);
-  commTimeouts.ReadIntervalTimeout = MAXDWORD;
+  commTimeouts.ReadIntervalTimeout = 1;
   commTimeouts.ReadTotalTimeoutMultiplier = 0;
   commTimeouts.ReadTotalTimeoutConstant = 0;
   commTimeouts.WriteTotalTimeoutMultiplier = 0;
   commTimeouts.WriteTotalTimeoutConstant = 0;
-  SetCommTimeouts(hComm,&commTimeouts);
+  if (!SetCommTimeouts(hComm,&commTimeouts)){
+    RAW_LOG (INFO, "SerialCom(%s): can't set timeouts",PortName);
+  }
   Sleep(3000);
 }
 
@@ -77,5 +99,6 @@ int SerialCom::GetOutSize(void)
 
 SerialCom::~SerialCom(void)
 {
+  CloseHandle(hComm);
   delete [] out;
 }

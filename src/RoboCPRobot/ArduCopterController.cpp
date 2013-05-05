@@ -16,6 +16,7 @@ ArduCopterController::~ArduCopterController(void)
 
 void ArduCopterController::sendInitionalData(void)
 {
+  RAW_LOG(INFO, "ArduCopterController: sending initional data...");
   unsigned char DataToSend[32];
   DataToSend[0] = 0xFE;
   DataToSend[1] = 0x02;
@@ -288,10 +289,12 @@ void ArduCopterController::sendInitionalData(void)
   copterCom->Write((char *)&DataToSend[0],14);
   Sleep(50);
   stage = -6;
+  RAW_LOG(INFO, "ArduCopterController: Initional data sent!");
 }
 
 void ArduCopterController::Start(void)
 {
+  RAW_LOG(INFO, "ArduCopterController: started");
   #ifdef COPTER_MSG_TYPES_TEST
   bool used[256];
   for (int i = 0; i<256; i++) used[i] = true;
@@ -344,6 +347,7 @@ void ArduCopterController::Start(void)
               printf("%d\n",MsgType);
             }
             #endif
+            RAW_LOG(INFO, "ArduCopterController: got message, mavlink id=%d",MsgType);
             if (MsgType == 30){
               PFloatData = ((float *)(&MavPacket[4]));//[0] - roll, [1] - pitch, [2] - yaw, all in radians
               #ifdef COPTER_TELEMETRY_TEST
@@ -354,6 +358,7 @@ void ArduCopterController::Start(void)
               CopterReceived->Pitch = PFloatData[1];
               CopterReceived->Yaw = PFloatData[2];
               CopterReceived->Time = time(NULL);
+              RAW_LOG(INFO, "ArduCopterController: got data - roll = %f, pitch = %f, yaw = %f",PFloatData[0],PFloatData[1],PFloatData[2]);
               buffer->Enqueue(CopterReceived);
             }
             if (MsgType == 74){
@@ -364,6 +369,7 @@ void ArduCopterController::Start(void)
               boost::shared_ptr<ArduCopterReceived> CopterReceived (new ArduCopterReceived());
               CopterReceived->AltitudeSonic = PFloatData[3];
               CopterReceived->Time = time(NULL);
+              RAW_LOG(INFO, "ArduCopterController: got data - altitude sonic = %f",PFloatData[3]);
               buffer->Enqueue(CopterReceived);
             }
             if (MsgType == 27){
@@ -376,6 +382,7 @@ void ArduCopterController::Start(void)
               CopterReceived->Acceleration.y = PShortData[5];
               CopterReceived->Acceleration.z = PShortData[6];
               CopterReceived->Time = time(NULL);
+              RAW_LOG(INFO, "ArduCopterController: got data - accel x = %d, accel y = %d, accel z = %d",PShortData[4],PShortData[5],PShortData[6]);
               buffer->Enqueue(CopterReceived);
             }
           }
@@ -385,6 +392,7 @@ void ArduCopterController::Start(void)
     }else{
       if (difftime(time(NULL),lastReadTime)>COPTER_SECONDS_TO_RECONNECT){
         copterCom->~SerialCom();
+        RAW_LOG(INFO, "ArduCopterController: reconnecting...");
         copterCom = new SerialCom(copterPort.c_str(), COPTER_BAUD_RATE);
         sendInitionalData();
         lastReadTime = time(NULL);

@@ -6,6 +6,10 @@
 #include <string.h>
 #include <time.h>
 
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+#include <glog/raw_logging.h>
+
 //#define COPTER_MSG_TYPES_TEST
 //#define COPTER_TELEMETRY_TEST
 

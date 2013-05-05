@@ -6,9 +6,13 @@
 #include <string.h>
 #include <time.h>
 
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+#include <glog/raw_logging.h>
+
 //#define NANO_FPS_TEST
 //#define NANO_TELEMETRY_TEST
-//#define NANO_INPUT_DATA_TEST
+#define NANO_INPUT_DATA_TEST
 
 #define NANO_BAUD_RATE 115200
 #define NANO_SECONDS_TO_RECONNECT 5

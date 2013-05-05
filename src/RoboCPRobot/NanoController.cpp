@@ -39,6 +39,7 @@ NanoController::~NanoController(void)
 
 void NanoController::Start(void)
 {
+  RAW_LOG(INFO, "NanoController: started");
   #ifdef NANO_FPS_TEST
   int count4 = 0;
   time_t FirstData;
@@ -57,6 +58,7 @@ void NanoController::Start(void)
     if ((readyToNewMessage == false)&&(Counter > 100)){
       DataLength = 0;
       while (dataToSend[DataLength] != '\0') DataLength++;
+      RAW_LOG(INFO, "NanoController: updating GPS message...");
       nanoCom->Write(dataToSend, DataLength);
       Counter = 0;
       readyToNewMessage = true;
@@ -116,6 +118,7 @@ void NanoController::Start(void)
             NanoData->BackSonicSensor = PShortData[2];
             NanoData->LeftSonicSensor = PShortData[3];
             NanoData->TopSonicSensor = PShortData[4];
+            RAW_LOG(INFO, "NanoController: got data - front = %d, right = %d, back = %d, left = %d, top = %d",PShortData[0],PShortData[1],PShortData[2],PShortData[3],PShortData[4]);
             #ifdef NANO_FPS_TEST
             if (count4 == 0){
               FirstData = time(NULL);
@@ -139,6 +142,7 @@ void NanoController::Start(void)
     }else{
       if (difftime(time(NULL),lastReadTime)>NANO_SECONDS_TO_RECONNECT){
         nanoCom->~SerialCom();
+        RAW_LOG(INFO, "NanoController: reconnecting...");
         nanoCom = new SerialCom(nanoPort.c_str(), NANO_BAUD_RATE);
         lastReadTime = time(NULL);
         stage = -4;

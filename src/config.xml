@@ -6,8 +6,8 @@
 	<KinectPort>6666</KinectPort>
 	<CommandPort>6667</CommandPort>
 	<SendPort>6668</SendPort>
-	<CarduinoPort>"COM3"</CarduinoPort>
-	<ArducopterPort>"COM4"</ArducopterPort>
+	<CarduinoPort>COM3</CarduinoPort>
+	<ArducopterPort>COM4</ArducopterPort>
 	<compressionProfile>0</CompressionProfile>
 	<ShowStatistics>0</ShowStatistics>
 	<PointResolution>0.001</PointResolution>

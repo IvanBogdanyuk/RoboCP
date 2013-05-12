@@ -131,9 +131,9 @@ int main(char *args[], int count)
 
   tgroup.create_thread ( boost::bind (&ClientReceiver::Start, &commandReceiver) );
   
-  tgroup.create_thread ( boost::bind (&NanoController::FakeStart, &NanoControl) );
+  tgroup.create_thread ( boost::bind (&NanoController::Start, &NanoControl) );
   
-  tgroup.create_thread ( boost::bind (&ArduCopterController::FakeStart, &CopterControl) );
+  tgroup.create_thread ( boost::bind (&ArduCopterController::Start, &CopterControl) );
 
   tgroup.create_thread ( boost::bind (&CameraController::Start, &CameraControl) );
 

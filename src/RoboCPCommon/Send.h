@@ -27,7 +27,8 @@ private:
 	ar & BOOST_SERIALIZATION_NVP(AltitudeBarometer);
 
 	ar & BOOST_SERIALIZATION_NVP(Acceleration);
-	ar & BOOST_SERIALIZATION_NVP(Time);
+	ar & BOOST_SERIALIZATION_NVP(PacketType);
+  ar & BOOST_SERIALIZATION_NVP(Time);
 	ar & BOOST_SERIALIZATION_NVP(Motion);
   }
 
@@ -45,6 +46,7 @@ public:
   float AltitudeBarometer;
     
   Point3d Acceleration;
+  int PacketType;
   time_t Time;
   //IplImage *Frame;
   Vector Motion;

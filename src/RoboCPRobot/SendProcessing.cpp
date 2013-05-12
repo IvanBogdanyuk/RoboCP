@@ -29,6 +29,7 @@ void SendProcessing::Start()
 		sendData->Yaw = arduData->Yaw;
 		sendData->AltitudeSonic = arduData->AltitudeSonic;
 		sendData->AltitudeBarometer = arduData->AltitudeBarometer;
+    sendData->PacketType = arduData->PacketType;
 	  
 	  if (nanoBuffer->Used->try_wait()){
 		nanoBuffer->Used->post();

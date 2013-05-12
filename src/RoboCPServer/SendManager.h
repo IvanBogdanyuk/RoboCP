@@ -18,6 +18,12 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
+enum ArduCopterReceivedType{
+  AccelerationPacket,
+  AnglesPacket,
+  AltitudePacket
+};
+
 // Class purpose: taking Send objects from buffer and updating KinectViewer info
 class SendManager
 {

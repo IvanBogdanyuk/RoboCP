@@ -359,6 +359,7 @@ void ArduCopterController::Start(void)
               CopterReceived->Roll = PFloatData[0];
               CopterReceived->Pitch = PFloatData[1];
               CopterReceived->Yaw = PFloatData[2];
+              CopterReceived->PacketType = AnglesPacket;
               CopterReceived->Time = time(NULL);
               RAW_LOG(INFO, "ArduCopterController: got data - roll = %f, pitch = %f, yaw = %f",PFloatData[0],PFloatData[1],PFloatData[2]);
               buffer->Enqueue(CopterReceived);
@@ -370,6 +371,7 @@ void ArduCopterController::Start(void)
               #endif
               boost::shared_ptr<ArduCopterReceived> CopterReceived (new ArduCopterReceived());
               CopterReceived->AltitudeSonic = PFloatData[3];
+              CopterReceived->PacketType = AltitudePacket;
               CopterReceived->Time = time(NULL);
               RAW_LOG(INFO, "ArduCopterController: got data - altitude sonic = %f",PFloatData[3]);
               buffer->Enqueue(CopterReceived);
@@ -383,6 +385,7 @@ void ArduCopterController::Start(void)
               CopterReceived->Acceleration.x = PShortData[4];
               CopterReceived->Acceleration.y = PShortData[5];
               CopterReceived->Acceleration.z = PShortData[6];
+              CopterReceived->PacketType = AccelerationPacket;
               CopterReceived->Time = time(NULL);
               RAW_LOG(INFO, "ArduCopterController: got data - accel x = %d, accel y = %d, accel z = %d",PShortData[4],PShortData[5],PShortData[6]);
               buffer->Enqueue(CopterReceived);

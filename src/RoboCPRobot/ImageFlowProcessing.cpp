@@ -60,10 +60,12 @@ void ImageFlowProcessing::CountDisplacement(IplImage *Img1, IplImage *Img2, Disp
 	Displacement->NumVectors = numVectors;
 
 	cvReleaseImage(&imgA);  
-	cvReleaseImage(&imgB);   
+	cvReleaseImage(&imgB);
+    cvReleaseImage(&eig_image);  
+	cvReleaseImage(&tmp_image);   
 	delete cornersA;  
 	delete cornersB;   
-	cvReleaseImage(&pyrA);  
+	cvReleaseImage(&pyrA);
 	cvReleaseImage(&pyrB); 
 }
 

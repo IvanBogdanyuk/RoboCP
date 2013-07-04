@@ -6,9 +6,11 @@
 #include <string.h>
 #include <time.h>
 
+#ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
 #include <glog/raw_logging.h>
+#endif
 
 //#define NANO_FPS_TEST
 //#define NANO_TELEMETRY_TEST

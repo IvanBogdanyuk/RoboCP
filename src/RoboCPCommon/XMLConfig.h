@@ -8,6 +8,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/nvp.hpp>
 
+//#define ENABLE_LOGGING
 
 using namespace pcl;
 using namespace pcl::octree;

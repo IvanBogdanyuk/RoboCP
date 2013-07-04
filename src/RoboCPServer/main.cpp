@@ -9,18 +9,23 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include "XMLConfig.h"
 
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 
+#ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
 #include <glog/raw_logging.h>
+#endif
 
 int main(char *args[], int count)
 {
   freopen ("log.log", "a", stderr);
+  #ifdef ENABLE_LOGGING
   RAW_LOG (INFO, "MAIN SERVER STARTED");
+  #endif
 
   XMLConfig config;
   { //deserialization

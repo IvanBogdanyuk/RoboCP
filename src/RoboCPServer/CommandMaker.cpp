@@ -19,8 +19,9 @@ void CommandMaker::Start ()
 
 	if (!socketStream.fail() ) {
       cout << "CommandMaker: Connected!" << endl; // TODO: write in log
+      #ifdef ENABLE_LOGGING
 	  RAW_LOG (INFO, "CommandMaker: Connected!");
-	  
+	  #endif
 	  boost::archive::xml_oarchive oa(socketStream); // We want to send commands in XML
 	  Command com;
 
@@ -40,7 +41,8 @@ void CommandMaker::Start ()
   }
   catch (exception& e) {
     cout << "CommandMaker: Exception: " << e.what () << endl; // TODO: write in log
-	RAW_LOG (INFO, "CommandMaker: Exception: %s", e.what());
-
+    #ifdef ENABLE_LOGGING
+	  RAW_LOG (INFO, "CommandMaker: Exception: %s", e.what());
+    #endif
   }
 }

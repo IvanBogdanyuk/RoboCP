@@ -1,0 +1,14 @@
+1. Download Cmake-2.8.11.2.exe from http://www.cmake.org/cmake/resources/software.html
+2. Download PCL 1.6.0 All-In-One Installer from http://pointclouds.org/downloads/windows.html
+3. Download boost 1.50.0 from http://pointclouds.org/downloads/windows.html
+4. Download Qt 4.8.0 from http://pointclouds.org/downloads/windows.html
+5. Download OpenCV 2.4.5 from http://opencv.org/downloads.html
+
+!!! Install Qt to the default way such as "C:\Qt\4.8.0" 
+Make a directory "SpDep" (Student Project dependences). And install next programs to "SpDep".
+1. Install Cmake and press the button "Set PATH for all/current user"
+2. Install Boost and press the button "Set PATH for all/current user"
+3. Install PCL and press the button "Set PATH for all/current user"
+When you will be installing PCL, you will see a new library installer.
+4. Install OpenNI to the same repository (SpDep\OpenNI).
+5. Install PrimeSense to the same repository (SpDep\PrimeSense).

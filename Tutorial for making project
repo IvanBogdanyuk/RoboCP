@@ -3,6 +3,7 @@
 3. Download boost 1.50.0 from http://pointclouds.org/downloads/windows.html
 4. Download Qt 4.8.0 from http://pointclouds.org/downloads/windows.html
 5. Download OpenCV 2.4.5 from http://opencv.org/downloads.html
+6. Download Microsoft Visual Studio 2010. 
 
 
 Install CMake to the default way. For example "C:\Program Files\Cmake".
@@ -25,4 +26,5 @@ Run Cmake.
 2) Where to build binaries: Set any repository that your wish.
 !!!! Press the button "Grouped" and "Advanced"
 3) Press "Configure"
+4) Use Visual Studio 2010 x32/x64 - it depends from your system (32-bit or 64-bit)
 4) If it will be any problems, you can ask Andrey, and I try to help you.

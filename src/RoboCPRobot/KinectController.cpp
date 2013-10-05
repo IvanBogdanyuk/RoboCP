@@ -31,15 +31,18 @@ KinectController::~KinectController()
 void KinectController::FakeStart ()
 {
   cout << "KinectController: loading clouds..." << endl; //TODO: write in log
+  #ifdef ENABLE_LOGGING
   RAW_LOG (INFO, "KinectController: loading clouds...!");
+  #endif
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1 (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud2 (new pcl::PointCloud<pcl::PointXYZ>);
   pcl::io::loadPCDFile<pcl::PointXYZ> ("KinectCloud1.pcd", *cloud1 ); // loading clouds from HDD
   pcl::io::loadPCDFile<pcl::PointXYZ> ("KinectCloud2.pcd", *cloud2 );
   cout << "KinectController: ready" << endl; //TODO: write in log
+  #ifdef ENABLE_LOGGING
   RAW_LOG (INFO, "KinectController: ready");
-
+  #endif
   while (true) { // Making new KinectData every 2 seconds
 	Sleep (100);
 	boost::shared_ptr<KinectData> kData1 (new KinectData (cloud1, time(NULL) ) );

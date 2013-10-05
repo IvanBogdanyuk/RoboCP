@@ -5,24 +5,36 @@ SerialCom::SerialCom(char *PortName, int BaudRate)
   TCHAR *pcCommPort = TEXT(PortName);
   out = new char[READ_BUFF_SIZE];
   outSize = 0;
+  #ifdef ENABLE_LOGGING
   RAW_LOG (INFO, "SerialCom(%s): connecting...",PortName);
+  #endif
   hComm = CreateFile(pcCommPort, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
   if (hComm == INVALID_HANDLE_VALUE){
     int err = GetLastError();
     if (err == ERROR_FILE_NOT_FOUND){
+      #ifdef ENABLE_LOGGING
       RAW_LOG (INFO, "SerialCom(%s): can't connect - this com port or device doesn't exist",PortName);
+      #endif
     }else{
       if (err = ERROR_ACCESS_DENIED){
+        #ifdef ENABLE_LOGGING
         RAW_LOG (INFO, "SerialCom(%s): can't connect - this com port already in use",PortName);
+        #endif
       }else{
+        #ifdef ENABLE_LOGGING
         RAW_LOG (INFO, "SerialCom(%s): can't connect - unknown error",PortName);
+        #endif
       }
     }
   }else{
+    #ifdef ENABLE_LOGGING
     RAW_LOG (INFO, "SerialCom(%s): connected!",PortName);
+    #endif
   }
   if (!SetupComm(hComm,1024,1024)){
+    #ifdef ENABLE_LOGGING
     RAW_LOG (INFO, "SerialCom(%s): can't setup i/o buffers",PortName);
+    #endif
   }
   COMMCONFIG conf;
   conf.dcb.DCBlength = sizeof(DCB);
@@ -45,7 +57,9 @@ SerialCom::SerialCom(char *PortName, int BaudRate)
   conf.dcb.Parity = NOPARITY;            // 0-4=no,odd,even,mark,space
   conf.dcb.StopBits = ONESTOPBIT;
   if (!SetCommState(hComm, &conf.dcb)){
+    #ifdef ENABLE_LOGGING
     RAW_LOG (INFO, "SerialCom(%s): can't set comm state",PortName);
+    #endif
   }
   COMMTIMEOUTS commTimeouts;
   GetCommTimeouts(hComm, &commTimeouts);
@@ -55,7 +69,9 @@ SerialCom::SerialCom(char *PortName, int BaudRate)
   commTimeouts.WriteTotalTimeoutMultiplier = 0;
   commTimeouts.WriteTotalTimeoutConstant = 0;
   if (!SetCommTimeouts(hComm,&commTimeouts)){
+    #ifdef ENABLE_LOGGING
     RAW_LOG (INFO, "SerialCom(%s): can't set timeouts",PortName);
+    #endif
   }
   delete [] PortName;
   Sleep(3000);

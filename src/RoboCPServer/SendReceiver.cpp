@@ -20,22 +20,23 @@ void SendReceiver::Start ()
 
     if (!socketStream.fail() ) {
       cout << "SendReceiver: Connected!" << endl; // TODO: write in log
-	  RAW_LOG (INFO, "SendReceiver: Connected!");
+      #ifdef ENABLE_LOGGING
+	    RAW_LOG (INFO, "SendReceiver: Connected!");
+      #endif
+	    Sleep(6000);
 
-	  Sleep(6000);
-
-	  while ( true ) {
-		boost::archive::xml_iarchive ia(socketStream); // We will receive Send objects in XML
-		boost::shared_ptr<Send> sendData (new Send);  // Creating new Send object
-		ia >> BOOST_SERIALIZATION_NVP(sendData); // Receiving
-		sendBuffer->Enqueue (sendData); // Adding Send in buffer
+	    while ( true ) {
+		    boost::archive::xml_iarchive ia(socketStream); // We will receive Send objects in XML
+		    boost::shared_ptr<Send> sendData (new Send);  // Creating new Send object
+		    ia >> BOOST_SERIALIZATION_NVP(sendData); // Receiving
+	    	sendBuffer->Enqueue (sendData); // Adding Send in buffer
+	    }
 	  }
-	
-	}
-
   }
   catch (exception& e) {
     cout << "SendReceiver: Exception: " << e.what () << endl; // TODO: write in log
-	RAW_LOG (INFO, "SendReceiver: Exception: %s", e.what());
+    #ifdef ENABLE_LOGGING
+	  RAW_LOG (INFO, "SendReceiver: Exception: %s", e.what());
+    #endif
   }
 }

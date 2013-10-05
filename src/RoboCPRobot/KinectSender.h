@@ -10,9 +10,11 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 #include "pcl/compression/octree_pointcloud_compression.h"
 
+#ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
 #include <glog/logging.h>
 #include <glog/raw_logging.h>
+#endif
 
 using boost::asio::ip::tcp;
 using namespace pcl;

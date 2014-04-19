@@ -1,7 +1,4 @@
-// ConsoleApplication1.cpp : Defines the entry point for the console application.
-//
-
-//#include "stdafx.h"
+﻿//#include "stdafx.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,7 +13,7 @@ WSADATA ws;
 using namespace std;
 
 
-const int  REQ_WINSOCK_VER   = 2;	// ����������� ��������� ������ WinSock
+const int  REQ_WINSOCK_VER   = 2;	
 const int  DEFAULT_PORT      = 8067;	
 const int  BUFF_SIZE=383631;
 const int  CHUNK_SIZE=383700;
@@ -44,7 +41,6 @@ string GetHostDescription(const sockaddr_in &sockAddr)
 
 void SetServerSockAddr(sockaddr_in *pSockAddr, int portNumber)
 {
-	// ������������� �������� ���������, ����� ����� � ���������� IP
 	pSockAddr->sin_family = AF_INET;
 	pSockAddr->sin_port = htons(portNumber);
 	pSockAddr->sin_addr.S_un.S_addr = INADDR_ANY;
@@ -147,7 +143,7 @@ int SEND(SOCKET s, int startRange)
 
 void HandleConnection(SOCKET hClientSocket, const sockaddr_in &sockAddr)
 {
-	// ������� ���������� � ������������ �������
+	
 	printf("Connected with %s .\n", GetHostDescription(sockAddr));
 
 	char StreamBuffer[BUFF_SIZE];
@@ -156,14 +152,14 @@ void HandleConnection(SOCKET hClientSocket, const sockaddr_in &sockAddr)
     int startRange;
 	int endRange;
 	
-	// �������� ������
+	
 	while(true)
 	{
 		fileCnt=GET(hClientSocket, StreamBuffer,BUFF_SIZE);
 
 		if (fileCnt ==0)
 		{ 
-			break; // ���������� ���� �������
+			break; 
 		}
 		else if (fileCnt ==SOCKET_ERROR)
 		{
@@ -191,42 +187,40 @@ bool RunServer(int portNumber)
 	
 	try
 	{
-		// ������� socket
+		
 		printf("Creating socket... ");
 		if ((hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
 			throw ROTException("could not create socket.");
 		printf("created.\n");
 		
-		// �������� socket
+		
 		printf("Binding socket... ");
 		SetServerSockAddr(&sockAddr, portNumber);
 		if (bind(hSocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr))!=0)
 			throw ROTException("could not bind socket.");
 		printf("bound.\n");
 
-		// ������������� socket � ����� �������������
+		
 		printf("Putting socket in listening mode... ");
 		if (listen(hSocket, SOMAXCONN)!=0)
 			throw ROTException("could not put socket in listening mode.");
 		printf("done.\n");
 
-		// ���� ����������
 		printf("Waiting for incoming connection... ");
 		
 		sockaddr_in clientSockAddr;
 		int			clientSockSize = sizeof(clientSockAddr);
 		
-		// ��������� ����������:
+		
 		hClientSocket = accept(hSocket,
 						 reinterpret_cast<sockaddr*>(&clientSockAddr),
 						 &clientSockSize);
 	
-		// ��������� ������� �� ������� ����������
+		
 		if (hClientSocket==INVALID_SOCKET)
 			throw ROTException("accept function failed.");
 		printf("accepted.\n");
 	
-		// ������������ ����������:
 		HandleConnection(hClientSocket, clientSockAddr);
 	}
 	catch(ROTException e)
@@ -252,7 +246,7 @@ int main(int argc, char* argv[])
 
 	if (WSAStartup(MAKEWORD(REQ_WINSOCK_VER,0), &wsaData)==0)
 	{
-		// ��������� �������� �� ��� ����������� ��������� ������ WinSock
+		
 		if (LOBYTE(wsaData.wVersion) >= REQ_WINSOCK_VER)
 		{
 			printf("initialized.\n");
@@ -265,8 +259,8 @@ int main(int argc, char* argv[])
 		}
 
 		printf("Cleaning up winsock... ");
-
-		// ������� WinSock
+		
+		
 		if (WSACleanup()!=0)
 		{
 			cerr << "cleanup failed!\n";

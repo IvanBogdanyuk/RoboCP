@@ -1,0 +1,13 @@
+@startuml
+
+interface Robot
+
+package "Server" {
+  Robot -down-> [KinectReceiver] : KinectData
+  Robot -down-> [SendReceiver] : Send
+  [KinectReceiver] -down-> [KinectViewer] : KinectData
+
+  [SendReceiver] -down-> [KinectViewer] : Send
+  [CommandMaker] -left-> Robot : Command
+}
+@enduml

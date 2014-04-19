@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="9">
+<c class_id="0" tracking_level="0" version="0">
+	<IP>127.0.0.1</IP>
+	<KinectPort>6666</KinectPort>
+	<CommandPort>6667</CommandPort>
+	<compressionProfile>0</compressionProfile>
+	<showStatistics>0</showStatistics>
+	<pointResolution>0.001</pointResolution>
+	<octreeResolution>0.01</octreeResolution>
+	<doVoxelGridDownDownSampling>0</doVoxelGridDownDownSampling>
+	<iFrameRate>30</iFrameRate>
+	<doColorEncoding>0</doColorEncoding>
+	<colorBitResolution>6</colorBitResolution>
+</c>
+</boost_serialization>
+

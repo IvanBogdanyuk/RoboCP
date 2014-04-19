@@ -1,0 +1,55 @@
+@startuml
+
+package "Intel 2800"{
+package "Kinect"{
+  [Kinect]
+}
+  [Kinect] --> [KinectListener]:flow
+  [KinectListener] --> [KinectProcessing]:flow
+  [KinectProcessing] --> [KinectCompression]
+  [KinectCompression] -->[KinectCommunication]
+  [KinectCommunication]-->[Server]
+
+package "Video"{
+  [Camera]
+}
+  [Camera]-->[VideoListener]:flow
+  [VideoListener]-->[VideoProcessing]:flow
+  [VideoProcessing]-->[RM]
+  [RM]-->[ArduCopter]
+  
+  [USB2]-->[Listener2]:flow
+  [Listener2]-->[Processing2]:flow
+  [Processing2]-->[ComputerCommunication]
+  
+  [USB]-->[Listener]:flow
+  [Listener]-->[Processing]:flow
+  [Processing]-->[ComputerCommunication]
+}
+
+
+package "Server"{
+  [Server]
+}
+
+[ComputerCommunication]-->[Server]
+[Server]-->[ComputerCommunication]:command
+[ComputerCommunication]-->[RM]:command
+
+package "ArduCopter"{
+  [Rangefinder]  
+  [ArduCopter]->miniUSB2
+}
+
+package "CarDuino Nano"{
+  [CarDuino Nano]->miniUSB
+  [*5 Rangefinders]
+}
+
+miniUSB-[USB]
+miniUSB2-[USB2]
+[Rangefinder]-->[RM]
+[*5 Rangefinders]-->[RM]
+[User]->[RM]
+
+@enduml

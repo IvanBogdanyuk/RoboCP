@@ -1,0 +1,61 @@
+@startuml
+note "stringstream buffer will be replaced with something \ndifferent. New class RobotBuffer may be." as N0
+
+abstract class SocketServer {
+  #boost::asio::io_service io_service;
+  #tcp::endpoint endpoint;
+  #tcp::iostream socketStream;
+  #tcp::acceptor * acceptor;
+  #stringstream * buffer;
+  
+  +SocketServer (string address, unsigned short port, stringstream * buf)
+  +~SocketServer ()
+  +{abstract} void start ()
+}
+
+class SocketServerListener {
+  +void start ()
+}
+
+class SocketServerSender {
+  +void start ()
+}
+
+SocketServer -down-|> SocketServerListener
+SocketServer -down-|> SocketServerSender
+
+note "Difference only in start() function" as N1
+SocketServerListener -- N1
+SocketServerSender -- N1
+
+
+
+
+abstract class SocketClient {
+  #tcp::iostream socketStream;
+  #stringstream * buffer;
+  #string address;
+  #unsigned short port;
+  
+  +SocketClient (string address, unsigned short port, stringstream * buf)
+  +{abstract} void start ()
+}
+
+class SocketClientListener {
+  +void start ()
+}
+
+class SocketClientSender {
+  +void start ()
+}
+
+SocketClient -down-|> SocketClientListener
+SocketClient -down-|> SocketClientSender
+
+note "Difference only in start() function" as N2
+SocketClientListener -- N2
+SocketClientSender -- N2
+
+N0 .down. SocketServer
+N0 .down. SocketClient
+@enduml

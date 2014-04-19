@@ -1,0 +1,17 @@
+@startuml
+package "CarDuino"{
+  Class TelemetricsSender
+  Class CommandListener
+  Class GPSSignalMaker
+  Class GPSSignalSender
+  Interface Rangefinder
+  Class Ultrasonic
+  Class Main
+  Main *-down- TelemetricsSender
+  Main *-left- CommandListener
+  Main *-up- Ultrasonic
+  Ultrasonic -left-|> Rangefinder
+  Main *-right- GPSSignalMaker
+  GPSSignalMaker *-up- GPSSignalSender
+}
+@enduml

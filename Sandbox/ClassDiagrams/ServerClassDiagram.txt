@@ -1,0 +1,142 @@
+@startuml
+
+class Command {
+  +int ComType;
+  +int ComCondition;
+  +float Value;
+  +time_t Time;
+  +Command (int t, int c, float v);
+  +Command ();
+
+  -serialize ();
+}
+
+class Point3d {
+  +short x;
+  +short y;
+  +short z;
+
+  -serialize ()
+}
+
+class Send {
+  +unsigned short TopSonicSensor;
+  +unsigned short FrontSonicSensor;
+  +unsigned short LeftSonicSensor;
+  +unsigned short RightSonicSensor;
+  +unsigned short BackSonicSensor;
+
+  +float Roll;
+  +float Pitch;
+  +float Yaw;
+  +float AltitudeSonic;
+  +float AltitudeBarometer;
+  
+  +Point3d Acceleration;
+  +time_t Time;
+  
+  +Send(void);
+  +~Send(void);
+  -serialize (); 
+}
+
+Point3d -down-* Send
+
+class KinectData {
+  +PointCloud<PointXYZ>::Ptr Cloud; // Boost shared_ptr to point cloud
+  +time_t Time; // Time
+  +KinectData(void);
+  +KinectData(PointCloud<PointXYZ>::Ptr cloud, time_t time);
+  +~KinectData();
+}
+
+class ReceivedBuffer {
+  -queue<Type> queue;
+  -boost::interprocess::interprocess_mutex* mtx;   // Mutex for thread safety
+
+  +boost::interprocess::interprocess_semaphore* Vacant;   // Count of vacant places
+  +boost::interprocess::interprocess_semaphore* Used;   // Count of used places
+   
+  +ReceivedBuffer(int size);
+  +~ReceivedBuffer(void);
+  +void Enqueue(Type a);   // Add to buffer
+  +Type Dequeue();   // Receive from buffer
+}
+
+ReceivedBuffer --|> KinectBuffer : Type = shared_ptr<KinectData>
+ReceivedBuffer --|> SendBuffer : Type = shared_ptr<Send>
+
+Send --o SendBuffer
+KinectData --o KinectBuffer
+
+class CommandMaker {
+  +void Start ();
+  +CommandMaker(XMLConfig * x);
+  +~CommandMaker(void);
+
+  -string ip;
+  -string port;
+}
+CommandMaker --> Command : create
+
+class KinectReceiver {
+  +void Start ();
+  +KinectReceiver(XMLConfig * x, KinectViewer* v);
+  +~KinectReceiver(void);
+
+  -KinectViewer* kinectViewer;
+  -PointCloudCompression<PointXYZ>* octreeCoder;
+  -string ip;
+  -string port;
+}
+KinectReceiver --> KinectData : Receive
+
+class KinectViewer {
+  +void Start ();
+  +KinectViewer(XMLConfig * x);
+  +~KinectViewer(void);
+  +pcl::visualization::PCLVisualizer* viewer;
+}
+
+class SendReceiver {
+  +void Start ();
+  +SendReceiver (XMLConfig * x, KinectViewer* v);
+  +~SendReceiver (void);
+
+  -string ip;
+  -string port;
+  -KinectViewer* kinectViewer;
+  -void updateText (boost::shared_ptr<Send> s);
+}
+SendReceiver --> Send : Receive
+
+SendReceiver -right-> KinectViewer : Use
+KinectReceiver -left-> KinectViewer : Use
+  
+class XMLConfig {
+  +string IP;
+  +string KinectPort;
+  +string CommandPort;
+  +string SendPort;
+  +string CarduinoPort;
+  +string ArducopterPort;
+
+  +pcl::octree::compression_Profiles_e CompressionProfile;
+
+  +bool ShowStatistics;
+  +double PointResolution;
+  +double OctreeResolution;
+  +bool DoVoxelGridDownDownSampling;
+  +unsigned int IFrameRate;
+  +bool DoColorEncoding;
+  +unsigned int ColorBitResolution;
+
+  +int CameraNumber;
+  +int CameraFramesPerSecond;
+  +int CameraFrameWidth;
+  +int CameraFrameHeight;
+
+  -serialize ()
+}
+
+@enduml

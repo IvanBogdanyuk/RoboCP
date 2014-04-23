@@ -1,4 +1,3 @@
-﻿//#include "stdafx.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -130,7 +129,7 @@ int SEND(SOCKET s, int startRange)
 	    seekAmount += 200;
 	    file.read(&ss[0],200);
 	    send(s,ss.c_str(),ss.size(),0);
-	
+
 	    response.append("\r\n");
 	    response.append(ss);
 	    response.append("\r\n");
@@ -143,7 +142,7 @@ int SEND(SOCKET s, int startRange)
 
 void HandleConnection(SOCKET hClientSocket, const sockaddr_in &sockAddr)
 {
-	
+
 	printf("Connected with %s .\n", GetHostDescription(sockAddr));
 
 	char StreamBuffer[BUFF_SIZE];
@@ -151,8 +150,8 @@ void HandleConnection(SOCKET hClientSocket, const sockaddr_in &sockAddr)
 	int fileCnt;
     int startRange;
 	int endRange;
-	
-	
+
+
 	while(true)
 	{
 		fileCnt=GET(hClientSocket, StreamBuffer,BUFF_SIZE);
@@ -167,7 +166,7 @@ void HandleConnection(SOCKET hClientSocket, const sockaddr_in &sockAddr)
 		}
 		else
 		{
-		
+
 		printf("Request recieved as \n%s\n",StreamBuffer); 
 		int startRange = FindRange(StreamBuffer,"bytes=");
 		printf("startRange = %i\n",startRange);
@@ -184,43 +183,43 @@ bool RunServer(int portNumber)
 				hClientSocket = INVALID_SOCKET;
 	bool		bSuccess = true;
 	sockaddr_in	sockAddr = {0};
-	
+
 	try
 	{
-		
+
 		printf("Creating socket... ");
 		if ((hSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET)
 			throw ROTException("could not create socket.");
 		printf("created.\n");
-		
-		
+
+
 		printf("Binding socket... ");
 		SetServerSockAddr(&sockAddr, portNumber);
 		if (bind(hSocket, reinterpret_cast<sockaddr*>(&sockAddr), sizeof(sockAddr))!=0)
 			throw ROTException("could not bind socket.");
 		printf("bound.\n");
 
-		
+
 		printf("Putting socket in listening mode... ");
 		if (listen(hSocket, SOMAXCONN)!=0)
 			throw ROTException("could not put socket in listening mode.");
 		printf("done.\n");
 
 		printf("Waiting for incoming connection... ");
-		
+
 		sockaddr_in clientSockAddr;
 		int			clientSockSize = sizeof(clientSockAddr);
-		
-		
+
+
 		hClientSocket = accept(hSocket,
 						 reinterpret_cast<sockaddr*>(&clientSockAddr),
 						 &clientSockSize);
-	
-		
+
+
 		if (hClientSocket==INVALID_SOCKET)
 			throw ROTException("accept function failed.");
 		printf("accepted.\n");
-	
+
 		HandleConnection(hClientSocket, clientSockAddr);
 	}
 	catch(ROTException e)
@@ -231,10 +230,10 @@ bool RunServer(int portNumber)
 
 	if (hSocket!=INVALID_SOCKET)
 		closesocket(hSocket);
-	
+
 	if (hClientSocket!=INVALID_SOCKET)
 		closesocket(hClientSocket);
-		
+
 	return bSuccess;
 }	
 
@@ -246,7 +245,7 @@ int main(int argc, char* argv[])
 
 	if (WSAStartup(MAKEWORD(REQ_WINSOCK_VER,0), &wsaData)==0)
 	{
-		
+
 		if (LOBYTE(wsaData.wVersion) >= REQ_WINSOCK_VER)
 		{
 			printf("initialized.\n");
@@ -259,8 +258,8 @@ int main(int argc, char* argv[])
 		}
 
 		printf("Cleaning up winsock... ");
-		
-		
+
+
 		if (WSACleanup()!=0)
 		{
 			cerr << "cleanup failed!\n";
@@ -271,5 +270,5 @@ int main(int argc, char* argv[])
 	{
 		cerr << "startup failed!\n";
 	}
-	return 0;}
-
+	return 0;
+}

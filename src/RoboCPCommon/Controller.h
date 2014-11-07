@@ -2,9 +2,10 @@
 class Controller
 {
 public:
-  void Start(void);
-  void Stop(void);
-  Controller(void);
-  ~Controller(void);
+	void Start(void);
+	void FakeStart(void);
+	void Stop(void);
+	Controller(void);
+	~Controller(void);
 };
 

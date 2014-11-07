@@ -8,18 +8,21 @@
 #include "ImageFlowProcessing.h"
 
 class CameraController :
-  public Controller
+	public Controller
 {
 private:
-  int cameraNum;
-  int fps;
-  int width;
-  int height;
-  CameraReceivedBuffer *buffer;
+	int cameraNum;
+	int fps;
+	int width;
+	int height;
+	int VideoStreamType;
+	string FileName;
+	CameraReceivedBuffer *buffer;
 public:
-  void Start(void);
-  CameraReceivedBuffer *GetBuffer(void);
-  CameraController(XMLConfig *x, CameraReceivedBuffer *buf);
-  ~CameraController(void);
+	void Start(void);
+	void FakeStart(void);
+	CameraReceivedBuffer *GetBuffer(void);
+	CameraController(XMLConfig *x, CameraReceivedBuffer *buf);
+	~CameraController(void);
 };
 

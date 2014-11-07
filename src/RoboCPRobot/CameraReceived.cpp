@@ -3,8 +3,9 @@
 
 CameraReceived::CameraReceived(IplImage *ImageToSave)
 {
-  Frame = 0;
-  Frame = cvCloneImage(ImageToSave);
+ 
+	Frame = cvCloneImage(ImageToSave);
+  
 }
 
 CameraReceived::CameraReceived()

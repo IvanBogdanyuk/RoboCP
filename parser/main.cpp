@@ -3,9 +3,11 @@
 #include <fstream>
 #include <vector>
 using namespace std;
-///finds first name from string from poistion=pos
 void writetohfile(string classname, vector<pair<string, string>> classdata);
 void writetocppfile(string classname, vector<pair<string, string>> classdata);
+
+///finds first name from string from poistion=pos,
+//if nothing is found makes empty pair with "-1" as 2 argument
 pair<string,int> getName(string s, int pos)
 {
 	int namestart = s.find('"', pos);
@@ -15,6 +17,8 @@ pair<string,int> getName(string s, int pos)
 	int nameend = s.find('"', namestart + 1);
 	return make_pair(s.substr(namestart + 1, nameend - 1 - namestart),nameend);
 }
+///finds pair (key,value) and index of last symbol in value name,
+//if nothing is found makes empty pair with "-1" as 2 argument 
 pair<pair<string,string>, int> getKeyValue(string s, int pos)
 {
 	if (s.find('"', pos) > s.find('}') || (s.find('"', pos) == -1))

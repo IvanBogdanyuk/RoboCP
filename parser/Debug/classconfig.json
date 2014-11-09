@@ -1,0 +1,17 @@
+{
+	"Camera" : {
+			"Number" : "int",
+			"FramesPerSecond" : "int",
+			"FrameWidth" : "int",
+			"FrameHeight" : "int"
+		 },
+	"Carduino" : {
+			 "Port" : "string"
+			 },
+	"Arducopter" : {
+			     "Port" : "string",
+  			     "IsAvailable" : "bool",
+			     "DoFakeStart" : "bool"
+		     }
+	
+}

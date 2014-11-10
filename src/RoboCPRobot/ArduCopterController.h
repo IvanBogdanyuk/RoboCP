@@ -2,6 +2,7 @@
 #include "controller.h"
 #include "ArduCopterBuffer.h"
 #include "XMLConfig.h"
+#include "JSONConfig.h"
 #include "SerialCom.h"
 #include <string.h>
 #include <time.h>
@@ -31,7 +32,7 @@ private:
 public:
   void Start(void);
   void FakeStart(void);
-  ArduCopterController(XMLConfig *x, ArduCopterBuffer *buf);
+  ArduCopterController(Config *x, ArduCopterBuffer *buf);
   ~ArduCopterController(void);
 };
 

@@ -34,10 +34,13 @@ add_executable (Robot
 	RoboCPCommon/KinectData.h RoboCPCommon/KinectData.cpp
 	RoboCPCommon/KinectBuffer.h 
 	
+	RoboCPCommon/JSONConfig.h RoboCPCommon/JSONConfig.cpp
 	RoboCPCommon/XMLConfig.h RoboCPCommon/XMLConfig.cpp
 
 	RoboCPCommon/Point3d.h
 
+	RoboCPRobot/ArduCopterConfig.h RoboCPRobot/ArduCopterConfig.cpp
+	RoboCPRobot/Config.h RoboCPRobot/Config.cpp
 	
 	RoboCPRobot/CommandProcessing.h RoboCPRobot/CommandProcessing.cpp
 	RoboCPRobot/CommandBuffer.h
@@ -91,7 +94,7 @@ add_executable (Server
 	RoboCPCommon/KinectData.h RoboCPCommon/KinectData.cpp
 	RoboCPCommon/KinectBuffer.h 
 
-	RoboCPCommon/XMLConfig.h RoboCPCommon/XMLConfig.cpp
+	RoboCPCommon/JSONConfig.h RoboCPCommon/JSONConfig.cpp
 
 	RoboCPCommon/Point3d.h
 

@@ -15,6 +15,7 @@
 #include "ClientReceiver.h"
 #include "SendProcessing.h"
 #include "SendSender.h"
+#include "JSONConfig.h"
 #include "XMLConfig.h"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
@@ -89,15 +90,20 @@ int main(char *args[], int count)
   return 0;
   #endif
 
-  XMLConfig config;
+  JSONConfig config1;
   { // Loading config from "config.xml" 
+    config1.Parser("config2.json");
+  }
+
+  XMLConfig config;
+  { // Loading config from "config.xml"
     std::ifstream ifs("config.xml");
-	if (ifs.is_open()) {
-	  boost::archive::xml_iarchive ia(ifs);
-	  ia >> BOOST_SERIALIZATION_NVP(config);
-	}
-	else
-	  cout << "Can't find config.xml! Default config used." << endl; // No config.xml found
+    if (ifs.is_open()) {
+    boost::archive::xml_iarchive ia(ifs);
+    ia >> BOOST_SERIALIZATION_NVP(config);
+  }
+  else
+    cout << "Can't find config.xml! Default config used." << endl; // No config.xml found
   }
 
   KinectBuffer kinectBuffer1 (10);
@@ -111,7 +117,7 @@ int main(char *args[], int count)
   NanoController  NanoControl(&config, &NanoBuffer);
 
   ArduCopterBuffer CopterBuffer(1000);
-  ArduCopterController CopterControl(&config, &CopterBuffer);
+  ArduCopterController CopterControl(config1.ConfigByName("ArduCopter"), &CopterBuffer);
 
   CameraReceivedBuffer CameraBuffer(1000);
   CameraController CameraControl(&config, &CameraBuffer);

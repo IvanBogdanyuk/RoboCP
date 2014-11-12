@@ -82,9 +82,6 @@ void writetohfile(string classname, vector<pair<string, string>> classdata)
 		"  %classname%();\n"
 		"  ~%classname%();\n"
 		"[getmas]\n"
-		//"  void set(string key,string value);\n"
-		//"  template<class T>\n"
-		//"  T get(string key);\n"
 		"private:\n"
 		"[prop]"
 		"};";
@@ -126,13 +123,7 @@ void writetocppfile(string classname, vector<pair<string, string>> classdata)
 		"  \n"
 		"}\n"
 		"[getmas]";
-	//"void %classname%::set(string key,string value) {\n"
-	//" [setbody]"
-	//"}\n"
-	//"template<class T>\n"
-	//"void %classname%::get(string key) {\n"
-	//"[getbody]"
-	//"}\n";
+	
 	while (templatestr.find("%classname%") != -1)
 	{
 		templatestr.replace(templatestr.find("%classname%"), 11, classname);

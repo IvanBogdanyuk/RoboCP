@@ -161,54 +161,6 @@ void writetocppfile(string classname, vector<pair<string, string>> classdata)
 	templatestr.replace(templatestr.find("[getmas]"), 8, getmas);
 	fout << templatestr;
 	fout.close();
-	/*
-	fout << "#include \"" << classname << "Controller.h\"" << endl;
-	fout << "template<class T>" << endl;
-	fout << "T parse(string value, string type){ " << endl;
-	fout << "  if( type == \"int\" )" << endl;
-	fout << "    try{" << endl;
-	fout << "      int t=stoi(value);" << endl;
-	fout << "      return t;" << endl;
-	fout << "    }" << endl;
-	fout << "    catch{" << endl;
-	fout << "      return -1;" << endl;
-	fout << "    }" << endl;
-	fout << "  else" << endl;
-	fout << "  if( type == \"double\" )" << endl;
-	fout << "    return strtod(value, nullptr);" << endl;
-	fout << "  else" << endl;
-	fout << "  if( type == \"bool\" )" << endl;
-	fout << "    return value == \"true\";" << endl;
-	fout << "  else" << endl;
-	fout << "  if( type ==\ \"string\" )" << endl;
-	fout << "    return value;" << endl;
-	fout << "}" << endl;
-	for (int i = 0; i < classdata.size(); ++i)
-	{
-
-	}
-	//set
-	fout << "void "<<classname<<"::set(string key, string value) {" << endl;
-	for (int i = 0; i < classdata.size(); ++i)
-	{
-	fout << "  if ( key == " << "\"" << classdata[i].first << "\" ) " << endl;
-	fout << "    " << classdata[i].first << " = parse<" << classdata[i].second << ">(value, \""<<classdata[i].second <<"\");" << endl;
-	if (i != classdata.size() - 1)
-	fout << "  else" << endl;
-	}
-	fout << "}" << endl;
-	//set
-
-	//get
-	fout << "template<class T>" << endl;
-	fout << "T " << classname << "::get(string key){" << endl;
-	for (int i = 0; i < classdata.size(); ++i)
-	{
-	fout << "  if ( key == " << "\"" << classdata[i].first << "\" ) " << endl;
-	fout << "    return " << classdata[i].first << ";" << endl;
-	}
-	fout << "}";
-	*/
 }
 void wrtitetocf(vector<pair<string, vector<pair<string, string>>>> classmas)
 {

@@ -6,26 +6,30 @@
 #include <boost/property_tree/ptree.hpp>
 #include "ArduCopterConfig.h"
 #include <unordered_map>
+#include <QJsonDocument.h>
+#include <QFile.h>
+#include <QString.h>
+#include <QByteArray.h>
+#include <QJsonObject.h>
+#include <QHash>
 
 //#define ENABLE_LOGGING
 
 using namespace pcl;
 using namespace pcl::octree;
-using namespace std;
-
 
 // Config class
 class JSONConfig {
 private:
 
 	boost::property_tree::ptree JSONTree; //Tree with "config.json"
-	void CreateDefaultConfig(std::string fileName);
-    unordered_map<string, Config*> MapOfConfigs;
-	Config* DetermineConfigObject(boost::property_tree::ptree treeOfObject);
+	void CreateDefaultConfig(QString fileName);
+	QHash<QString, Config*> MapOfConfigs;
+	Config* DetermineConfigObject(QJsonObject treeOfObject);
 
 public:
 
   JSONConfig();
-  void Parser(std::string fileName);
-  Config* ConfigByName(std::string configName);
+  void Parser(QString fileName);
+  Config* ConfigByName(QString configName);
 };

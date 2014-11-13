@@ -1,42 +1,46 @@
 #include "JSONConfig.h"
 #include "boost\property_tree\json_parser.hpp"
 
-
 JSONConfig::JSONConfig ()
 {
 	
 }
 
-void JSONConfig::CreateDefaultConfig(std::string fileName)
+void JSONConfig::CreateDefaultConfig(QString fileName)
 {
   // default values
-  JSONTree.put("IP", "127.0.0.1");
-  JSONTree.put("KinectPort.Port", "6666");
-  JSONTree.put("CommandPort.Port", "6667");
-  JSONTree.put("SendPort.Port", "6668");
-  JSONTree.put("CarduinoPort.Port", "\\\\.\\COM3");
-  JSONTree.put("ArducopterPort.Port", "\\\\.\\COM4");
-  JSONTree.put("CompressionProfile", pcl::octree::LOW_RES_ONLINE_COMPRESSION_WITHOUT_COLOR); //-?
-  JSONTree.put("ShowStatistics", false);
-  JSONTree.put("PointResolution", 0.001);
-  JSONTree.put("OctreeResolution", 0.01);
-  JSONTree.put("DoVoxelGridDownDownSampling", false);
-  JSONTree.put("IFrameRate", 30);
-  JSONTree.put("DoColorEncoding", false);
-  JSONTree.put("ColorBitResolution", 6);
-  JSONTree.put("CameraNumber", 1);
-  JSONTree.put("CameraFramesPerSecond", 180);
-  JSONTree.put("CameraFrameWidth", 320);
-  JSONTree.put("CameraFrameHeight", 240);
-  std::ofstream file(fileName);
-  boost:property_tree:write_json(file, JSONTree);
-  MapOfConfigs = unordered_map<string, Config*>();
-  file.close();
+  //JSONTree.put("IP", "127.0.0.1");
+  //JSONTree.put("KinectPort.Port", "6666");
+  //JSONTree.put("CommandPort.Port", "6667");
+  //JSONTree.put("SendPort.Port", "6668");
+  //JSONTree.put("CarduinoPort.Port", "\\\\.\\COM3");
+  //JSONTree.put("ArducopterPort.Port", "\\\\.\\COM4");
+  //JSONTree.put("CompressionProfile", pcl::octree::LOW_RES_ONLINE_COMPRESSION_WITHOUT_COLOR); //-?
+  //JSONTree.put("ShowStatistics", false);
+  //JSONTree.put("PointResolution", 0.001);
+  //JSONTree.put("OctreeResolution", 0.01);
+  //JSONTree.put("DoVoxelGridDownDownSampling", false);
+  //JSONTree.put("IFrameRate", 30);
+  //JSONTree.put("DoColorEncoding", false);
+  //JSONTree.put("ColorBitResolution", 6);
+  //JSONTree.put("CameraNumber", 1);
+  //JSONTree.put("CameraFramesPerSecond", 180);
+  //JSONTree.put("CameraFrameWidth", 320);
+  //JSONTree.put("CameraFrameHeight", 240);
+  //std::ofstream file(fileName);
+  //boost:property_tree:write_json(file, JSONTree);
+  //MapOfConfigs = unordered_map<string, Config*>();
+  //file.close();
 }
 
-void JSONConfig::Parser(std::string fileName)
+void JSONConfig::Parser(QString fileName)
 {
-  std::ifstream ifs(fileName);
+  QFile json(fileName);
+  if(json.open(QIODevice::ReadOnly))
+  {
+    QJsonParseError  parseError;
+	QJsonObject jsonDoc = QJsonDocument::fromJson(json.readAll(), &parseError).object();
+  /*std::ifstream ifs(fileName);
   if (ifs.is_open())
   {
     boost::property_tree::read_json(ifs, JSONTree);
@@ -44,10 +48,11 @@ void JSONConfig::Parser(std::string fileName)
   else
   {
     CreateDefaultConfig(fileName);
-  }
-  BOOST_FOREACH(auto &child, JSONTree)
-  {
-	  MapOfConfigs[child.first.c_str()] = DetermineConfigObject(child.second);
+  }*/
+	for(auto it = jsonDoc.begin(); it != jsonDoc.end(); it++)
+	{
+		MapOfConfigs[it.key()] = DetermineConfigObject(it.value().toObject());
+	}
   }
   /*IP = JSONTree.get<std::string>("IP.Address", "127.0.0.1");
   KinectPort = JSONTree.get<std::string>("KinectPort.Port", "6666");
@@ -69,20 +74,20 @@ void JSONConfig::Parser(std::string fileName)
   CameraFrameHeight = JSONTree.get<int>("OctreeResolution", 240);*/
 }
 
-Config* JSONConfig::DetermineConfigObject(boost::property_tree::ptree treeOfObject)
+Config* JSONConfig::DetermineConfigObject(QJsonObject treeOfObject)
 {
-	std::string type = treeOfObject.get<std::string>("Type");
+	QString type = treeOfObject.value("Type").toString();
 	if(type == "ArduCopter")
 	{
 		ArduCopterConfig* config = new ArduCopterConfig();
-		config->DoFakeStart = treeOfObject.get<bool>("DoFakeStart");
-		config->IsAvailable = treeOfObject.get<bool>("IsAvailable");
-		config->setPort(treeOfObject.get<std::string>("Port"));
+			config->DoFakeStart = treeOfObject.value("DoFakeStart").toInt();
+		config->IsAvailable = treeOfObject.value("IsAvailable").toInt();
+		config->setPort(treeOfObject.value("Port").toString().toStdString());
 		return config;
 	}
 }
 
-Config* JSONConfig::ConfigByName(std::string configName)
+Config* JSONConfig::ConfigByName(QString configName)
 {
 	return MapOfConfigs[configName];
 }

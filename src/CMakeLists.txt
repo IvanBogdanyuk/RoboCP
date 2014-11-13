@@ -20,6 +20,8 @@ INCLUDE_DIRECTORIES(RoboCPRobot)
 INCLUDE_DIRECTORIES(RoboCPServer)
 INCLUDE_DIRECTORIES(RoboCPCommon)
 
+find_package(Qt5Core)
+
 project(Robot)
 
 add_executable (Robot
@@ -76,7 +78,7 @@ add_executable (Robot
 	RoboCPRobot/main.cpp
 
 )
-target_link_libraries (Robot ${PCL_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries (Robot ${PCL_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS} ${Qt5Core_LIBRARIES})
 
 
 

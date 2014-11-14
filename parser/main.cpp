@@ -5,7 +5,8 @@
 using namespace std;
 void writetohfile(string classname, vector<pair<string, string>> classdata);
 void writetocppfile(string classname, vector<pair<string, string>> classdata);
-void wrtitetocf(vector<pair<string, vector<pair<string, string>>>> classmas);
+void wrtitetocfh(vector<pair<string, vector<pair<string, string>>>> classmas);
+void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas);
 ///finds first name from string from poistion=pos,
 //if nothing is found makes empty pair with "-1" as 2 argument
 pair<string, int> getName(string s, int pos)
@@ -66,21 +67,23 @@ void parsecf(string &s)
 		writetohfile(classmas[i].first, classmas[i].second);
 		writetocppfile(classmas[i].first, classmas[i].second);
 	}
-	wrtitetocf(classmas);
+	wrtitetocfcpp(classmas);
+	wrtitetocfh(classmas);
 	return;
 }
 
 void writetohfile(string classname, vector<pair<string, string>> classdata)
 {
-	string filename = classname + "Controller.h";
+	string filename = classname + "Config.h";
 	ofstream out(filename, ofstream::out);
 	string templatestr =
 		"#pragma once\n"
-		"#include \"Controller.h\"\n"
-		"class %classname% : public Controller{\n"
+		"#include \"Config.h\"\n"
+		"class %classname%Config : public Config{\n"
 		"public:\n"
-		"  %classname%();\n"
-		"  ~%classname%();\n"
+		"  %classname%Config();\n"
+		"  %classname%Config([paramas]);\n"
+		"  ~%classname%Config();\n"
 		"[getmas]\n"
 		"private:\n"
 		"[prop]"
@@ -91,7 +94,18 @@ void writetohfile(string classname, vector<pair<string, string>> classdata)
 	{
 		templatestr.replace(templatestr.find("%classname%"), 11, classname);
 	}
-	
+	if (classdata.size() != 0)
+	{
+
+		string paramas = "";
+		for (int i = 0; i < classdata.size(); ++i)
+		{
+			paramas += " " + classdata[i].second + " _" + classdata[i].first + ",";
+		}
+		paramas.pop_back();
+		paramas += " ";
+		templatestr.replace(templatestr.find("[paramas]"), 9, paramas);
+	}
 	string getmas = "";
 	for (int i = 0; i < classdata.size(); ++i)
 	{
@@ -112,18 +126,27 @@ void writetohfile(string classname, vector<pair<string, string>> classdata)
 
 void writetocppfile(string classname, vector<pair<string, string>> classdata)
 {
-	string filename = classname + "Controller.cpp";
+	string filename = classname + "Config.cpp";
 	ofstream fout(filename, ofstream::out);
+
+	string constwparam = "";
+	if (classdata.size() != 0)
+		constwparam =
+		"%classname%Config::%classname%Config([paramas]) {\n"
+		"[setmas]"
+		"}\n";
+
 	string templatestr =
-		"#include \"%classname%Controller.h\"\n\n"
-		"%classname%():[constructorinit] {\n"
+		"#include \"%classname%Config.h\"\n\n"
+		"%classname%Config::%classname%Config():[constructorinit] {\n"
 		"  \n"
 		"}\n"
-		"~%classname%(){\n"
+		+ constwparam +
+		"%classname%Config::~%classname%Config(){\n"
 		"  \n"
 		"}\n"
 		"[getmas]";
-	
+
 	while (templatestr.find("%classname%") != -1)
 	{
 		templatestr.replace(templatestr.find("%classname%"), 11, classname);
@@ -151,62 +174,133 @@ void writetocppfile(string classname, vector<pair<string, string>> classdata)
 			constructorinit += ") ";
 	}
 	templatestr.replace(templatestr.find("[constructorinit]"), 17, constructorinit);
+	if (classdata.size() != 0)
+	{
 
+		string paramas = "";
+		for (int i = 0; i < classdata.size(); ++i)
+		{
+			paramas += " " + classdata[i].second + " _" + classdata[i].first + ",";
+		}
+		paramas.pop_back();
+		paramas += " ";
+		templatestr.replace(templatestr.find("[paramas]"), 9, paramas);
+		string setmas = "";
+		for (int i = 0; i < classdata.size(); ++i)
+		{
+			setmas += "  " + classdata[i].first + " = _" + classdata[i].first + ";\n";
+		}
+		templatestr.replace(templatestr.find("[setmas]"), 8, setmas);
+	}
 	string getmas = "";
 	for (int i = 0; i < classdata.size(); ++i)
 	{
-		getmas += "" + classdata[i].second + " get" + classdata[i].first + "() {\n";
+		getmas += classdata[i].second + +" " + classname + "Config::" + "get" + classdata[i].first + "() {\n";
 		getmas += "  return " + classdata[i].first + ";\n}\n";
 	}
 	templatestr.replace(templatestr.find("[getmas]"), 8, getmas);
 	fout << templatestr;
 	fout.close();
 }
-void wrtitetocf(vector<pair<string, vector<pair<string, string>>>> classmas)
+void wrtitetocfh(vector<pair<string, vector<pair<string, string>>>> classmas)
 {
-	ofstream out("configFactory.cpp", ofstream::out);
-	string templatestr =
-		"[incmas]\n"
-		"enum device[enummas]\n"
-		"controller* create(device d) {\n"
-		"  switch (d){\n"
-		"[casemas]"
-		"  default:\n"
-		"    return nullptr;\n"
-		"  break;\n"
-		"  }\n"
-		"}";
+	ofstream outh("configFactory.h", ofstream::out);
+	string templatestrh = 
+		"#pragma once\n"
+		"#include <iostream>\n"
+		"#include <QJsonDocument.h>\n"
+		"#include <QFile.h>\n"
+		"#include <QString.h>\n"
+		"#include <QByteArray.h>\n"
+		"#include <QJsonObject.h>\n"
+		"#include <QHash>\n"
+		"[incmas]"
+		"\n"
+		"class configFactory{\n"
+		"public:\n"
+		"  Config* ConfigByName(QString configName);"
+		"  configFactory();\n"
+		"  ~configFactory();\n"
+		"private:\n"
+		"  QHash<QString, Config*> MapOfConfigs;\n"
+		"  Config* DetermineConfigObject(QJsonObject treeOfObject);\n"
+		"};"
+		"";
 	string incmas = "";
 	for (int i = 0; i < classmas.size(); ++i)
 	{
-		incmas += "#include \"" + classmas[i].first + "\".h\n";
+		incmas += "#include \"" + classmas[i].first + "Config\".h\n";
 	}
-	templatestr.replace(templatestr.find("[incmas]"), 8, incmas);
-	string enummas = "{";
-	for (int i = 0; i < classmas.size(); ++i)
-	{
+	templatestrh.replace(templatestrh.find("[incmas]"), 8, incmas);
+	outh << templatestrh;
+	outh.close();
 
-		if (i != classmas.size() - 1)
-			enummas += " " + classmas[i].first + ",";
-		else
-			enummas += " " + classmas[i].first + " };";
-	}
-	templatestr.replace(templatestr.find("[enummas]"), 9, enummas);
-	string casemas = "";
+}
+void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas)
+{
+	
+	ofstream outcpp("configFactory.cpp", ofstream::out);
+	
+	string templatestrcpp =
+		"#include \"configFactory.h\"\n\n"
+		"configFactory::~configFactory(){\n"
+		"\n"
+		"}\n"
+		"configFactory::configFactory(){\n"
+		"  QFile json(config.json);\n"
+		"  if (json.open(QIODevice::ReadOnly))\n"
+		"  {\n"
+		"    QJsonParseError  parseError;\n"
+		"    QJsonObject jsonDoc = QJsonDocument::fromJson(json.readAll(), &parseError).object();\n"
+		"    for (auto it = jsonDoc.begin(); it != jsonDoc.end(); it++)\n"
+		"    {\n"
+		"      MapOfConfigs[it.key()] = DetermineConfigObject(it.value().toObject());\n"
+		"    }\n"
+		"  }\n"
+		"}\n"
+		"Config* configFactory::DetermineConfigObject(QJsonObject treeOfObject)\n"
+		"{\n"
+		"QString type = treeOfObject.value(\"Type\").toString();\n"
+		"[ifmas]"
+		"\n"
+		"return nullptr;\n"
+		"}\n"
+		"\n"
+		"Config* JSONConfig::ConfigByName(QString configName)\n"
+		"{\n"
+		"	return MapOfConfigs[configName];\n"
+		"}"
+		"";
+	
+	string ifmas = "";
 	for (int i = 0; i < classmas.size(); ++i)
 	{
-		casemas += "    case " + classmas[i].first + ":\n";
-		casemas += "      " + classmas[i].first + " *dev=new " + classmas[i].first + "();\n";
+		string propmas = "";
+		ifmas += "  if (type == \""+ classmas[i].first+"\"){\n";
+		ifmas += "    " + classmas[i].first + "Config *config= new " + classmas[i].first + "();\n";
+		ifmas += "[propmas]";
+		ifmas += "    return config;\n  }\n";
+		
 		for (int j = 0; j < classmas[i].second.size(); ++j)
 		{
-			casemas += "      " + classmas[i].first + "." + classmas[i].second[j].first + " =getjson(" + classmas[i].second[j].first + "); \n";
+			if (classmas[i].second[j].second == "int")
+				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toInt();\n";
+			else
+			if (classmas[i].second[j].second == "bool")
+				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toInt();\n";
+			else
+			if (classmas[i].second[j].second == "double")
+				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toDouble();\n";
+			else
+			if (classmas[i].second[j].second == "string")
+				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toString().toStdString());\n";
 		}
-		casemas += "      return dev;\n";
-		casemas += "      break;\n";
+		ifmas.replace(ifmas.find("[propmas]"), 9, propmas);
+
 	}
-	templatestr.replace(templatestr.find("[casemas]"), 9, casemas);
-	out << templatestr;
-	out.close();
+	templatestrcpp.replace(templatestrcpp.find("[ifmas]"), 7, ifmas);
+	outcpp << templatestrcpp;
+	outcpp.close();
 }
 int main()
 {
@@ -224,9 +318,8 @@ int main()
 	string s(text);
 	parsecf(s);
 	s.clear();
-	
-	
-	
-	
-	cin >> n;
+
+
+
+
 }

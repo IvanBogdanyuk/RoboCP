@@ -117,7 +117,8 @@ int main(char *args[], int count)
   NanoController  NanoControl(&config, &NanoBuffer);
 
   ArduCopterBuffer CopterBuffer(1000);
-  ArduCopterController CopterControl(config1.ConfigByName("ArduCopter"), &CopterBuffer);
+  ArduCopterController CopterControl = ArduCopterController();
+  CopterControl.Configure(config1.ConfigByName("ArduCopter"), &CopterBuffer);
 
   CameraReceivedBuffer CameraBuffer(1000);
   CameraController CameraControl(&config, &CameraBuffer);

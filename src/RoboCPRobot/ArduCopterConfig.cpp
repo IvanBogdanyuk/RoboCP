@@ -1,20 +1,17 @@
-#pragma once
-#include "ArduCopterConfig.h"
+#include "ArducopterConfig.h"
 
-ArduCopterConfig::ArduCopterConfig(void)
-{
+ArducopterConfig::ArducopterConfig():Port(""), IsAvailable(false), DoFakeStart(false)  {
+  
 }
-
-ArduCopterConfig::~ArduCopterConfig(void)
-{
+ArducopterConfig::~ArducopterConfig(){
+  
 }
-
-std::string ArduCopterConfig::getPort()
-{
-	return Port;
+string ArducopterConfig::getPort() {
+  return Port;
 }
-
-void ArduCopterConfig::setPort(std::string Port)
-{
-	this->Port = Port;
+bool ArducopterConfig::getIsAvailable() {
+  return IsAvailable;
+}
+bool ArducopterConfig::getDoFakeStart() {
+  return DoFakeStart;
 }

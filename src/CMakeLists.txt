@@ -36,7 +36,6 @@ add_executable (Robot
 	RoboCPCommon/KinectData.h RoboCPCommon/KinectData.cpp
 	RoboCPCommon/KinectBuffer.h 
 	
-	RoboCPCommon/JSONConfig.h RoboCPCommon/JSONConfig.cpp
 	RoboCPCommon/XMLConfig.h RoboCPCommon/XMLConfig.cpp
 
 	RoboCPCommon/Point3d.h

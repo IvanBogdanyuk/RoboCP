@@ -1,16 +1,17 @@
 #pragma once
 #include "Config.h"
-
-class ArduCopterConfig : public Config
-{
-  public:
-    bool IsAvailable;
-    bool DoFakeStart;
-    std::string getPort(void);
-    ArduCopterConfig(void);
-    ~ArduCopterConfig(void);
-	void setPort(std::string Port);
+#include "configFactory.h"
+class ArducopterConfig : public Config{
+public:
+  ArducopterConfig();
+  friend class configFactory;
+  ~ArducopterConfig();
+  string getPort();
+  bool getIsAvailable();
+  bool getDoFakeStart();
 
 private:
-	std::string Port;
+  string Port;
+  bool IsAvailable;
+  bool DoFakeStart;
 };

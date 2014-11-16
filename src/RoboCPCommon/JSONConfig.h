@@ -22,7 +22,6 @@ private:
 	Config* DetermineConfigObject(QJsonObject treeOfObject);
 
 public:
-
   JSONConfig();
   void Parser(QString fileName);
   Config* ConfigByName(QString configName);

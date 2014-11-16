@@ -15,7 +15,7 @@
 #include "ClientReceiver.h"
 #include "SendProcessing.h"
 #include "SendSender.h"
-#include "JSONConfig.h"
+#include "configFactory.h"
 #include "XMLConfig.h"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
@@ -90,10 +90,7 @@ int main(char *args[], int count)
   return 0;
   #endif
 
-  JSONConfig config1;
-  { // Loading config from "config.xml" 
-    config1.Parser("config2.json");
-  }
+  configFactory config1;
 
   XMLConfig config;
   { // Loading config from "config.xml"

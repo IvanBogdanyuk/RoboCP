@@ -79,10 +79,11 @@ void writetohfile(string classname, vector<pair<string, string>> classdata)
 	string templatestr =
 		"#pragma once\n"
 		"#include \"Config.h\"\n"
+		"#include \"configFactory.h\"\n"
 		"class %classname%Config : public Config{\n"
 		"public:\n"
 		"  %classname%Config();\n"
-		"  %classname%Config([paramas]);\n"
+		"  friend class configFactory;\n"
 		"  ~%classname%Config();\n"
 		"[getmas]\n"
 		"private:\n"
@@ -93,18 +94,6 @@ void writetohfile(string classname, vector<pair<string, string>> classdata)
 	while (templatestr.find("%classname%") != -1)
 	{
 		templatestr.replace(templatestr.find("%classname%"), 11, classname);
-	}
-	if (classdata.size() != 0)
-	{
-
-		string paramas = "";
-		for (int i = 0; i < classdata.size(); ++i)
-		{
-			paramas += " " + classdata[i].second + " _" + classdata[i].first + ",";
-		}
-		paramas.pop_back();
-		paramas += " ";
-		templatestr.replace(templatestr.find("[paramas]"), 9, paramas);
 	}
 	string getmas = "";
 	for (int i = 0; i < classdata.size(); ++i)
@@ -129,19 +118,13 @@ void writetocppfile(string classname, vector<pair<string, string>> classdata)
 	string filename = classname + "Config.cpp";
 	ofstream fout(filename, ofstream::out);
 
-	string constwparam = "";
-	if (classdata.size() != 0)
-		constwparam =
-		"%classname%Config::%classname%Config([paramas]) {\n"
-		"[setmas]"
-		"}\n";
+	
 
 	string templatestr =
 		"#include \"%classname%Config.h\"\n\n"
 		"%classname%Config::%classname%Config():[constructorinit] {\n"
 		"  \n"
 		"}\n"
-		+ constwparam +
 		"%classname%Config::~%classname%Config(){\n"
 		"  \n"
 		"}\n"
@@ -174,24 +157,7 @@ void writetocppfile(string classname, vector<pair<string, string>> classdata)
 			constructorinit += ") ";
 	}
 	templatestr.replace(templatestr.find("[constructorinit]"), 17, constructorinit);
-	if (classdata.size() != 0)
-	{
-
-		string paramas = "";
-		for (int i = 0; i < classdata.size(); ++i)
-		{
-			paramas += " " + classdata[i].second + " _" + classdata[i].first + ",";
-		}
-		paramas.pop_back();
-		paramas += " ";
-		templatestr.replace(templatestr.find("[paramas]"), 9, paramas);
-		string setmas = "";
-		for (int i = 0; i < classdata.size(); ++i)
-		{
-			setmas += "  " + classdata[i].first + " = _" + classdata[i].first + ";\n";
-		}
-		templatestr.replace(templatestr.find("[setmas]"), 8, setmas);
-	}
+	
 	string getmas = "";
 	for (int i = 0; i < classdata.size(); ++i)
 	{
@@ -208,17 +174,18 @@ void wrtitetocfh(vector<pair<string, vector<pair<string, string>>>> classmas)
 	string templatestrh = 
 		"#pragma once\n"
 		"#include <iostream>\n"
-		"#include <QJsonDocument.h>\n"
-		"#include <QFile.h>\n"
-		"#include <QString.h>\n"
-		"#include <QByteArray.h>\n"
-		"#include <QJsonObject.h>\n"
+		"#include <QJsonDocument>\n"
+		"#include <QFile>\n"
+		"#include <QString>\n"
+		"#include <QByteArray>\n"
+		"#include <QJsonObject>\n"
 		"#include <QHash>\n"
+		"#include \"Config.h\"\n"
 		"[incmas]"
 		"\n"
 		"class configFactory{\n"
 		"public:\n"
-		"  Config* ConfigByName(QString configName);"
+		"  Config* ConfigByName(QString configName);\n"
 		"  configFactory();\n"
 		"  ~configFactory();\n"
 		"private:\n"
@@ -229,7 +196,7 @@ void wrtitetocfh(vector<pair<string, vector<pair<string, string>>>> classmas)
 	string incmas = "";
 	for (int i = 0; i < classmas.size(); ++i)
 	{
-		incmas += "#include \"" + classmas[i].first + "Config\".h\n";
+		incmas += "#include \"" + classmas[i].first + "Config.h\"\n";
 	}
 	templatestrh.replace(templatestrh.find("[incmas]"), 8, incmas);
 	outh << templatestrh;
@@ -247,7 +214,7 @@ void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas)
 		"\n"
 		"}\n"
 		"configFactory::configFactory(){\n"
-		"  QFile json(config.json);\n"
+		"  QFile json(\"config.json\");\n"
 		"  if (json.open(QIODevice::ReadOnly))\n"
 		"  {\n"
 		"    QJsonParseError  parseError;\n"
@@ -266,7 +233,7 @@ void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas)
 		"return nullptr;\n"
 		"}\n"
 		"\n"
-		"Config* JSONConfig::ConfigByName(QString configName)\n"
+		"Config* configFactory::ConfigByName(QString configName)\n"
 		"{\n"
 		"	return MapOfConfigs[configName];\n"
 		"}"
@@ -277,7 +244,7 @@ void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas)
 	{
 		string propmas = "";
 		ifmas += "  if (type == \""+ classmas[i].first+"\"){\n";
-		ifmas += "    " + classmas[i].first + "Config *config= new " + classmas[i].first + "();\n";
+		ifmas += "    " + classmas[i].first + "Config *config= new " + classmas[i].first + "Config();\n";
 		ifmas += "[propmas]";
 		ifmas += "    return config;\n  }\n";
 		
@@ -293,7 +260,7 @@ void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas)
 				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toDouble();\n";
 			else
 			if (classmas[i].second[j].second == "string")
-				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toString().toStdString());\n";
+				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toString().toStdString();\n";
 		}
 		ifmas.replace(ifmas.find("[propmas]"), 9, propmas);
 

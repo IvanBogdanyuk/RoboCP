@@ -24,7 +24,13 @@ find_package(Qt5Core)
 
 project(Robot)
 
-add_executable (Robot
+file(GLOB Robot_Autogen_SOURCE_LIST parser/*.h parser/*.cpp)
+
+source_group( Autogen FILES ${Robot_Autogen_SOURCE_LIST} )
+
+include_directories(parser)
+
+add_executable (Robot ${Robot_Autogen_SOURCE_LIST}
 	RoboCPCommon/Controller.h RoboCPCommon/Controller.cpp
 	RoboCPCommon/SenderBase.h RoboCPCommon/SenderBase.cpp
 	RoboCPCommon/ReceivedBuffer.h RoboCPCommon/ReceivedBuffer.cpp
@@ -39,9 +45,6 @@ add_executable (Robot
 	RoboCPCommon/XMLConfig.h RoboCPCommon/XMLConfig.cpp
 
 	RoboCPCommon/Point3d.h
-
-	RoboCPRobot/ArduCopterConfig.h RoboCPRobot/ArduCopterConfig.cpp
-	RoboCPRobot/Config.h RoboCPRobot/Config.cpp
 	
 	RoboCPRobot/CommandProcessing.h RoboCPRobot/CommandProcessing.cpp
 	RoboCPRobot/CommandBuffer.h
@@ -75,11 +78,10 @@ add_executable (Robot
 	RoboCPRobot/SerialCom.h RoboCPRobot/SerialCom.cpp 
 	
 	RoboCPRobot/main.cpp
-
+ 
 )
-target_link_libraries (Robot ${PCL_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS} ${Qt5Core_LIBRARIES})
 
-
+target_link_libraries (Robot ${PCL_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS} ${Qt5Core_LIBRARIES} )
 
 project(Server)
 

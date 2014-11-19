@@ -34,5 +34,17 @@
     <None Include="config.json">
       <Filter>Файлы ресурсов</Filter>
     </None>
+    <None Include="configFactoryCpp.template">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="configFactoryHeader.template">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="cpp.template">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
+    <None Include="header.template">
+      <Filter>Файлы ресурсов</Filter>
+    </None>
   </ItemGroup>
 </Project>

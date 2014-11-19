@@ -91,6 +91,9 @@ int main(char *args[], int count)
   #endif
 
   configFactory config1;
+  {
+      config1.Parse();
+  }
 
   XMLConfig config;
   { // Loading config from "config.xml"

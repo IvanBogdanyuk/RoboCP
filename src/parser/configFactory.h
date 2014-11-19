@@ -14,11 +14,14 @@
 #include "ArducopterConfig.h"
 #include "CameraConfig.h"
 
+//Main class of processing config
 class configFactory{
 public:
+  //configName - name of device
   Config* ConfigByName(QString configName);
   configFactory();
   ~configFactory();
+  void Parse();
 private:
   QHash<QString, Config*> MapOfConfigs;
   Config* DetermineConfigObject(QJsonObject treeOfObject);

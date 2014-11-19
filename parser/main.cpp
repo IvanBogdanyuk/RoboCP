@@ -2,13 +2,13 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include "parser.h"
 using namespace std;
-void writetohfile(string classname, vector<pair<string, string>> classdata);
-void writetocppfile(string classname, vector<pair<string, string>> classdata);
-void wrtitetocfh(vector<pair<string, vector<pair<string, string>>>> classmas);
-void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas);
-///finds first name from string from poistion=pos,
-//if nothing is found makes empty pair with "-1" as 2 argument
+Templates temp;
+///finds first name from string from poistion,
+///returns name and position of last symbol+1
+///if nothing is found makes empty pair with "-1" as 2 argument
+
 pair<string, int> getName(string s, int pos)
 {
 	int namestart = s.find('"', pos);
@@ -18,24 +18,25 @@ pair<string, int> getName(string s, int pos)
 	int nameend = s.find('"', namestart + 1);
 	return make_pair(s.substr(namestart + 1, nameend - 1 - namestart), nameend);
 }
-///finds pair (key,value) and index of last symbol in value name,
-//if nothing is found makes empty pair with "-1" as 2 argument 
-pair<pair<string, string>, int> getKeyValue(string s, int pos)
+///finds pair (key,value) 
+///returns this pair and index of last symbol in value name,
+///if nothing is found makes empty pair with "-1" as 2 argument 
+pair<propType, int> getKeyValue(string s, int pos)
 {
 	if (s.find('"', pos) > s.find('}') || (s.find('"', pos) == -1))
-		return make_pair(make_pair("", ""), -1);
+		return make_pair(propType(), -1);
 	pair<string, int> key = getName(s, pos);
 	if (key.second == -1)
-		return make_pair(make_pair("", ""), -1);
+		return make_pair(propType(), -1);
 	pos = s.find(':', pos) + 1;
 	pair<string, int> value = getName(s, pos);
 	if (value.second == -1)
-		return make_pair(make_pair("", ""), -1);
-	return make_pair(make_pair(key.first, value.first), pos + value.first.size() + 2);
+		return make_pair(propType(), -1);
+	return make_pair(propType(key.first, value.first), pos + value.first.size() + 2);
 }
 void parsecf(string &s)
 {
-	vector<pair<string, vector<pair<string, string>>>> classmas;
+	vector<Class> classArr;
 	char c = '1';
 	int pos = 0;
 	string classname;
@@ -49,62 +50,49 @@ void parsecf(string &s)
 		int begin = s.find("{", pos);
 		int end = s.find("}", pos);
 		classstr = s.substr(begin, end - begin);
-		vector<pair<string, string>> classdata;
+		vector<propType> classdata;
 		int i = 0;
 		while (1)
 		{
-			pair<pair<string, string>, int> kv = getKeyValue(classstr, i);
+			pair<propType, int> kv = getKeyValue(classstr, i);
 			if (kv.second == -1)
 				break;
 			classdata.push_back(kv.first);
 			i = kv.second + 1;
 		}
 		pos = end + 1;
-		classmas.push_back(make_pair(classname.first, classdata));
+		classArr.push_back(Class(classname.first,classdata));
 	}
-	for (int i = 0; i < classmas.size(); ++i)
+	for (int i = 0; i < classArr.size(); ++i)
 	{
-		writetohfile(classmas[i].first, classmas[i].second);
-		writetocppfile(classmas[i].first, classmas[i].second);
+		writeToHeader(classArr[i]);
+		writeToCpp(classArr[i]);
 	}
-	wrtitetocfcpp(classmas);
-	wrtitetocfh(classmas);
+	wrtiteToConfigFactoryHeader(classArr);
+	wrtiteToConfigFactoryCpp(classArr);
 	return;
 }
 
-void writetohfile(string classname, vector<pair<string, string>> classdata)
+void writeToHeader(Class classdata)
 {
-	string filename = classname + "Config.h";
+	string filename = classdata.Name + "Config.h";
 	ofstream out(filename, ofstream::out);
-	string templatestr =
-		"#pragma once\n"
-		"#include \"Config.h\"\n"
-		"#include \"configFactory.h\"\n"
-		"class %classname%Config : public Config{\n"
-		"public:\n"
-		"  %classname%Config();\n"
-		"  friend class configFactory;\n"
-		"  ~%classname%Config();\n"
-		"[getmas]\n"
-		"private:\n"
-		"[prop]"
-		"};";
-	//
+	string templatestr = temp.tempMap["header"];
 
 	while (templatestr.find("%classname%") != -1)
 	{
-		templatestr.replace(templatestr.find("%classname%"), 11, classname);
+		templatestr.replace(templatestr.find("%classname%"), 11, classdata.Name);
 	}
 	string getmas = "";
-	for (int i = 0; i < classdata.size(); ++i)
+	for (int i = 0; i < classdata.Props.size(); ++i)
 	{
-		getmas += "  " + classdata[i].second + " get" + classdata[i].first + "();\n";
+		getmas += "  " + classdata.Props[i].type + " get" + classdata.Props[i].prop + "();\n";
 	}
 	templatestr.replace(templatestr.find("[getmas]"), 8, getmas);
 	string propstr = "";
-	for (int i = 0; i < classdata.size(); ++i)
+	for (int i = 0; i < classdata.Props.size(); ++i)
 	{
-		propstr += "  " + classdata[i].second + " " + classdata[i].first + ";\n";
+		propstr += "  " + classdata.Props[i].type + " " + classdata.Props[i].prop + ";\n";
 	}
 	templatestr.replace(templatestr.find("[prop]"), 6, propstr);
 
@@ -113,43 +101,31 @@ void writetohfile(string classname, vector<pair<string, string>> classdata)
 
 }
 
-void writetocppfile(string classname, vector<pair<string, string>> classdata)
+void writeToCpp(Class classdata)
 {
-	string filename = classname + "Config.cpp";
+	string filename = classdata.Name + "Config.cpp";
 	ofstream fout(filename, ofstream::out);
-
-	
-
-	string templatestr =
-		"#include \"%classname%Config.h\"\n\n"
-		"%classname%Config::%classname%Config():[constructorinit] {\n"
-		"  \n"
-		"}\n"
-		"%classname%Config::~%classname%Config(){\n"
-		"  \n"
-		"}\n"
-		"[getmas]";
-
+	string templatestr = temp.tempMap["cpp"];
 	while (templatestr.find("%classname%") != -1)
 	{
-		templatestr.replace(templatestr.find("%classname%"), 11, classname);
+		templatestr.replace(templatestr.find("%classname%"), 11, classdata.Name);
 	}
 	string constructorinit = "";
-	for (int i = 0; i < classdata.size(); ++i)
+	for (int i = 0; i < classdata.Props.size(); ++i)
 	{
-		constructorinit += classdata[i].first + "(";
-		if (classdata[i].second == "int")
+		constructorinit += classdata.Props[i].prop + "(";
+		if (classdata.Props[i].type == "int")
 			constructorinit += "0";
 		else
-		if (classdata[i].second == "double")
+		if (classdata.Props[i].type == "double")
 			constructorinit += "0.0";
 		else
-		if (classdata[i].second == "string")
+		if (classdata.Props[i].type == "string")
 			constructorinit += "\"\"";
 		else
-		if (classdata[i].second == "bool")
+		if (classdata.Props[i].type == "bool")
 			constructorinit += "false";
-		if (i != classdata.size() - 1)
+		if (i != classdata.Props.size() - 1)
 		{
 			constructorinit += "), ";
 		}
@@ -157,110 +133,65 @@ void writetocppfile(string classname, vector<pair<string, string>> classdata)
 			constructorinit += ") ";
 	}
 	templatestr.replace(templatestr.find("[constructorinit]"), 17, constructorinit);
-	
+
 	string getmas = "";
-	for (int i = 0; i < classdata.size(); ++i)
+	for (int i = 0; i < classdata.Props.size(); ++i)
 	{
-		getmas += classdata[i].second + +" " + classname + "Config::" + "get" + classdata[i].first + "() {\n";
-		getmas += "  return " + classdata[i].first + ";\n}\n";
+		getmas += classdata.Props[i].type + +" " + classdata.Name + "Config::" + "get" + classdata.Props[i].prop + "() {\n";
+		getmas += "  return " + classdata.Props[i].prop + ";\n}\n";
 	}
 	templatestr.replace(templatestr.find("[getmas]"), 8, getmas);
 	fout << templatestr;
 	fout.close();
 }
-void wrtitetocfh(vector<pair<string, vector<pair<string, string>>>> classmas)
+void wrtiteToConfigFactoryHeader(vector<Class> classArr)
 {
 	ofstream outh("configFactory.h", ofstream::out);
-	string templatestrh = 
-		"#pragma once\n"
-		"#include <iostream>\n"
-		"#include <QJsonDocument>\n"
-		"#include <QFile>\n"
-		"#include <QString>\n"
-		"#include <QByteArray>\n"
-		"#include <QJsonObject>\n"
-		"#include <QHash>\n"
-		"#include \"Config.h\"\n"
-		"[incmas]"
-		"\n"
-		"class configFactory{\n"
-		"public:\n"
-		"  Config* ConfigByName(QString configName);\n"
-		"  configFactory();\n"
-		"  ~configFactory();\n"
-		"private:\n"
-		"  QHash<QString, Config*> MapOfConfigs;\n"
-		"  Config* DetermineConfigObject(QJsonObject treeOfObject);\n"
-		"};"
-		"";
+	string templatestrh = temp.tempMap["configFactoryHeader"];
 	string incmas = "";
-	for (int i = 0; i < classmas.size(); ++i)
+	for (int i = 0; i < classArr.size(); ++i)
 	{
-		incmas += "#include \"" + classmas[i].first + "Config.h\"\n";
+		incmas += "#include \"" + classArr[i].Name + "Config.h\"\n";
 	}
 	templatestrh.replace(templatestrh.find("[incmas]"), 8, incmas);
 	outh << templatestrh;
 	outh.close();
 
 }
-void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas)
+void wrtiteToConfigFactoryCpp(vector<Class> classArr)
 {
-	
+
 	ofstream outcpp("configFactory.cpp", ofstream::out);
-	
-	string templatestrcpp =
-		"#include \"configFactory.h\"\n\n"
-		"configFactory::~configFactory(){\n"
-		"\n"
-		"}\n"
-		"configFactory::configFactory(){\n"
-		"  QFile json(\"config.json\");\n"
-		"  if (json.open(QIODevice::ReadOnly))\n"
-		"  {\n"
-		"    QJsonParseError  parseError;\n"
-		"    QJsonObject jsonDoc = QJsonDocument::fromJson(json.readAll(), &parseError).object();\n"
-		"    for (auto it = jsonDoc.begin(); it != jsonDoc.end(); it++)\n"
-		"    {\n"
-		"      MapOfConfigs[it.key()] = DetermineConfigObject(it.value().toObject());\n"
-		"    }\n"
-		"  }\n"
-		"}\n"
-		"Config* configFactory::DetermineConfigObject(QJsonObject treeOfObject)\n"
-		"{\n"
-		"QString type = treeOfObject.value(\"Type\").toString();\n"
-		"[ifmas]"
-		"\n"
-		"return nullptr;\n"
-		"}\n"
-		"\n"
-		"Config* configFactory::ConfigByName(QString configName)\n"
-		"{\n"
-		"	return MapOfConfigs[configName];\n"
-		"}"
-		"";
-	
+
+	string templatestrcpp = temp.tempMap["configFactoryCpp"];
+		
+
 	string ifmas = "";
-	for (int i = 0; i < classmas.size(); ++i)
+	for (int i = 0; i < classArr.size(); ++i)
 	{
 		string propmas = "";
-		ifmas += "  if (type == \""+ classmas[i].first+"\"){\n";
-		ifmas += "    " + classmas[i].first + "Config *config= new " + classmas[i].first + "Config();\n";
+		ifmas += "  if (type == \"" + classArr[i].Name + "\"){\n";
+		ifmas += "    " + classArr[i].Name + "Config *config= new " + classArr[i].Name + "Config();\n";
 		ifmas += "[propmas]";
 		ifmas += "    return config;\n  }\n";
-		
-		for (int j = 0; j < classmas[i].second.size(); ++j)
+
+		for (int j = 0; j < classArr[i].Props.size(); ++j)
 		{
-			if (classmas[i].second[j].second == "int")
-				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toInt();\n";
+			if (classArr[i].Props[j].type == "int")
+				propmas += "    config->" + classArr[i].Props[j].prop + 
+					+" = treeOfObject.value(\"" + classArr[i].Props[j].prop + "\").toInt();\n";
 			else
-			if (classmas[i].second[j].second == "bool")
-				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toInt();\n";
+			if (classArr[i].Props[j].type == "bool")
+				propmas += "    config->" + classArr[i].Props[j].prop + 
+					+" = treeOfObject.value(\"" + classArr[i].Props[j].prop + "\").toInt();\n";
 			else
-			if (classmas[i].second[j].second == "double")
-				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toDouble();\n";
+			if (classArr[i].Props[j].type == "double")
+				propmas += "    config->" + classArr[i].Props[j].prop + 
+					+" = treeOfObject.value(\"" + classArr[i].Props[j].prop + "\").toDouble();\n";
 			else
-			if (classmas[i].second[j].second == "string")
-				propmas += "    config->" + classmas[i].second[j].first + " = treeOfObject.value(\"" + classmas[i].second[j].first + "\").toString().toStdString();\n";
+			if (classArr[i].Props[j].type == "string")
+				propmas += "    config->" + classArr[i].Props[j].prop + 
+					+" = treeOfObject.value(\"" + classArr[i].Props[j].prop + "\").toString().toStdString();\n";
 		}
 		ifmas.replace(ifmas.find("[propmas]"), 9, propmas);
 
@@ -272,6 +203,7 @@ void wrtitetocfcpp(vector<pair<string, vector<pair<string, string>>>> classmas)
 int main()
 {
 	int n;
+	temp.readTemplates();
 	ifstream in("classconfig.json", ifstream::in);
 	char *text = new char[10000];
 	char c = '1';
@@ -284,9 +216,6 @@ int main()
 	text[len] = '\0';
 	string s(text);
 	parsecf(s);
-	s.clear();
-
-
-
-
+	delete[] text;
+	in.close();
 }

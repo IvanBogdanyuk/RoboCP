@@ -1,5 +1,5 @@
 #pragma once
-#include <Windows.h>
+/*#include <Windows.h>
 #include <WinDef.h>
 #include <tchar.h>
 #include "XMLConfig.h"
@@ -26,4 +26,16 @@ public:
   SerialCom(char *PortName, int BaudRate);
   ~SerialCom(void);
 };
+*/#include <QtCore/QCoreApplication>
+#include <QtSerialPort/QSerialPort>
+#include <iostream>
 
+class SerialCom
+{
+	QSerialPort serialPort;
+	bool stop = false;
+	char* ReadCOMPort(int len);
+	void WriteToCOMPort(char *Data, int DataSize);
+	void COMConnector();
+	void COMClose();
+};

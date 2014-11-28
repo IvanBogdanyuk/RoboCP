@@ -1,11 +1,12 @@
+//WARNING!!!!!!!! This is a template file. Do not change it without necessity.
 #include "configFactory.h"
 
 configFactory::~configFactory(){
 
 }
 configFactory::configFactory(){
-  }
 
+}
 void configFactory::Parse(){
   QFile json("config.json");
   if (json.open(QIODevice::ReadOnly))

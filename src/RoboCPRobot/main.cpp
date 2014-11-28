@@ -118,7 +118,8 @@ int main(char *args[], int count)
 
   ArduCopterBuffer CopterBuffer(1000);
   ArduCopterController CopterControl = ArduCopterController();
-  CopterControl.Configure(config1.ConfigByName("ArduCopter"), &CopterBuffer);
+  CopterControl.Configure(config1.ConfigByName("Arducopter"), &CopterBuffer);
+  CopterControl.Start();
 
   CameraReceivedBuffer CameraBuffer(1000);
   CameraController CameraControl(&config, &CameraBuffer);

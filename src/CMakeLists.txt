@@ -22,6 +22,8 @@ INCLUDE_DIRECTORIES(RoboCPCommon)
 
 find_package(Qt5Core)
 
+find_package(Qt5SerialPort)
+
 project(Robot)
 
 file(GLOB Robot_Autogen_SOURCE_LIST parser/*.h parser/*.cpp)
@@ -56,6 +58,8 @@ add_executable (Robot ${Robot_Autogen_SOURCE_LIST}
 	RoboCPRobot/ArduCopterController.h RoboCPRobot/ArduCopterController.cpp
 	RoboCPRobot/ArduCopterReceived.h RoboCPRobot/ArduCopterReceived.cpp
 	RoboCPRobot/ArduCopterBuffer.h 
+
+	RoboCPRobot/Config.h RoboCPRobot/Config.cpp
 	
 	RoboCPRobot/NanoController.h RoboCPRobot/NanoController.cpp
 	RoboCPRobot/NanoReceived.h RoboCPRobot/NanoReceived.cpp
@@ -81,7 +85,7 @@ add_executable (Robot ${Robot_Autogen_SOURCE_LIST}
  
 )
 
-target_link_libraries (Robot ${PCL_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS} ${Qt5Core_LIBRARIES} )
+target_link_libraries (Robot ${PCL_LIBRARIES} ${Boost_LIBRARIES} ${OpenCV_LIBS} ${Qt5Core_LIBRARIES} ${Qt5SerialPort_LIBRARIES})
 
 project(Server)
 

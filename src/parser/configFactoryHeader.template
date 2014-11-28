@@ -1,20 +1,14 @@
 //WARNING!!!!!!!! This is a template file. Do not change it without necessity.
 #pragma once
 #include <iostream>
-#include <qjsondocument.h>
+#include <QJsonDocument>
 #include <QFile>
 #include <QString>
 #include <QByteArray>
 #include <QJsonObject>
 #include <QHash>
 #include "Config.h"
-#include "KinectConfig.h"
-#include "CommandConfig.h"
-#include "SendConfig.h"
-#include "CarduinoConfig.h"
-#include "ArducopterConfig.h"
-#include "CameraConfig.h"
-
+[incmas]
 //Main class of processing config
 class configFactory{
 public:

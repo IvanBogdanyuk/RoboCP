@@ -2,13 +2,11 @@
 #pragma once
 #include "Config.h"
 #include "configFactory.h"
-class CarduinoConfig : public Config{
+class %classname%Config : public Config{
 public:
-  CarduinoConfig();
+  %classname%Config();
   friend class configFactory;
-  ~CarduinoConfig();
-  string getPort();
-
+  ~%classname%Config();
+[getmas]
 private:
-  string Port;
-};
+[prop]};

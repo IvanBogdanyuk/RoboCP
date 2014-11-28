@@ -1,7 +1,7 @@
 #pragma once
 #include "controller.h"
 #include "ArduCopterBuffer.h"
-#include "JSONConfig.h"
+#include "configFactory.h"
 #include "SerialCom.h"
 #include <string.h>
 #include <time.h>
@@ -23,7 +23,7 @@ class ArduCopterController :
 {
 private:
   ArduCopterBuffer *buffer;
-  ArduCopterConfig *config;
+  ArducopterConfig *config;
   SerialCom *copterCom;
   time_t lastReadTime;
   char stage;

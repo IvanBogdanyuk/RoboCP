@@ -35,7 +35,7 @@ ArduCopterController::ArduCopterController()
 void ArduCopterController::Configure(Config *x, ArduCopterBuffer *buf)
 {
 	buffer = buf;
-    config = (ArduCopterConfig*)x;
+    config = (ArducopterConfig*)x;
 	char *cstr = new char[config->getPort().length() + 1];
     strcpy(cstr, config->getPort().c_str());
     copterCom = new SerialCom(cstr,COPTER_BAUD_RATE);
@@ -330,9 +330,9 @@ void ArduCopterController::sendInitionalData(void)
 
 void ArduCopterController::Start(void)
 {
-  if(!config->IsAvailable)
+	if(!config->getIsAvailable())
   {
-    if(config->DoFakeStart)
+	  if(config->getDoFakeStart())
     {
       #ifdef ENABLE_LOGGING
       RAW_LOG(INFO, "ArduCopterController: not available. Do fake start");

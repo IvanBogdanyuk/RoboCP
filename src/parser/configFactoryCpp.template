@@ -1,0 +1,31 @@
+//WARNING!!!!!!!! This is a template file. Do not change it without necessity.
+#include "configFactory.h"
+
+configFactory::~configFactory(){
+
+}
+configFactory::configFactory(){
+
+}
+void configFactory::Parse(){
+  QFile json("config.json");
+  if (json.open(QIODevice::ReadOnly))
+  {
+    QJsonParseError  parseError;
+    QJsonObject jsonDoc = QJsonDocument::fromJson(json.readAll(), &parseError).object();
+    for (auto it = jsonDoc.begin(); it != jsonDoc.end(); it++)
+    {
+      MapOfConfigs[it.key()] = DetermineConfigObject(it.value().toObject());
+    }
+  }
+Config* configFactory::DetermineConfigObject(QJsonObject treeOfObject)
+{
+QString type = treeOfObject.value("Type").toString();
+[ifmas]
+return nullptr;
+}
+
+Config* configFactory::ConfigByName(QString configName)
+{
+	return MapOfConfigs[configName];
+}

@@ -19,6 +19,7 @@
 #include "XMLConfig.h"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
+#include <qobject.h>
 
 #ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
@@ -94,6 +95,7 @@ int main(char *args[], int count)
   {
       config1.Parse();
   }
+
 
   XMLConfig config;
   { // Loading config from "config.xml"

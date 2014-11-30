@@ -3,33 +3,6 @@
 
 ArduCopterController::ArduCopterController()
 {
-  /*ArduCopterConfig *config = (ArduCopterConfig*)x;
-  if(config->IsAvailable)
-  {
-	buffer = buf;
-    copterPort = config->getPort();
-    char *cstr = new char[copterPort.length() + 1];
-    strcpy(cstr, copterPort.c_str());
-    copterCom = new SerialCom(cstr,COPTER_BAUD_RATE);
-    lastReadTime = time(NULL);
-  }
-  else
-  {
-    if(config->DoFakeStart)
-	{
-	  #ifdef ENABLE_LOGGING
-      RAW_LOG (INFO, "ArdoCopter is not available. Doing fake start");
-      #endif
-	  FakeStart();
-	}
-	else
-	{
-	  #ifdef ENABLE_LOGGING
-      RAW_LOG (INFO, "ArdoCopter is not available. Close programme");
-      #endif
-	  exit(1);
-	}
-  }*/
 }
 
 void ArduCopterController::Configure(Config *x, ArduCopterBuffer *buf)

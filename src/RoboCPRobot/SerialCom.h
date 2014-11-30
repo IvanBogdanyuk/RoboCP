@@ -1,19 +1,14 @@
 #pragma once
-#include <windows.h>
 #include <qserialport.h>
-#include <qobject.h>
-#include <WinDef.h>
-#include <tchar.h>
-#include "XMLConfig.h"
 
-//#ifdef ENABLE_LOGGING
-//#define GLOG_NO_ABBREVIATED_SEVERITIES
-//#include <glog/logging.h>
-//#include <glog/raw_logging.h>
-//#endif
-//
-//#define READ_BUFF_SIZE 256
-//#define SERIAL_WRITE_WAIT_MS 5000
+#ifdef ENABLE_LOGGING
+#define GLOG_NO_ABBREVIATED_SEVERITIES
+#include <glog/logging.h>
+#include <glog/raw_logging.h>
+#endif
+
+#define READ_BUFF_SIZE 256
+#define SERIAL_WRITE_WAIT_MS 5000
 
 //Structure with port's settings.
 struct Settings {

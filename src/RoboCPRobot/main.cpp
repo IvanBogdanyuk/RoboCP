@@ -15,9 +15,11 @@
 #include "ClientReceiver.h"
 #include "SendProcessing.h"
 #include "SendSender.h"
+#include "configFactory.h"
 #include "XMLConfig.h"
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
+#include <qobject.h>
 
 #ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
@@ -89,15 +91,21 @@ int main(char *args[], int count)
   return 0;
   #endif
 
+  configFactory config1;
+  {
+      config1.Parse();
+  }
+
+
   XMLConfig config;
-  { // Loading config from "config.xml" 
+  { // Loading config from "config.xml"
     std::ifstream ifs("config.xml");
-	if (ifs.is_open()) {
-	  boost::archive::xml_iarchive ia(ifs);
-	  ia >> BOOST_SERIALIZATION_NVP(config);
-	}
-	else
-	  cout << "Can't find config.xml! Default config used." << endl; // No config.xml found
+    if (ifs.is_open()) {
+    boost::archive::xml_iarchive ia(ifs);
+    ia >> BOOST_SERIALIZATION_NVP(config);
+  }
+  else
+    cout << "Can't find config.xml! Default config used." << endl; // No config.xml found
   }
 
   KinectBuffer kinectBuffer1 (10);
@@ -111,7 +119,8 @@ int main(char *args[], int count)
   NanoController  NanoControl(&config, &NanoBuffer);
 
   ArduCopterBuffer CopterBuffer(1000);
-  ArduCopterController CopterControl(&config, &CopterBuffer);
+  ArduCopterController CopterControl = ArduCopterController();
+  CopterControl.Configure(config1.ConfigByName("Arducopter"), &CopterBuffer);
 
   CameraReceivedBuffer CameraBuffer(1000);
   CameraController CameraControl(&config, &CameraBuffer);

@@ -1,0 +1,10 @@
+//WARNING!!!!!!!! This is a template file. Do not change it without necessity.
+#include "%classname%Config.h"
+
+%classname%Config::%classname%Config():[constructorinit] {
+  
+}
+%classname%Config::~%classname%Config(){
+  
+}
+[getmas]

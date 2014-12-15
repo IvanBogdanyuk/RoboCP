@@ -28,6 +28,7 @@ public:
 	string prop;
 	string type;
 };
+
 class Class{
 public:
 	Class(string _Name, vector < propType > _Props)
@@ -38,6 +39,7 @@ public:
 	string Name;
 	vector < propType > Props;
 };
+
 class Templates{
 public:
 	void readTemplates();
@@ -46,5 +48,6 @@ public:
 };
 void writeToHeader(Class classdata);
 void writeToCpp(Class classdata);
-void wrtiteToConfigFactoryHeader(vector<Class> classArr);
-void wrtiteToConfigFactoryCpp(vector<Class> classArr);
+void writeToConfigFactoryHeader(vector<Class> classArr);
+void writeToConfigFactoryCpp(vector<Class> classArr);
+void writeToVcxproj(vector<Class> classArr,char **dir);

@@ -4,11 +4,11 @@
 #include <vector>
 #include "parser.h"
 using namespace std;
+
 Templates temp;
 ///finds first name from string from poistion,
 ///returns name and position of last symbol+1
 ///if nothing is found makes empty pair with "-1" as 2 argument
-
 pair<string, int> getName(string s, int pos)
 {
 	int namestart = s.find('"', pos);
@@ -18,6 +18,7 @@ pair<string, int> getName(string s, int pos)
 	int nameend = s.find('"', namestart + 1);
 	return make_pair(s.substr(namestart + 1, nameend - 1 - namestart), nameend);
 }
+
 ///finds pair (key,value) 
 ///returns this pair and index of last symbol in value name,
 ///if nothing is found makes empty pair with "-1" as 2 argument 
@@ -34,7 +35,8 @@ pair<propType, int> getKeyValue(string s, int pos)
 		return make_pair(propType(), -1);
 	return make_pair(propType(key.first, value.first), pos + value.first.size() + 2);
 }
-void parsecf(string &s)
+
+void parsecf(string &s,char **dir)
 {
 	vector<Class> classArr;
 	char c = '1';
@@ -68,14 +70,15 @@ void parsecf(string &s)
 		writeToHeader(classArr[i]);
 		writeToCpp(classArr[i]);
 	}
-	wrtiteToConfigFactoryHeader(classArr);
-	wrtiteToConfigFactoryCpp(classArr);
+	writeToConfigFactoryHeader(classArr);
+	writeToConfigFactoryCpp(classArr);
+	writeToVcxproj(classArr, dir);
 	return;
 }
 
 void writeToHeader(Class classdata)
 {
-	string filename = classdata.Name + "Config.h";
+	string filename =classdata.Name + "Config.h";
 	ofstream out(filename, ofstream::out);
 	string templatestr = temp.tempMap["header"];
 
@@ -144,7 +147,8 @@ void writeToCpp(Class classdata)
 	fout << templatestr;
 	fout.close();
 }
-void wrtiteToConfigFactoryHeader(vector<Class> classArr)
+
+void writeToConfigFactoryHeader(vector<Class> classArr)
 {
 	ofstream outh("configFactory.h", ofstream::out);
 	string templatestrh = temp.tempMap["configFactoryHeader"];
@@ -158,7 +162,8 @@ void wrtiteToConfigFactoryHeader(vector<Class> classArr)
 	outh.close();
 
 }
-void wrtiteToConfigFactoryCpp(vector<Class> classArr)
+
+void writeToConfigFactoryCpp(vector<Class> classArr)
 {
 
 	ofstream outcpp("configFactory.cpp", ofstream::out);
@@ -200,7 +205,38 @@ void wrtiteToConfigFactoryCpp(vector<Class> classArr)
 	outcpp << templatestrcpp;
 	outcpp.close();
 }
-int main()
+void writeToVcxproj(vector<Class> classArr, char **dir)
+{
+	ifstream in(dir[1], ifstream::in);
+	string file;
+	char c;
+	while (in.good())
+	{
+		c = in.get();
+		file += c;
+	}
+	in.close();
+	if (file.size() == 0)
+		return;
+	string configDir=file.substr(0,file.find("\\RoboCPRobot"));
+	configDir = configDir.substr(configDir.rfind("\"")+1, configDir.npos);
+	configDir += "\\RoboCPRobot\\";
+	int pos=file.rfind("<ClInclude")-1;
+	for (int i = 0; i < classArr.size(); ++i)
+	{
+		file.insert(pos, "    <ClInclude Include=\""+configDir+classArr[i].Name+"Config.h\" />\n");
+	}
+	pos = file.rfind("<ClCompile") - 1;
+	for (int i = 0; i < classArr.size(); ++i)
+	{
+		file.insert(pos, "     <ClCompile Include=\"" + configDir + classArr[i].Name + "Config.cpp\" />\n");
+	}
+	ofstream out(dir[1], ofstream::out);
+	out << file;
+	out.close();
+}
+
+int main(int argc, char *argv[])
 {
 	int n;
 	temp.readTemplates();
@@ -215,7 +251,7 @@ int main()
 	}
 	text[len] = '\0';
 	string s(text);
-	parsecf(s);
+	parsecf(s,argv);
 	delete[] text;
 	in.close();
 }

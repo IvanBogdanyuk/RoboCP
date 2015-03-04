@@ -27,6 +27,6 @@ public:
   CommandMaker(XMLConfig * x);
   ~CommandMaker(void);
 private:
-  string ip;
-  string port;
+  QString ip;
+  QString port;
 };

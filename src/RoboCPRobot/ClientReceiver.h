@@ -6,6 +6,8 @@
 #include <sstream>
 #include <stdlib.h>
 #include <string>
+#include "QtNetwork\qtcpserver.h"
+#include "QtNetwork\qtcpsocket.h"
 
 #ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
@@ -29,6 +31,6 @@ public:
   ClientReceiver(XMLConfig * x);
   ~ClientReceiver(void);
 private:
-  string port;
+  QString port;
 };
 

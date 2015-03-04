@@ -4,6 +4,9 @@
 #include "SendBuffer.h"
 #include "XMLConfig.h"
 #include <boost/asio.hpp>
+#include "QtCore\qsharedpointer.h"
+#include "QtNetwork\qtcpserver.h"
+#include "QtNetwork\qtcpsocket.h"
 
 #ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES

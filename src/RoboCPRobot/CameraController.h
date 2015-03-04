@@ -6,6 +6,8 @@
 #include "XMLConfig.h"
 #include "CameraReceivedBuffer.h"
 #include "ImageFlowProcessing.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 class CameraController :
   public Controller
@@ -18,6 +20,7 @@ private:
   CameraReceivedBuffer *buffer;
 public:
   void Start(void);
+  void FakeStart(void);
   CameraReceivedBuffer *GetBuffer(void);
   CameraController(XMLConfig *x, CameraReceivedBuffer *buf);
   ~CameraController(void);

@@ -1,0 +1,28 @@
+
+{
+	"Kinect" : {
+			 "Port" : "int"
+			 },
+	"Command" :{
+			 "Port" : "int"
+			 },
+	"Send" : {
+		     "Port" : "int",
+		     "IsAvailable" : "bool"
+	       },
+	"Carduino" : {
+			 "Port" : "string"
+			 },
+	"Arducopter" : {
+			     "Port" : "string",
+  			     "IsAvailable" : "bool",
+			     "DoFakeStart" : "bool"
+		     },
+	"Camera" : {
+			"Number" : "int",
+			"FramesPerSecond" : "int",
+			"FrameWidth" : "int",
+			"FrameHeight" : "int"
+		 }
+	
+}

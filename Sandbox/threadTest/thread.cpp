@@ -14,6 +14,6 @@ void MyThread::run()
 {
 	for (int i = 0; i <= 100; i++)
 	{
-		std::cout << this->name.toStdString() << " " << i;
+		std::cout << this->name.toUtf8()[0] << " " << i;
 	}
 }

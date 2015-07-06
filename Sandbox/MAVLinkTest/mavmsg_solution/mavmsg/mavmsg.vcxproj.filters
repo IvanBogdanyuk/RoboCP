@@ -1,0 +1,408 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="msg_send.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_actuator_control_target.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_attitude.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_attitude_quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_attitude_quaternion_cov.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_attitude_target.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_att_pos_mocap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_auth_key.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_autopilot_version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_battery_status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_camera_trigger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_change_operator_control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_change_operator_control_ack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_command_ack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_command_int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_command_long.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_data_stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_data_transmission_handshake.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_debug_vect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_distance_sensor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_encapsulated_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_file_transfer_protocol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_global_position_int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_global_position_int_cov.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_global_vision_position_estimate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_gps2_raw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_gps2_rtk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_gps_global_origin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_gps_inject_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_gps_raw_int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_gps_rtk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_gps_status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_heartbeat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_highres_imu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_hil_controls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_hil_gps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_hil_optical_flow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_hil_rc_inputs_raw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_hil_sensor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_hil_state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_hil_state_quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_landing_target.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_local_position_ned.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_local_position_ned_cov.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_local_position_ned_system_global_offset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_log_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_log_entry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_log_erase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_log_request_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_log_request_end.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_log_request_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_manual_control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_manual_setpoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_memory_vect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_ack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_clear_all.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_count.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_current.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_item_int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_item_reached.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_request.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_request_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_request_partial_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_set_current.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_mission_write_partial_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_named_value_float.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_named_value_int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_nav_controller_output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_optical_flow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_optical_flow_rad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_param_map_rc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_param_request_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_param_request_read.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_param_set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_param_value.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_ping.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_position_target_global_int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_position_target_local_ned.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_power_status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_radio_status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_raw_imu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_raw_pressure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_rc_channels.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_rc_channels_override.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_rc_channels_raw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_rc_channels_scaled.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_request_data_stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_safety_allowed_area.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_safety_set_allowed_area.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_scaled_imu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_scaled_imu2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_scaled_imu3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_scaled_pressure.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_scaled_pressure2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_serial_control.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_servo_output_raw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_set_actuator_control_target.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_set_attitude_target.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_set_gps_global_origin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_set_mode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_set_position_target_global_int.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_set_position_target_local_ned.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_sim_state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_statustext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_system_time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_sys_status.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_terrain_check.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_terrain_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_terrain_report.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_terrain_request.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_timesync.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_v2_extension.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_vfr_hud.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_vibration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_vicon_position_estimate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_vision_position_estimate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink_msg_vision_speed_estimate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\version.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\testsuite.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\protocol.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\mavlink_types.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\checksum.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\common.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\common\mavlink.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\mavlink_conversions.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\GitHub\mavlink\generated\testing\mavlink_helpers.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -3,19 +3,19 @@
 #include "QtCore\qthread.h"
 #include "QtCore\QMutex"
 #include <iostream>
-
-const int RUDDER_DEFAULT = 0, GAS_DEFAULT = 0, PITCH_DEFAULT = 0, ROLL_DEFAULT = 0;
+typedef unsigned short uint16_t;
+const uint16_t RUDDER_DEFAULT = 0, GAS_DEFAULT = 0, PITCH_DEFAULT = 0, ROLL_DEFAULT = 0;
 
 
 
 class JoystickData{
 public:
-	int rudder;
-	int gas;
-	int pitch;
-	int roll;
+	uint16_t rudder;
+	uint16_t gas;
+	uint16_t pitch;
+	uint16_t roll;
 public:
-	JoystickData(int a, int b, int c, int d) :rudder(a), gas(b), pitch(c), roll(d){};
+	JoystickData(uint16_t a, uint16_t b, uint16_t c, uint16_t d) :rudder(a), gas(b), pitch(c), roll(d){};
 	JoystickData() :rudder(RUDDER_DEFAULT), gas(GAS_DEFAULT), pitch(PITCH_DEFAULT), roll(ROLL_DEFAULT){};
 
 	JoystickData* clone(){

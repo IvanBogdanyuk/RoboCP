@@ -1,20 +1,35 @@
-#include "thread.h"
 #include <iostream>
 #include <vector>
+
+#include "jbuffer_test.h"
+#include "JoysticThreads.h"
+
+
+
+#include <QtCore\qthread.h>
+#include <SDL.h>
+
+#include <QtCore/QDebug>
+#undef main
 using namespace std;
 int main()
 {
+	RealJoystick* joystick = new RealJoystick();
+	JoystickBuffer* buffer = new JoystickBuffer();
+	MockRobotLinker* link = new MockRobotLinker();
 
+	JoystickThread* jthread = new JoystickThread(joystick, buffer);
+	RobotLinkThread* rthread = new RobotLinkThread(buffer, link);
 
-	MyThread thread1("A"), thread2("B"), thread3("C");
-	
-	thread1.start();
-	thread2.start();
-	thread3.start();
-	
-	vector<joystickData> buf,buf1;
+	jthread->start();
+	rthread->start();
 
 	int i;
 	std::cin >> i;
 	return 0;
+
+
+
+	
+	 
 }

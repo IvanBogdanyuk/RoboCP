@@ -1,4 +1,4 @@
-#include "thread.h"
+/*#include "thread.h"
 #include <iostream>
 
 MyThread::MyThread(QString s) : name(s)
@@ -14,6 +14,6 @@ void MyThread::run()
 {
 	for (int i = 0; i <= 100; i++)
 	{
-		std::cout << this->name.toUtf8()[0] << " " << i;
+		std::cout << this->name.toUtf8().data()[0] << " " << i;
 	}
-}
+}*/

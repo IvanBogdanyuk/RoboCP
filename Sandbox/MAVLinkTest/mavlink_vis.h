@@ -5,14 +5,6 @@ public:
 	unsigned char* data;
 };
 
-class MavlinkVisitor 
-{
-public:
-	virtual void visitHeartBeat(MavlinkPacket* result) = 0;
-	virtual void visitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder) = 0;
-};
-
-
 class ComMavlinkVisitor : public MavlinkVisitor
 {
 	mavlink_system_t mavlink_system;//ID and component

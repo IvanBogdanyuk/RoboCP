@@ -99,6 +99,9 @@ QByteArray readPacket()
 		if (count == 299)
 			break;
 	}
+	
+	
+	
 	sequence.append((unsigned char)buffer[2]);
 	// packet is now verified
 
@@ -180,6 +183,7 @@ void getParamList()
 		if ((unsigned char)buffer[5] == 22) //mavlink param value
 		{
 			cout << "param val";
+
 		}
 		if ((unsigned char)buffer[5] == 253) //status text
 		{
@@ -206,19 +210,7 @@ int main()
 		cout << QObject::tr("Failed to open port %1, error: %2").arg(serialPortName).arg(serial.error()).toStdString() << endl;
 	}
 	
-
-	//serial.flush();
-	getHeartBit();
-	int lastsize = 0;
-	QByteArray readData;
-	QElapsedTimer timer;
-	int lasttime = 0;
-	timer.start();
 	getParamList();
-	while (1)
-	{
-
-	}
 	/*
 	while (1)
 	{

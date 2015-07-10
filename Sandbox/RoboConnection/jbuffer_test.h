@@ -5,6 +5,7 @@
 #include <SDL.h>
 
 //mock implementations of a joysick and com-port connection
+/*
 class MockJoystick : public Joystick{
 public:
 	MockJoystick(){
@@ -26,3 +27,4 @@ public:
 
 	};
 };
+*/

@@ -2,27 +2,30 @@
 #include "QtCore\QWaitCondition.h"
 #include "QtCore\qthread.h"
 #include "QtCore\QMutex"
+#include "qelapsedtimer.h"
+#include "mavlink_types.h"
 #include <iostream>
 
 #include <ctime>
 
 const int RUDDER_DEFAULT = 0, GAS_DEFAULT = 0, PITCH_DEFAULT = 0, ROLL_DEFAULT = 0;
-
+typedef unsigned short uint16_t;
 class MavlinkPacket {
 public:
 	unsigned char* data;
+	uint16_t len;
 	MavlinkPacket(){
-		data = new unsigned char[32];
+		data = new unsigned char[MAVLINK_MAX_PACKET_LEN];
 	}
 	void toString()
 	{
-		int length = ((unsigned short) data[1]) + 7;
+		int length = ((unsigned short)data[1]) + 7;
 
-		for(int i = 0; i<length; i++){
-			std::cout<<(unsigned short) data[i]<<"\t";
+		for (int i = 0; i < length; i++){
+			std::cout << (unsigned short)data[i] << "\t";
 		}
 
-		std::cout<<"\n";
+		std::cout << "\n";
 	}
 };
 
@@ -46,10 +49,10 @@ public:
 
 class JoystickData : public MavlinkMessage{
 public:
-	int rudder;
-	int gas;
-	int pitch;
-	int roll;
+	uint16_t rudder;
+	uint16_t gas;
+	uint16_t pitch;
+	uint16_t roll;
 public:
 	JoystickData(int a, int b, int c, int d) :rudder(a), gas(b), pitch(c), roll(d){};
 	JoystickData() :rudder(RUDDER_DEFAULT), gas(GAS_DEFAULT), pitch(PITCH_DEFAULT), roll(ROLL_DEFAULT){};
@@ -63,6 +66,7 @@ public:
 	}
 
 	void copy(JoystickData* to){
+
 		to->rudder = rudder;
 		to->gas = gas;
 		to->pitch = pitch;
@@ -70,7 +74,7 @@ public:
 	}
 
 	void print(){
-		std::cout<<"JoystickData: \nrudder:"<<rudder<<"\ngas: "<<gas<<"\npitch: "<<pitch<<"\nroll: "<<roll<<"\n\n";
+		std::cout << "JoystickData: \nrudder:" << rudder << "\ngas: " << gas << "\npitch: " << pitch << "\nroll: " << roll << "\n\n";
 	}
 };
 
@@ -87,7 +91,7 @@ class SingleJoystickBuffer : public MavlinkBuffer{
 	bool isReading;
 	QMutex mutex;
 	QWaitCondition readingCondition;
-
+	QElapsedTimer heartBitTimer, joystickTimer;
 	HeartBeat* heartbeat;
 
 	long lastHeartbeat;
@@ -101,6 +105,8 @@ public:
 
 		heartbeat = new HeartBeat();
 		lastHeartbeat = -1;
+		heartBitTimer.start();
+		joystickTimer.start();
 	}
 
 	void switchBuffer(){
@@ -113,14 +119,14 @@ public:
 
 		mutex.lock();
 
-		while(isReading) readingCondition.wait(&mutex);
+		while (isReading) readingCondition.wait(&mutex);
 		switchBuffer();
-		
+
 		mutex.unlock();
 	}
 
 	void readJoystickData(MavlinkPacket* packet, MavlinkVisitor* visitor){
-		
+
 		mutex.lock();
 		isReading++;
 
@@ -132,10 +138,17 @@ public:
 	}
 
 	void read(MavlinkPacket* packet, MavlinkVisitor* visitor){
-		if(lastHeartbeat < time(NULL) - 900){
+		if (heartBitTimer.elapsed() > 1000)
+		{
 			heartbeat->toMavlinkPacket(packet, visitor);
+			heartBitTimer.restart();
 		}
-		else readJoystickData(packet, visitor);
+		else
+			if (joystickTimer.elapsed() > 59)
+			{
+				readJoystickData(packet, visitor);
+				joystickTimer.restart();
+			}
 	}
 
 	~SingleJoystickBuffer(){
@@ -149,10 +162,10 @@ class CircularJoystickBuffer : public MavlinkBuffer
 	JoystickData** secondBuffer;
 	int size;
 	int i, j;
-	
+
 	bool isReading;
 	QMutex mutex;
-
+	QElapsedTimer heartBitTimer, joystickTimer;
 	HeartBeat* heartbeat;
 
 	long lastHeartbeat;
@@ -165,7 +178,7 @@ public:
 		firstBuffer = new JoystickData*[size];
 		secondBuffer = new JoystickData*[size];
 
-		for(int k = 0; k<size; k++){
+		for (int k = 0; k < size; k++){
 			firstBuffer[k] = new JoystickData();
 			secondBuffer[k] = new JoystickData();
 		}
@@ -173,13 +186,15 @@ public:
 		isReading = false;
 		heartbeat = new HeartBeat();
 		lastHeartbeat = -1;
+		heartBitTimer.start();
+		joystickTimer.start();
 	}
 	void flushToFirstBuffer(){
 		for (int k = j; k < (j + size); ++k)
 		{
 			if (secondBuffer[k % size] != NULL)
 			{
-				secondBuffer[k % size] -> copy(firstBuffer[i]);
+				secondBuffer[k % size]->copy(firstBuffer[i]);
 				++i;
 				i %= size;
 				secondBuffer[k % size] = NULL;
@@ -189,51 +204,58 @@ public:
 
 	void writeJoystickData(JoystickData* jData)
 	{
-		
+
 		if (isReading)
 		{
-			jData -> copy(secondBuffer[j]);
+			jData->copy(secondBuffer[j]);
 			++j;
 			j %= size;
 		}
 		else
 		{
 			mutex.lock();
-			jData -> copy(firstBuffer[i]);
+			jData->copy(firstBuffer[i]);
 			++i;
 			i %= size;
 			mutex.unlock();
 		}
-		
+
 	}
 	void readJoystickData(MavlinkPacket* packet, MavlinkVisitor* visitor)
 	{
 		mutex.lock();
 
 		++isReading;
-		firstBuffer[(i - 1 + size)%size] -> toMavlinkPacket(packet, visitor);
+		firstBuffer[(i - 1 + size) % size]->toMavlinkPacket(packet, visitor);
 
 		flushToFirstBuffer();
 		isReading -= 1;
-		
+
 		mutex.unlock();
 	}
 	void read(MavlinkPacket* packet, MavlinkVisitor* visitor){
-		if(lastHeartbeat < time(NULL) - 900){
+		if (heartBitTimer.elapsed() > 1000)
+		{
 			heartbeat->toMavlinkPacket(packet, visitor);
+			heartBitTimer.restart();
 		}
-		else readJoystickData(packet, visitor);
+		else
+		if (joystickTimer.elapsed() > 59)
+		{
+			readJoystickData(packet, visitor);
+			joystickTimer.restart();
+		}
 	}
 	~CircularJoystickBuffer()
 	{
 
-		for(int k = 0; k<size; k++){
+		for (int k = 0; k < size; k++){
 			delete firstBuffer[k];
 			delete secondBuffer[k];
 		}
 
-		delete [] firstBuffer;
-		delete [] secondBuffer;
+		delete[] firstBuffer;
+		delete[] secondBuffer;
 	}
 };
 class Joystick {

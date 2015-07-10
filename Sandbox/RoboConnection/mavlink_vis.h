@@ -1,7 +1,7 @@
 #include "robo_mavlink_test\mavlink.h"
 
 #include "joystickData.h"
-
+#pragma once
 class ComMavlinkVisitor : public MavlinkVisitor
 {
 	mavlink_system_t mavlink_system;//ID and component
@@ -29,13 +29,17 @@ public:
 	{
 		mavlink_message_t msg; //Struct for mavmessage
 		mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, system_type, autopilot_type, system_mode, custom_mode, system_state);
-		uint16_t len = mavlink_msg_to_send_buffer(result->data, &msg);
+		
+		result->len = mavlink_msg_to_send_buffer(result->data, &msg);
+		std::cout << result->len << std::endl;
 	}
 	virtual void visitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder)
 	{
 		mavlink_message_t msg; //Struct for mavmessage
 		mavlink_msg_rc_channels_override_pack(mavlink_system.sysid, mavlink_system.compid, &msg, mavlink_target.sysid,mavlink_target.compid, pitch, roll, gas, rudder, NULL, NULL, NULL, NULL);
-		uint16_t len = mavlink_msg_to_send_buffer(result->data, &msg);
+		result->len = mavlink_msg_to_send_buffer(result->data, &msg);
+		
+		
 	}
 };
 

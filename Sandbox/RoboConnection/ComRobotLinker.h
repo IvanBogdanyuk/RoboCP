@@ -5,6 +5,8 @@
 #include "com_connection.h"
 #include <robo_mavlink_test\mavlink.h>
 
+char crcs[] = MAVLINK_MESSAGE_CRCS;
+
 bool com_checksum(uint8_t *data, int32_t length, uint8_t com_ck_a, uint8_t com_ck_b) //Gets an array, length of its payload 
 //and checksums on the com-ports
 {
@@ -54,7 +56,7 @@ public:
 		if (buffer.length() > 5){
 			int idd = (unsigned char)buffer[5];
 			if ((idd == 22) && (com_checksum(packet->data, 9)))
-				std::cout << "checked";
+				std::cout << "checked:" << std::endl;
 				
 			std::cout << "got obj with id: " << idd << std::endl;
 		}

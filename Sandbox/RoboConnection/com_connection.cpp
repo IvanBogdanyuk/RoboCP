@@ -1,4 +1,5 @@
 ﻿#include "com_connection.h"
+#include <iostream>
 
 ComConnection::ComConnection()
 {
@@ -11,12 +12,7 @@ void ComConnection::openPort(QString name)
 	bool errorFlag = true;
 
 	errorFlag &= serial.setBaudRate(QSerialPort::Baud57600);
-	/*
-	errorFlag &= serial.setDataBits(QSerialPort::Data8);
-	errorFlag &= serial.setParity(QSerialPort::NoParity);
-	errorFlag &= serial.setStopBits(QSerialPort::OneStop);
-	errorFlag &= serial.setFlowControl(QSerialPort::NoFlowControl);
-	*/
+	
 	errorFlag &= serial.open(QIODevice::ReadWrite);
 
 	if (!errorFlag) 

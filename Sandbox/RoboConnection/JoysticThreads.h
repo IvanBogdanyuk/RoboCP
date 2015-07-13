@@ -2,8 +2,9 @@
 #include "joystickData.h"
 #include "QtCore\qthread.h"
 #include "QtCore\qstring.h"
-#include "qelapsedtimer.h"
+#include "QtCore\qelapsedtimer.h"
 #include "com_connection.h"
+#include "robotLink.h"
 
 class JoystickThread : public QThread
 {
@@ -12,26 +13,9 @@ class JoystickThread : public QThread
 	MavlinkBuffer* buffer;
 	const int cJoystickRate = 59;
 public:
-
-	JoystickThread(Joystick* joystick, MavlinkBuffer* buffer){
-		this->joystick = joystick;
-		this->buffer = buffer;
-	}
-
+	JoystickThread(Joystick* joystick, MavlinkBuffer* buffer);
 	// overriding the QThread's run() method
-	void run()
-	{
-
-		while (true)
-		{
-			joystick->getJoysticState(&data);
-			buffer->writeJoystickData(&data);
-			//std::cout << "2" << std::endl;
-		}
-
-	}
-	
-	
+	void run();	
 };
 
 class RobotLinkThread : public QThread{
@@ -40,51 +24,9 @@ class RobotLinkThread : public QThread{
 	MavlinkPacket packet;
 	MavlinkVisitor* visitor;
 public:
-	RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor){
-		this->buffer = buffer;
-		this->link = link;
-		this->visitor = visitor;
-	}
+	RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor);
 
-	void run(){
-		link->openPort("COM5");
+	void run();
 
-		while (true)
-		{
-			buffer->read(&packet, visitor);
-			link->sendPacket(&packet);
-			//std::cout << "1"<<std::endl;
-		}
-
-	}
-
-	void sleep_m(int millis){
-		this->msleep(millis);
-	}
+	void sleep_m(int millis);
 };
-/*
-class ComListener :public QThread{
-public:
-	RobotLinker* link;
-	QByteArray arr;
-	ComListener(RobotLinker* link)
-	{
-		this->link = link;
-	}
-	void run()
-	{
-		
-		while (true)
-		{
-			link->readPacket(arr);
-			if (!arr.isEmpty())
-				std::cout << "asas";
-		}
-	}
-};
-*/
-
-
-
-
-

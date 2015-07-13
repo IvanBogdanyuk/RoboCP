@@ -13,12 +13,10 @@ void JoystickThread::run()
 	while (true)
 	{
 		joystick->getJoysticState(&data);
-		buffer->writeJoystickData(&data);
+		QThread::currentThread()->msleep(buffer->writeJoystickData(&data));
 	}
 
 }
-
-
 
 RobotLinkThread::RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor){
 	this->buffer = buffer;

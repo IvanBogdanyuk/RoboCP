@@ -4,7 +4,6 @@
 ComConnection::ComConnection()
 {
 	//initializing connection
-	
 }
 void ComConnection::openPort(QString name)
 {

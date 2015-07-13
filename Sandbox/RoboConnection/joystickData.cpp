@@ -56,7 +56,7 @@ void SingleJoystickBuffer::switchBuffer(){
 	else activeBuffer = 1;
 }
 
-void SingleJoystickBuffer::writeJoystickData(JoystickData* jdata){
+int SingleJoystickBuffer::writeJoystickData(JoystickData* jdata){
 	jdata->copy(&jbuffers[activeBuffer]);
 
 	mutex.lock();
@@ -65,6 +65,8 @@ void SingleJoystickBuffer::writeJoystickData(JoystickData* jdata){
 	switchBuffer();
 
 	mutex.unlock();
+
+	return 0;
 }
 
 void SingleJoystickBuffer::readJoystickData(MavlinkPacket* packet, MavlinkVisitor* visitor){
@@ -116,6 +118,9 @@ CircularJoystickBuffer::CircularJoystickBuffer(int array_size)
 	writeToSecondBuffer = false;
 	heartbeat = new HeartBeat();
 	lastHeartbeat = -1;
+
+	secondBuffLoad = 0;
+	factorToWait = 2.0;
 }
 void CircularJoystickBuffer::flushToFirstBuffer(){
 	for (int k = j; k < (j + size); ++k)
@@ -130,9 +135,11 @@ void CircularJoystickBuffer::flushToFirstBuffer(){
 
 		}
 	}
+
+	secondBuffLoad = 0;
 }
 
-void CircularJoystickBuffer::writeJoystickData(JoystickData* jData)
+int CircularJoystickBuffer::writeJoystickData(JoystickData* jData)
 {
 
 	if (isReading)
@@ -145,7 +152,7 @@ void CircularJoystickBuffer::writeJoystickData(JoystickData* jData)
 			secondSent[j] = 0;
 			++j;
 			j %= size;
-
+			this->secondBuffLoad++;
 		}
 		else  //second bufer is full
 			std::cout << "Second buffer is full!" << std::endl;
@@ -176,7 +183,7 @@ void CircularJoystickBuffer::writeJoystickData(JoystickData* jData)
 		}
 		firstMutex.unlock();
 	}
-
+	return factorToWait*secondBuffLoad;
 }
 void CircularJoystickBuffer::getMiddleValue(JoystickData* midJoystickData, int i)
 {

@@ -56,7 +56,7 @@ public:
 
 class MavlinkBuffer{
 public:
-	virtual void writeJoystickData(JoystickData* jdata) = 0;
+	virtual int writeJoystickData(JoystickData* jdata) = 0;
 	virtual void read(MavlinkPacket* packet, MavlinkVisitor* visitor) = 0;
 };
 
@@ -76,7 +76,7 @@ public:
 
 	void switchBuffer();
 
-	void writeJoystickData(JoystickData* jdata);
+	int writeJoystickData(JoystickData* jdata);
 
 	void readJoystickData(MavlinkPacket* packet, MavlinkVisitor* visitor);
 
@@ -102,12 +102,15 @@ class CircularJoystickBuffer : public MavlinkBuffer
 	QMutex secondMutex;
 	HeartBeat* heartbeat;
 
+	int secondBuffLoad;
+	int factorToWait;
+
 	long lastHeartbeat;
 public:
 	CircularJoystickBuffer(int array_size);
 	void flushToFirstBuffer();
 
-	void writeJoystickData(JoystickData* jData);
+	int writeJoystickData(JoystickData* jData);
 	void getMiddleValue(JoystickData* midJoystickData, int i);
 	void fill(bool *firstSent);
 	void readJoystickData(JoystickData* midJoystickData);

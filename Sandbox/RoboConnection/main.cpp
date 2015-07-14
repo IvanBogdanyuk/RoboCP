@@ -14,9 +14,10 @@
 
 
 
+
 int main(int argc, char *argv[])
 {
-	
+
 	Joystick* joystick = new MockJoystick();	//initializing a joystick
 	MavlinkBuffer* buffer = new CircularJoystickBuffer(10);		//buffer to send mavlink packets to the robot
 	RobotLinker* link = new MockRobotLinker();	//initializing a com-port connection
@@ -28,8 +29,16 @@ int main(int argc, char *argv[])
 	
 	jthread->start();
 	rthread->start();
-	
+
+	getchar();
+#ifdef PROFILING
+	std::cout<<"Profiling statistics: \n";
+	std::cout<<"joystick reading total time: "<<joystickTime<<"\n";
+	std::cout << "mean time: " << joystickTime / joystickTimes<<"\n\n";
+
+	std::cout << "com port writing total time: " << robotLinkTime << "\n";
+	std::cout << "mean time: " << robotLinkTime / robotLinkTimes << "\n\n";
+#endif
 	getchar();
 	return 0;
-	
 }

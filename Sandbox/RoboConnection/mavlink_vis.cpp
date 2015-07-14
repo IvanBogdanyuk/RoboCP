@@ -18,7 +18,6 @@ void ComMavlinkVisitor::visitHeartBeat(MavlinkPacket* result)
 	mavlink_msg_heartbeat_pack(mavlink_system.sysid, mavlink_system.compid, &msg, system_type, autopilot_type, system_mode, custom_mode, system_state);
 
 	result->len = mavlink_msg_to_send_buffer(result->data, &msg);
-	std::cout << result->len << std::endl;
 }
 void ComMavlinkVisitor::visitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder)
 {

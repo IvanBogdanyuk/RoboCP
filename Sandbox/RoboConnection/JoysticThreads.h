@@ -1,10 +1,14 @@
-#pragma once
+#ifndef __JOYSTICK_THREADS_H__
+#define __JOYSTICK_THREADS_H__
+
 #include "joystickData.h"
 #include "QtCore\qthread.h"
 #include "QtCore\qstring.h"
 #include "QtCore\qelapsedtimer.h"
 #include "com_connection.h"
 #include "robotLink.h"
+
+#include "preprocess.h"
 
 class JoystickThread : public QThread
 {
@@ -29,3 +33,5 @@ public:
 
 	void sleep_m(int millis);
 };
+
+#endif

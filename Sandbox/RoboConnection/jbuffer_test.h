@@ -29,7 +29,6 @@ class MockRobotLinker : public RobotLinker{
 public:
 	MockRobotLinker(){ timer = time(NULL); }
 	virtual void sendPacket(MavlinkPacket* packet){
-		//packet->toString();
 		sent++;
 		if (time(0) > timer + 3){
 			std::cout << "rate: " << (1.0*read) / sent << "\n";

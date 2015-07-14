@@ -21,5 +21,4 @@ void RealJoystick::getJoysticState(JoystickData* data)
 	data->roll = convert(SDL_JoystickGetAxis(joy, 1), true);
 	data->gas = convert(SDL_JoystickGetAxis(joy, 2), true);
 	data->rudder = convert(SDL_JoystickGetAxis(joy, 3), false);
-	//std :: cout << data -> pitch << ' ' << data -> roll << ' ' << data -> gas << ' ' << data -> rudder << std :: endl;
 }

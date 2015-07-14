@@ -4,6 +4,5 @@
 class RobotLinker{
 public:
 	virtual void sendPacket(MavlinkPacket* packet) = 0;
-	//virtual void readPacket(QByteArray res) = 0;
 	virtual void openPort(QString name) = 0;
 };

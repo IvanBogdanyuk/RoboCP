@@ -79,17 +79,7 @@ QByteArray ComConnection::readPacket()
 		}
 		readcount++;
 		if (serial.waitForReadyRead(-1))
-		{
-			/*for (int i = 0; i < t.size(); ++i)
-			{
-			cout << (unsigned char)t[i];
-			if ((unsigned char)t[i] == 254)
-			cout << endl << "BAB" << endl;
-			}
-			*/
 			buffer.replace(count, 1, serial.read(1));
-
-		}
 		// check if looks like a mavlink packet and check for exclusions and write to console
 		if ((unsigned char)buffer[0] != 254 && buffer[0] != 'U')
 		{
@@ -101,7 +91,6 @@ QByteArray ComConnection::readPacket()
 					// check new line is valid
 					if (buildplaintxtline.length() > 3)
 						plaintxtline = buildplaintxtline;
-
 					// reset for next line
 					buildplaintxtline = "";
 				}
@@ -145,8 +134,6 @@ QByteArray ComConnection::readPacket()
 		if (count == 299)
 			break;
 	}
-
-	
 	// packet is now verified
 
 	char sysid = buffer[3];

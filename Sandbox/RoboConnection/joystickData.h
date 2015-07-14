@@ -86,25 +86,28 @@ public:
 };
 
 class CircularJoystickBuffer : public MavlinkBuffer
+	/*synchronized buffer with circular structure and a queue for writing*/
 {
 	JoystickData* firstBuffer;	//buffer to send
-	JoystickData* secondBuffer;	//queue to send
-	bool* firstSent;	//sent messages in f-t buffer
-	bool* secondSent;
+	JoystickData* secondBuffer;	//queue to write
+	bool* firstSent;	//sent messages-cells in f-t buffer
+	bool* secondSent;	// -//-
 
 	JoystickData midJoystickData;	//for computing mean
 
-	int size;
+	int size;	//length of a buffer
 	int i, j;	//place to add in first and second buffs
-	bool isReading;
-	bool writeToSecondBuffer;
-	QMutex firstMutex;
+	bool isReading;	//flag that raised when reading from buffer
+	bool writeToSecondBuffer;	//flag that raised when write to the queue
+	QMutex firstMutex;	
 	QMutex secondMutex;
-	HeartBeat* heartbeat;
 
-	int secondBuffLoad;
-	int factorToWait;
+	HeartBeat* heartbeat;	//message that should be sent at least one time per second
 
+	int secondBuffLoad;	//num of ele
+	double factorToWait;
+
+	QElapsedTimer heartBitTimer, joystickTimer;
 	long lastHeartbeat;
 public:
 	CircularJoystickBuffer(int array_size);

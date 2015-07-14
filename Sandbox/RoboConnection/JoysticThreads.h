@@ -11,10 +11,9 @@ class JoystickThread : public QThread
 	JoystickData data;
 	Joystick* joystick;
 	MavlinkBuffer* buffer;
-	const int cJoystickRate = 59;
 public:
 	JoystickThread(Joystick* joystick, MavlinkBuffer* buffer);
-	// overriding the QThread's run() method
+	
 	void run();	
 };
 

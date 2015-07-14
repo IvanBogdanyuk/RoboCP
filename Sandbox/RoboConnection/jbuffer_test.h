@@ -5,6 +5,8 @@
 #include<ctime>
 #include <SDL.h>
 
+int sent = 0, read = 0;
+
 //mock implementations of a joysick and com-port connection
 
 class MockJoystick : public Joystick{
@@ -17,16 +19,28 @@ public:
 		data->gas = rand();
 		data->pitch = rand();
 		data->roll = rand();
+
+		read++;
 	}
 };
 
 class MockRobotLinker : public RobotLinker{
+	long timer;
 public:
-	MockRobotLinker(){}
+	MockRobotLinker(){ timer = time(NULL); }
 	virtual void sendPacket(MavlinkPacket* packet){
-		packet->toString();
+		//packet->toString();
+		sent++;
+		if (time(0) > timer + 3){
+			std::cout << "rate: " << (1.0*read) / sent << "\n";
+			timer = time(0);
+		}
+			
+		(QThread::currentThread())->msleep(4);
+	}
+	virtual void openPort(QString name){
 
-	};
+	}
 };
 
 class CircularBufferTestSuite{

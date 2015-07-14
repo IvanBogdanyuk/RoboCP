@@ -16,21 +16,19 @@
 
 int main(int argc, char *argv[])
 {
-
-	//uncomment this to check the QtSerialPort example
-	//return mainExample(argc, argv);
 	
-	Joystick* joystick = new RealJoystick();	//initializing a joystick
-	MavlinkBuffer* buffer = new SingleJoystickBuffer();	
-	RobotLinker* link = new ComRobotLinker();	//initializing a com-port connection
-	MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();
+	Joystick* joystick = new MockJoystick();	//initializing a joystick
+	MavlinkBuffer* buffer = new CircularJoystickBuffer(10);		//buffer to send mavlink packets to the robot
+	RobotLinker* link = new MockRobotLinker();	//initializing a com-port connection
+	MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();	//helps to convert different objects to mavlink packet
 
 	JoystickThread* jthread = new JoystickThread(joystick, buffer);	//thread that reads joysick state and pushes it to the buffer
 	RobotLinkThread* rthread = new RobotLinkThread(buffer, link, mavlinkvisitor);	//thread that reads the latest joystick state to a buffer and sends it via com-port
-	//ComListener* lthread = new ComListener(link);
+	
+	
 	jthread->start();
 	rthread->start();
-	//lthread->start();
+	
 	getchar();
 	return 0;
 	

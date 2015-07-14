@@ -13,7 +13,9 @@ void JoystickThread::run()
 	while (true)
 	{
 		joystick->getJoysticState(&data);
-		QThread::currentThread()->msleep(buffer->writeJoystickData(&data));
+		int waitTime = buffer->writeJoystickData(&data);
+
+		QThread::currentThread()->msleep(waitTime);
 	}
 
 }
@@ -31,7 +33,8 @@ void RobotLinkThread::run(){
 	{
 		buffer->read(&packet, visitor);
 		link->sendPacket(&packet);
-		//std::cout << "1"<<std::endl;
+		
+		this->msleep(1);
 	}
 
 }

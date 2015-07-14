@@ -119,8 +119,11 @@ CircularJoystickBuffer::CircularJoystickBuffer(int array_size)
 	heartbeat = new HeartBeat();
 	lastHeartbeat = -1;
 
+	heartBitTimer.start();
+	joystickTimer.start();
+
 	secondBuffLoad = 0;
-	factorToWait = 2.0;
+	factorToWait = 1.3;
 }
 void CircularJoystickBuffer::flushToFirstBuffer(){
 	for (int k = j; k < (j + size); ++k)
@@ -141,6 +144,7 @@ void CircularJoystickBuffer::flushToFirstBuffer(){
 
 int CircularJoystickBuffer::writeJoystickData(JoystickData* jData)
 {
+	
 
 	if (isReading)
 	{
@@ -177,13 +181,14 @@ int CircularJoystickBuffer::writeJoystickData(JoystickData* jData)
 				secondSent[j] = 0;
 				++j;
 				j %= size;
+				this->secondBuffLoad++;
 			}
 			else
-				std::cout << "Second buffer is full!" << std::endl;
+				std::cout << " First and second buffer is full!" << std::endl;
 		}
 		firstMutex.unlock();
 	}
-	return factorToWait*secondBuffLoad;
+	return floor(factorToWait*secondBuffLoad);
 }
 void CircularJoystickBuffer::getMiddleValue(JoystickData* midJoystickData, int i)
 {
@@ -241,7 +246,7 @@ void CircularJoystickBuffer::readJoystickData(JoystickData* midJoystickData)
 
 	fill(firstSent);
 
-	if (secondSent[(j + size - 1) % size])
+	if (!secondSent[(j + size - 1) % size])
 	{
 		secondMutex.lock();
 		flushToFirstBuffer();
@@ -262,10 +267,17 @@ void CircularJoystickBuffer::readJoystickData(MavlinkPacket* packet, MavlinkVisi
 	midJoystickData.toMavlinkPacket(packet, visitor);
 }
 void CircularJoystickBuffer::read(MavlinkPacket* packet, MavlinkVisitor* visitor){
-	if (lastHeartbeat < time(NULL) - 900){
+	if (heartBitTimer.elapsed() > 1000)
+	{
 		heartbeat->toMavlinkPacket(packet, visitor);
+		heartBitTimer.restart();
 	}
-	else readJoystickData(packet, visitor);
+	else
+	if (joystickTimer.elapsed() > 59)
+	{
+		readJoystickData(packet, visitor);
+		joystickTimer.restart();
+	}
 }
 CircularJoystickBuffer::~CircularJoystickBuffer()
 {

@@ -10,7 +10,6 @@ JoystickThread::JoystickThread(Joystick* joystick, MavlinkBuffer* buffer){
 // overriding the QThread's run() method
 void JoystickThread::run()
 {
-
 	while (true)
 	{
 #ifdef PROFILING
@@ -25,9 +24,7 @@ void JoystickThread::run()
 #endif
 
 		QThread::currentThread()->msleep(waitTime);
-
 	}
-
 }
 
 RobotLinkThread::RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor){
@@ -38,7 +35,6 @@ RobotLinkThread::RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, Mavli
 
 void RobotLinkThread::run(){
 	link->openPort("COM5");
-
 	while (true)
 	{
 #ifdef PROFILING
@@ -52,9 +48,7 @@ void RobotLinkThread::run(){
 		robotLinkTimes++;
 #endif
 		this->msleep(1);
-
 	}
-
 }
 
 void RobotLinkThread::sleep_m(int millis){

@@ -1,9 +1,10 @@
 #include "joystickData.h"
 
-MavlinkPacket::MavlinkPacket(){
-	data = new unsigned char[MAVLINK_MAX_PACKET_LEN];
+MavlinkPacket::MavlinkPacket()
+{
+	data = new unsigned char[MAVLINK_MAX_PACKET_LEN];    //Maximum length of the mavlink package
 }
-void MavlinkPacket::toString()
+void MavlinkPacket::toString()                           //
 {
 	int length = ((unsigned short)data[1]) + 7;
 
@@ -14,31 +15,36 @@ void MavlinkPacket::toString()
 	std::cout << "\n";
 }
 
-void HeartBeat::toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor){
+void HeartBeat::toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
+{
 	visitor->visitHeartBeat(result);
 }
 
-void JoystickData::toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor){
+void JoystickData::toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
+{
 	visitor->visitRc_Channels_Override(result, pitch, roll, gas, rudder);
 }
 
-JoystickData* JoystickData::clone(){
+JoystickData* JoystickData::clone()
+{
 	return new JoystickData(rudder, gas, pitch, roll);
 }
 
-void JoystickData::copy(JoystickData* to){
-
+void JoystickData::copy(JoystickData* to)
+{
 	to->rudder = rudder;
 	to->gas = gas;
 	to->pitch = pitch;
 	to->roll = roll;
 }
 
-void JoystickData::print(){
+void JoystickData::print()
+{
 	std::cout << "JoystickData: \nrudder:" << rudder << "\ngas: " << gas << "\npitch: " << pitch << "\nroll: " << roll << "\n\n";
 }
 
-SingleJoystickBuffer::SingleJoystickBuffer() {
+SingleJoystickBuffer::SingleJoystickBuffer()
+{
 	jbuffers = new JoystickData[2];
 
 	activeBuffer = 0;
@@ -51,12 +57,14 @@ SingleJoystickBuffer::SingleJoystickBuffer() {
 	joystickTimer.start();
 }
 
-void SingleJoystickBuffer::switchBuffer(){
+void SingleJoystickBuffer::switchBuffer()
+{
 	if (activeBuffer) activeBuffer = 0;
 	else activeBuffer = 1;
 }
 
-int SingleJoystickBuffer::writeJoystickData(JoystickData* jdata){
+int SingleJoystickBuffer::writeJoystickData(JoystickData* jdata)
+{
 	jdata->copy(&jbuffers[activeBuffer]);
 
 	mutex.lock();
@@ -69,8 +77,8 @@ int SingleJoystickBuffer::writeJoystickData(JoystickData* jdata){
 	return 0;
 }
 
-void SingleJoystickBuffer::readJoystickData(MavlinkPacket* packet, MavlinkVisitor* visitor){
-
+void SingleJoystickBuffer::readJoystickData(MavlinkPacket* packet, MavlinkVisitor* visitor)
+{
 	mutex.lock();
 	isReading++;
 
@@ -81,7 +89,8 @@ void SingleJoystickBuffer::readJoystickData(MavlinkPacket* packet, MavlinkVisito
 	mutex.unlock();
 }
 
-void SingleJoystickBuffer::read(MavlinkPacket* packet, MavlinkVisitor* visitor){
+void SingleJoystickBuffer::read(MavlinkPacket* packet, MavlinkVisitor* visitor)
+{
 	if (heartBitTimer.elapsed() > 1000)
 	{
 		heartbeat->toMavlinkPacket(packet, visitor);
@@ -95,7 +104,8 @@ void SingleJoystickBuffer::read(MavlinkPacket* packet, MavlinkVisitor* visitor){
 	}
 }
 
-SingleJoystickBuffer::~SingleJoystickBuffer(){
+SingleJoystickBuffer::~SingleJoystickBuffer()
+{
 	delete[] jbuffers;
 }
 
@@ -125,7 +135,8 @@ CircularJoystickBuffer::CircularJoystickBuffer(int array_size)
 	secondBuffLoad = 0;
 	factorToWait = 1.3;
 }
-void CircularJoystickBuffer::flushToFirstBuffer(){
+void CircularJoystickBuffer::flushToFirstBuffer()
+{
 	for (int k = j; k < (j + size); ++k)
 	{
 		if (!secondSent[k % size])
@@ -144,8 +155,6 @@ void CircularJoystickBuffer::flushToFirstBuffer(){
 
 int CircularJoystickBuffer::writeJoystickData(JoystickData* jData)
 {
-	
-
 	if (isReading)
 	{
 		secondMutex.lock();

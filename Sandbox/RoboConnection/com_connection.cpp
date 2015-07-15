@@ -58,7 +58,7 @@ bool ComConnection::com_checksum(uint8_t *data, int32_t length, uint8_t com_ck_a
 		return false;
 }
 void ComConnection::Write(unsigned char* message, int length)
-{	
+{
 	serial.write((char*)message, length);
 }
 QByteArray ComConnection::readPacket()

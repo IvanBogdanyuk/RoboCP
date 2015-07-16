@@ -1,5 +1,5 @@
 #include "WebcamCapture.h"
-#include <iostream>
+
 void WebcamCapture::run()
 {
 	Mat orig;

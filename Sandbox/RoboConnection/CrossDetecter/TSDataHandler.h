@@ -12,10 +12,10 @@ public:
 	~TSDataHandler();
 	void Write(T input);
 	bool Read(T &output);
+	bool Peek(T &output);
 private:
 	int mCapacity;
-	T mFrame;
-	// Очередь фрэймов
+	// Очередь данных
 	std::deque<T> mQueue;
 
 };
@@ -27,7 +27,7 @@ TSDataHandler<T>::TSDataHandler(int frameLimit)
 	mCapacity = frameLimit;
 }
 
-// функция записи изображения из очереди
+// функция записи в очередь
 template <class T>
 void TSDataHandler<T>::Write(T input)
 {
@@ -45,7 +45,7 @@ void TSDataHandler<T>::Write(T input)
 	m.unlock();
 }
 
-// функция считывания изображения из очереди
+// функция считывания из очереди
 template <class T>
 bool TSDataHandler<T>::Read(T &output)
 {
@@ -58,12 +58,27 @@ bool TSDataHandler<T>::Read(T &output)
 		return false;
 	}
 
-	mFrame = mQueue.back();
-	mFrame.copyTo(output);
+	output = mQueue.back();
 	mQueue.pop_back();
-	mFrame.release();
 
 	m.unlock();
 	return true;
 }
 
+template <class T>
+bool TSDataHandler<T>::Peek(T &output)
+{
+	QMutex m;
+	m.lock();
+
+	if (mQueue.empty())
+	{
+		m.unlock();
+		return false;
+	}
+
+	output = mQueue.back();
+	
+	m.unlock();
+	return true;
+}

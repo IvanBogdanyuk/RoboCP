@@ -21,17 +21,19 @@ void ProcessingThread::run()
 
 	while (isRunning())
 	{
+		// засечение времени
+		TimerUpdate();
 		while (mDataHandler_in->Read(orig))
 		{
-			// засечение времени
-			TimerUpdate();
 
 			// вызов обработчика
 			mOpticalFlowHandle(previmg, orig, prev_pts, orig_pts);
 
-            // вывод времени
-			TimerElapsed();
 		}
+		// вывод времени
+		TimerElapsed();
+		sleep();
+		
 		yieldCurrentThread();
 	}
 }

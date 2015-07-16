@@ -17,12 +17,12 @@ void MavlinkPacket::toString()                           //
 
 void HeartBeat::toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
 {
-    visitor->visitHeartBeat(result);
+    visitor->VisitHeartBeat(result);
 }
 
 void JoystickData::toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
 {
-    visitor->visitRc_Channels_Override(result, pitch, roll, gas, rudder);
+    visitor->VisitRc_Channels_Override(result, pitch, roll, gas, rudder);
 }
 
 JoystickData* JoystickData::clone()

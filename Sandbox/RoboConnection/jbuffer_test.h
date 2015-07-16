@@ -14,7 +14,7 @@ public:
     MockJoystick(){
         srand(time(NULL));
     }
-    virtual void getJoysticState(JoystickData* data){
+    virtual void GetJoysticState(JoystickData* data){
         data->rudder = rand();
         data->gas = rand();
         data->pitch = rand();
@@ -28,7 +28,7 @@ class MockRobotLinker : public RobotLinker{
     long timer;
 public:
     MockRobotLinker(){ timer = time(NULL); }
-    virtual void sendPacket(MavlinkPacket* packet){
+    virtual void SendPacket(MavlinkPacket* packet){
         sent++;
         if (time(0) > timer + 3){
             std::cout << "rate: " << (1.0*read) / sent << "\n";
@@ -37,7 +37,7 @@ public:
             
         (QThread::currentThread())->msleep(4);
     }
-    virtual void openPort(QString name){
+    virtual void OpenPort(QString name){
 
     }
 };

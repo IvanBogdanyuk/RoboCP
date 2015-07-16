@@ -21,8 +21,8 @@ public:
 
 class MavlinkVisitor {
 public:
-    virtual void visitHeartBeat(MavlinkPacket* result) = 0;
-    virtual void visitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder) = 0;
+    virtual void VisitHeartBeat(MavlinkPacket* result) = 0;
+    virtual void VisitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder) = 0;
 };
 
 class MavlinkMessage {
@@ -124,5 +124,5 @@ public:
 
 class Joystick {
 public:
-    virtual void getJoysticState(JoystickData* data) = 0;
+    virtual void GetJoysticState(JoystickData* data) = 0;
 };

@@ -13,7 +13,7 @@ ComMavlinkVisitor::ComMavlinkVisitor(){
     m_custom_mode = 0;                 //For MAV_MODE_FLAG ok     
     m_system_state = 3;                //MAV_STATE ok (MAV_STATE_STANDBY)
 }
-void ComMavlinkVisitor::visitHeartBeat(MavlinkPacket* result)
+void ComMavlinkVisitor::VisitHeartBeat(MavlinkPacket* result)
 {
     mavlink_message_t msg; //Struct for a mavlink message
                            //Packing the message
@@ -21,7 +21,7 @@ void ComMavlinkVisitor::visitHeartBeat(MavlinkPacket* result)
                            //Sending the message
     result->len = mavlink_msg_to_send_buffer(result->data, &msg);
 }
-void ComMavlinkVisitor::visitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder)
+void ComMavlinkVisitor::VisitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder)
 {
     mavlink_message_t msg; //Struct for a mavlink message
                            //Packing the message

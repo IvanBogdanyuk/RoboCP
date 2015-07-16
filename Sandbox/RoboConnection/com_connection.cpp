@@ -43,20 +43,7 @@ uint16_t crc_calculate(uint8_t *pBuffer, int length)
 
 	return (crcTmp);
 }
-bool ComConnection::com_checksum(uint8_t *data, int32_t length, uint8_t com_ck_a, uint8_t com_ck_b) //Gets an array, length of it payload 
-{
-	if (length < 5)
-		return 0;
-	char crcs[] = MAVLINK_MESSAGE_CRCS;
-	uint16_t res = crc_calculate(data, length + 6);
-	res = crc_accumulate(crcs[data[5]], res);
-	uint8_t ck_a = (uint8_t)(res & 0xFF);		  //< High byte
-	uint8_t ck_b = (uint8_t)(res >> 8);			  //< Low byte
-	if ((ck_a == com_ck_a) && (ck_b == com_ck_b)) //If checksums are equal to each other, then
-		return true;							  //returns true 
-	else
-		return false;
-}
+
 void ComConnection::Write(unsigned char* message, int length)
 {
 	serial.write((char*)message, length);

@@ -155,16 +155,16 @@ void ComConnection::getParamList()
 	uint8_t system_mode = MAV_MODE_PREFLIGHT; //MAV_MODE_PREFLIGHT ok
 	uint32_t custom_mode = 0;                 // MAV_MODE_FLAG ok     
 	uint8_t system_state = MAV_STATE_STANDBY; //MAV_STATE ok
-	mavlink_system.sysid = 255;    //ID 
-	mavlink_system.compid = 190;	//
+	mavlink_system.sysid = 255;    //System ID 
+	mavlink_system.compid = 190;	//Component ID
 
-	mavlink_target.sysid = 1;      //ID 
-	mavlink_target.compid = 1;		//
-	mavlink_message_t msg;               // MAVLink 
-	uint8_t buf[MAVLINK_MAX_PACKET_LEN];
+	mavlink_target.sysid = 1;      //System ID 
+	mavlink_target.compid = 1;		//Component ID
+	mavlink_message_t msg;               //MAVLink message
+	uint8_t buf[MAVLINK_MAX_PACKET_LEN]; //Init MAVLink buffer
 	mavlink_msg_param_request_list_pack(mavlink_system.sysid, mavlink_system.compid,
-		&msg, mavlink_target.sysid, mavlink_target.compid);
-	uint16_t len = mavlink_msg_to_send_buffer(buf, &msg);
+		&msg, mavlink_target.sysid, mavlink_target.compid); //Packing the message
+	uint16_t len = mavlink_msg_to_send_buffer(buf, &msg); // Sending the message to buffer
 	serial.write((char*)buf, len);
 
 	int packets = 0;
@@ -174,14 +174,9 @@ void ComConnection::getParamList()
 		QByteArray buffer = readPacket();
 		packets++;
 		if ((unsigned char)buffer[5] == 22) //mavlink param value
-		{
 			std::cout << "param val";
-
-		}
 		if ((unsigned char)buffer[5] == 253) //status text
-		{
 			std::cout << "status val";
-		}
 		int idd = (unsigned char)buffer[5];
 		std::cout << "got obj with id: " << idd << std::endl;
 	} while (packets<50);

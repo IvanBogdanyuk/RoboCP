@@ -8,7 +8,7 @@ public:
 	ComMavlinkVisitor();
 	virtual void visitHeartBeat(MavlinkPacket* result);
 	virtual void visitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder);
-private:
+private:							//MAVLink protocol, message ID #0
 	mavlink_system_t mavlink_system;//ID and component
 	mavlink_system_t mavlink_target;
 

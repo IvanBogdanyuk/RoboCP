@@ -16,11 +16,11 @@ class ProcessingThread :
 	public QThread
 {
 public:
-	ProcessingThread(TSDataHandler *dh_in, TSDataHandler *dh_out = nullptr);
+	ProcessingThread(TSDataHandler<Mat> *dh_in, TSDataHandler<Mat> *dh_out = nullptr);
 	~ProcessingThread();
 private:
 	bool mCrossDetect(Mat img, vector<Point2f> &cross);
 	void mOpticalFlowHandle(Mat &previmg, Mat lastimg, vector<Point2f> &prev_pts, vector<Point2f> &orig_pts);
 	void run();
-	TSDataHandler *mDataHandler_in, *mDataHandler_out;
+	TSDataHandler<Mat> *mDataHandler_in, *mDataHandler_out;
 };

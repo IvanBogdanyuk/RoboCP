@@ -14,11 +14,11 @@ using namespace cv;
 class WebcamCapture : public QThread
 {
 public:
-	WebcamCapture(TSDataHandler *dh_out, int cameraNum = 0);
+	WebcamCapture(TSDataHandler<Mat> *dh_out, int cameraNum = -1);
 	WebcamCapture();
 	~WebcamCapture();
 private:
 	cv::VideoCapture *mVideoCapture;
 	void run();
-	TSDataHandler *mDataHandler_out;
+	TSDataHandler<Mat> *mDataHandler_out;
 };

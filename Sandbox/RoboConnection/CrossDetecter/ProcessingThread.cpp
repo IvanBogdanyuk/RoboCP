@@ -1,6 +1,6 @@
 #include "ProcessingThread.h"
 
-ProcessingThread::ProcessingThread(TSDataHandler *dh_in, TSDataHandler *dh_out)
+ProcessingThread::ProcessingThread(TSDataHandler<Mat> *dh_in, TSDataHandler<Mat> *dh_out)
 {
 	// инициализация
 	this->mDataHandler_in = dh_in;
@@ -21,7 +21,7 @@ void ProcessingThread::run()
 
 	while (isRunning())
 	{
-		while (mDataHandler_in->ReadFrame(orig))
+		while (mDataHandler_in->Read(orig))
 		{
 			// засечение времени
 			TimerUpdate();

@@ -1,5 +1,5 @@
 #include "WebcamCapture.h"
-
+#include <iostream>
 void WebcamCapture::run()
 {
 	Mat orig;
@@ -18,7 +18,7 @@ void WebcamCapture::run()
 		if (mVideoCapture->isOpened())
 		{
 			if (mVideoCapture->read(orig))
-				mDataHandler_out->WriteFrame(orig);
+				mDataHandler_out->Write(orig);
 		}
 		else
 		{
@@ -33,12 +33,14 @@ void WebcamCapture::run()
 	this->exit(0);
 }
 
-WebcamCapture::WebcamCapture(TSDataHandler *dh_out, int cameraNum)
+WebcamCapture::WebcamCapture(TSDataHandler<Mat> *dh_out, int cameraNum)
 {
 	// инициализация камеры стандартной камеры 
 	// с размером выходного изображения 320x240
-	this->mVideoCapture = new VideoCapture;
-	mVideoCapture->open(cameraNum);
+	this->mVideoCapture = new VideoCapture(cameraNum);
+	if (!mVideoCapture->isOpened())
+		exit(-1);
+	//bool success = mVideoCapture->open(cameraNum);
 	mVideoCapture->set(CV_CAP_PROP_FRAME_HEIGHT, 240);
 	mVideoCapture->set(CV_CAP_PROP_FRAME_WIDTH, 320);
 	this->mDataHandler_out = dh_out;

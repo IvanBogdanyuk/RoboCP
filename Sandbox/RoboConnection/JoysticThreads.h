@@ -16,9 +16,9 @@ public:
     JoystickThread(Joystick* joystick, MavlinkBuffer* buffer);
     void run();    
 private:
-    JoystickData data;
-    Joystick* joystick;
-    MavlinkBuffer* buffer;
+    JoystickData m_data;
+    Joystick* m_joystick;
+    MavlinkBuffer* m_buffer;
 };
 
 class RobotLinkThread : public QThread

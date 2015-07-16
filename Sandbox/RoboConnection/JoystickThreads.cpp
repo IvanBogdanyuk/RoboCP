@@ -3,8 +3,8 @@
 
 
 JoystickThread::JoystickThread(Joystick* joystick, MavlinkBuffer* buffer){
-    this->joystick = joystick;
-    this->buffer = buffer;
+    this->m_joystick = joystick;
+    this->m_buffer = buffer;
 }
 
 // overriding the QThread's run() method
@@ -15,8 +15,8 @@ void JoystickThread::run()
 #ifdef PROFILING
         long timer = time(NULL);
 #endif
-        joystick->GetJoysticState(&data);  //получение данных
-        int waitTime = buffer->writeJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
+        m_joystick->GetJoysticState(&m_data);  //получение данных
+        int waitTime = m_buffer->writeJoystickData(&m_data); //ждём тем дольше, чем меньше места в буфере
 
 #ifdef PROFILING
         joystickTime += time(0) - timer;

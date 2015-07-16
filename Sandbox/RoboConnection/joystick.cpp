@@ -5,7 +5,7 @@ RealJoystick::RealJoystick() //класс для настоящего джойс
 {
     SDL_Init(SDL_INIT_JOYSTICK); //инициализация, открытие джойстика
     SDL_JoystickEventState(SDL_ENABLE);
-    joy = SDL_JoystickOpen(0);
+    m_joy = SDL_JoystickOpen(0);
 }
 uint16_t RealJoystick::convert(int JData, bool toinvert)  //перевод значений в диапазон [1000, 2000]
 {
@@ -16,9 +16,9 @@ uint16_t RealJoystick::convert(int JData, bool toinvert)  //перевод зн�
 }
 void RealJoystick::getJoysticState(JoystickData* data)
 {
-    SDL_PollEvent(&event);
-    data->pitch = convert(SDL_JoystickGetAxis(joy, 0), false); 
-    data->roll = convert(SDL_JoystickGetAxis(joy, 1), true);
-    data->gas = convert(SDL_JoystickGetAxis(joy, 2), true);
-    data->rudder = convert(SDL_JoystickGetAxis(joy, 3), false);
+    SDL_PollEvent(&m_event);
+    data->pitch = convert(SDL_JoystickGetAxis(m_joy, 0), false); 
+    data->roll = convert(SDL_JoystickGetAxis(m_joy, 1), true);
+    data->gas = convert(SDL_JoystickGetAxis(m_joy, 2), true);
+    data->rudder = convert(SDL_JoystickGetAxis(m_joy, 3), false);
 }

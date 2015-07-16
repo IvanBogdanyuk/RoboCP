@@ -7,7 +7,8 @@
 
 bool com_checksum(uint8_t *data, int32_t length); //Gets an array, length of its payload 
 
-class ComRobotLinker : public RobotLinker{
+class ComRobotLinker : public RobotLinker
+{
 
 public:
     ComRobotLinker();

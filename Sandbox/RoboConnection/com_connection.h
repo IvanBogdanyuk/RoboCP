@@ -5,7 +5,8 @@
 #include <QtSerialPort\QSerialPort>
 #include <QtSerialPort\QSerialPortInfo>
 
-class ComConnection{
+class ComConnection
+{
 public:
     ComConnection();
     void openPort(QString name);

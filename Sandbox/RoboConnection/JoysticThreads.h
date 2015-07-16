@@ -21,7 +21,8 @@ private:
     MavlinkBuffer* buffer;
 };
 
-class RobotLinkThread : public QThread{
+class RobotLinkThread : public QThread
+{
 public:
     RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor);
     void run();

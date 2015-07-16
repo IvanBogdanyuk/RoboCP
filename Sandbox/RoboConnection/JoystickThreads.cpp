@@ -3,8 +3,8 @@
 
 
 JoystickThread::JoystickThread(Joystick* joystick, MavlinkBuffer* buffer){
-    this->m_joystick = joystick;
-    this->m_buffer = buffer;
+    this->joystick = joystick;
+    this->buffer = buffer;
 }
 
 // overriding the QThread's run() method
@@ -15,8 +15,8 @@ void JoystickThread::run()
 #ifdef PROFILING
         long timer = time(NULL);
 #endif
-        m_joystick->GetJoysticState(&m_data);  //получение данных
-        int waitTime = m_buffer->writeJoystickData(&m_data); //ждём тем дольше, чем меньше места в буфере
+        joystick->GetJoysticState(&data);  //получение данных
+        int waitTime = buffer->writeJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
 
 #ifdef PROFILING
         joystickTime += time(0) - timer;
@@ -27,10 +27,19 @@ void JoystickThread::run()
     }
 }
 
-RobotLinkThread::RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor){
+
+RobotLinkThread::RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor, Joystick* joystick){
     this->m_buffer = buffer;
     this->m_link = link;
     this->m_visitor = visitor;
+	this->m_joystick = joystick;
+}
+
+void RobotLinkThread::Stop()
+{
+	JoystickData* jData = new JoystickData(1500, 1000, 1500, 1500);
+	jData->toMavlinkPacket(&m_packet, m_visitor);
+	m_link->SendPacket(&m_packet);
 }
 
 void RobotLinkThread::run(){
@@ -40,8 +49,16 @@ void RobotLinkThread::run(){
 #ifdef PROFILING
         long timer = time(NULL);
 #endif
-        m_buffer->read(&m_packet, m_visitor);  //получение данных и отправка в виде Mavlink-пакета
-        m_link->SendPacket(&m_packet);
+		if (m_joystick->isDanger())
+			Stop();
+		else
+		{
+			m_buffer->read(&m_packet, m_visitor);  //получение данных, формирование  Mavlink-пакета
+		}
+		if (m_joystick->isDanger())
+			Stop();
+		else
+			m_link->SendPacket(&m_packet); //отправка Mavlink-пакета
         
 #ifdef PROFILING
         robotLinkTime += time(0) - timer;

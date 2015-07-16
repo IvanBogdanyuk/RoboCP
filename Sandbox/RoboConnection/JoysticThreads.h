@@ -16,15 +16,14 @@ public:
     JoystickThread(Joystick* joystick, MavlinkBuffer* buffer);
     void run();    
 private:
-    JoystickData m_data;
-    Joystick* m_joystick;
-    MavlinkBuffer* m_buffer;
+    JoystickData data;
+    Joystick* joystick;
+    MavlinkBuffer* buffer;
 };
 
-class RobotLinkThread : public QThread
-{
+class RobotLinkThread : public QThread{
 public:
-    RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor);
+    RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor, Joystick* joystick);
     void run();
     void sleep_m(int millis);
 private:
@@ -32,5 +31,7 @@ private:
     RobotLinker* m_link;
     MavlinkPacket m_packet;
     MavlinkVisitor* m_visitor;
+	Joystick* m_joystick;
+	void Stop();
 };
 #endif

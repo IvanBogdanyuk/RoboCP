@@ -9,14 +9,12 @@ int sent = 0, read = 0;
 
 //mock implementations of a joysick and com-port connection
 
-class MockJoystick : public Joystick
-{
+class MockJoystick : public Joystick{
 public:
     MockJoystick(){
         srand(time(NULL));
     }
-    virtual void GetJoysticState(JoystickData* data)
-    {
+    virtual void GetJoysticState(JoystickData* data){
         data->rudder = rand();
         data->gas = rand();
         data->pitch = rand();
@@ -26,13 +24,11 @@ public:
     }
 };
 
-class MockRobotLinker : public RobotLinker
-{
+class MockRobotLinker : public RobotLinker{
     long timer;
 public:
     MockRobotLinker(){ timer = time(NULL); }
-    virtual void SendPacket(MavlinkPacket* packet)
-    {
+    virtual void SendPacket(MavlinkPacket* packet){
         sent++;
         if (time(0) > timer + 3){
             std::cout << "rate: " << (1.0*read) / sent << "\n";
@@ -41,11 +37,12 @@ public:
             
         (QThread::currentThread())->msleep(4);
     }
-    virtual void OpenPort(QString name){ }
+    virtual void OpenPort(QString name){
+
+    }
 };
 
-class CircularBufferTestSuite
-{
+class CircularBufferTestSuite{
     CircularJoystickBuffer* testBuffer;
     JoystickData* jData;
     MavlinkPacket* packet;
@@ -57,8 +54,7 @@ public:
         packet = new MavlinkPacket();
         visitor = new ComMavlinkVisitor();
     }
-    bool simpleTest()
-    {
+    bool simpleTest(){
         jData = new JoystickData(1600, 1550, 1570, 1600);
         testBuffer -> writeJoystickData(jData);
         jData->rudder = 1450;
@@ -75,8 +71,7 @@ public:
         std::cout << jData->rudder << ' ' << jData->pitch << ' ' << jData->roll << ' ' << jData->gas << std :: endl;
         
     }
-    bool run()
-    {
+    bool run(){
         return simpleTest();
     }
 };

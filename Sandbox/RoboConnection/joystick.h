@@ -6,10 +6,10 @@
 class RealJoystick : public Joystick
 {
 public:
-	RealJoystick();
-	uint16_t convert(int JData, bool toinvert);
-	virtual void getJoysticState(JoystickData* data);
+    RealJoystick();
+    uint16_t convert(int JData, bool toinvert);
+    virtual void getJoysticState(JoystickData* data);
 private:
-	SDL_Joystick* joy;
-	SDL_Event event;
+    SDL_Joystick* joy;
+    SDL_Event event;
 };

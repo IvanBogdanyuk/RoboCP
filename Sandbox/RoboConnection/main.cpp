@@ -21,61 +21,61 @@
 int main(int argc, char *argv[])
 {
 
-	Joystick* joystick = new MockJoystick();	//initializing a joystick
-	MavlinkBuffer* buffer = new CircularJoystickBuffer(10);		//buffer to send mavlink packets to the robot
-	RobotLinker* link = new MockRobotLinker();	//initializing a com-port connection
-	MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();	//helps to convert different objects to mavlink packet
+    Joystick* joystick = new MockJoystick();    //initializing a joystick
+    MavlinkBuffer* buffer = new CircularJoystickBuffer(10);        //buffer to send mavlink packets to the robot
+    RobotLinker* link = new MockRobotLinker();    //initializing a com-port connection
+    MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();    //helps to convert different objects to mavlink packet
 
-	JoystickThread* jthread = new JoystickThread(joystick, buffer);	//thread that reads joysick state and pushes it to the buffer
-	RobotLinkThread* rthread = new RobotLinkThread(buffer, link, mavlinkvisitor);	//thread that reads the latest joystick state to a buffer and sends it via com-port
-	
-	jthread->start();
-	rthread->start();
+    JoystickThread* jthread = new JoystickThread(joystick, buffer);    //thread that reads joystick state and pushes it to the buffer
+    RobotLinkThread* rthread = new RobotLinkThread(buffer, link, mavlinkvisitor);    //thread that reads the latest joystick state to a buffer and sends it via com-port
+    
+    jthread->start();
+    rthread->start();
 
 #pragma region CrossDetection
-	// инициализация очереди на обработку изображения
-	TSDataHandler* cap2proc = new TSDataHandler();
-	// инициализация очереди для вывода 
-	TSDataHandler* proc2out = new TSDataHandler();
-	cv::Mat img;
+    // инициализация очереди на обработку изображения
+    TSDataHandler* cap2proc = new TSDataHandler();
+    // инициализация очереди для вывода 
+    TSDataHandler* proc2out = new TSDataHandler();
+    cv::Mat img;
 
-	// инициализация и старт потоков считывания и обработки данных
-	WebcamCapture capThread(cap2proc);
-	ProcessingThread procThread(cap2proc, proc2out);
-	capThread.start();
-	procThread.start();
+    // инициализация и старт потоков считывания и обработки данных
+    WebcamCapture capThread(cap2proc);
+    ProcessingThread procThread(cap2proc, proc2out);
+    capThread.start();
+    procThread.start();
 
-	// цикл вывода обработанных изображений
-	forever
-	{
-		int key = -1;
-		if (proc2out->ReadFrame(img))
-		{
-			cv::imshow("Output", img);
-			key = cv::waitKey(1);
-			// если нажат пробел, то break
-			if (key == 27)
-				break;
-		}
-	}
+    // цикл вывода обработанных изображений
+    forever
+    {
+        int key = -1;
+        if (proc2out->ReadFrame(img))
+        {
+            cv::imshow("Output", img);
+            key = cv::waitKey(1);
+            // если нажат пробел, то break
+            if (key == 27)
+                break;
+        }
+    }
 
-	// закрытие потоков
-	capThread.exit();
-	procThread.exit();
+    // закрытие потоков
+    capThread.exit();
+    procThread.exit();
 #pragma endregion
 
 
 
 
-	getchar();
+    getchar();
 #ifdef PROFILING
-	std::cout<<"Profiling statistics: \n";
-	std::cout<<"joystick reading total time: "<<joystickTime<<"\n";
-	std::cout << "mean time: " << joystickTime / joystickTimes<<"\n\n";
+    std::cout<<"Profiling statistics: \n";
+    std::cout<<"joystick reading total time: "<<joystickTime<<"\n";
+    std::cout << "mean time: " << joystickTime / joystickTimes<<"\n\n";
 
-	std::cout << "com port writing total time: " << robotLinkTime << "\n";
-	std::cout << "mean time: " << robotLinkTime / robotLinkTimes << "\n\n";
+    std::cout << "com port writing total time: " << robotLinkTime << "\n";
+    std::cout << "mean time: " << robotLinkTime / robotLinkTimes << "\n\n";
 #endif
-	getchar();
-	return 0;
+    getchar();
+    return 0;
 }

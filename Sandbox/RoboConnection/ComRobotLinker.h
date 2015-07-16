@@ -10,9 +10,9 @@ bool com_checksum(uint8_t *data, int32_t length); //Gets an array, length of its
 class ComRobotLinker : public RobotLinker{
 
 public:
-	ComRobotLinker();
-	virtual void sendPacket(MavlinkPacket* packet);
-	virtual void openPort(QString name);
+    ComRobotLinker();
+    virtual void sendPacket(MavlinkPacket* packet);
+    virtual void openPort(QString name);
 private:
-	ComConnection* copterCom;
+    ComConnection* copterCom;
 };

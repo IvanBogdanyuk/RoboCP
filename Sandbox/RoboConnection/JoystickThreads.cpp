@@ -3,55 +3,55 @@
 
 
 JoystickThread::JoystickThread(Joystick* joystick, MavlinkBuffer* buffer){
-	this->joystick = joystick;
-	this->buffer = buffer;
+    this->joystick = joystick;
+    this->buffer = buffer;
 }
 
 // overriding the QThread's run() method
 void JoystickThread::run()
 {
-	while (true)
-	{
+    while (true)
+    {
 #ifdef PROFILING
-		long timer = time(NULL);
+        long timer = time(NULL);
 #endif
-		joystick->getJoysticState(&data);  //получение данных
-		int waitTime = buffer->writeJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
+        joystick->getJoysticState(&data);  //получение данных
+        int waitTime = buffer->writeJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
 
 #ifdef PROFILING
-		joystickTime += time(0) - timer;
-		joystickTimes++;
+        joystickTime += time(0) - timer;
+        joystickTimes++;
 #endif
 
-		QThread::currentThread()->msleep(waitTime);
-	}
+        QThread::currentThread()->msleep(waitTime);
+    }
 }
 
 RobotLinkThread::RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, MavlinkVisitor* visitor){
-	this->buffer = buffer;
-	this->link = link;
-	this->visitor = visitor;
+    this->m_buffer = buffer;
+    this->m_link = link;
+    this->m_visitor = visitor;
 }
 
 void RobotLinkThread::run(){
-	link->openPort("COM5"); 
-	while (true)
-	{
+    m_link->openPort("COM5"); 
+    while (true)
+    {
 #ifdef PROFILING
-		long timer = time(NULL);
+        long timer = time(NULL);
 #endif
-		buffer->read(&packet, visitor);  //получение данных и отправка в виде Mavlink-пакета
-		link->sendPacket(&packet);
-		
+        m_buffer->read(&m_packet, m_visitor);  //получение данных и отправка в виде Mavlink-пакета
+        m_link->sendPacket(&m_packet);
+        
 #ifdef PROFILING
-		robotLinkTime += time(0) - timer;
-		robotLinkTimes++;
+        robotLinkTime += time(0) - timer;
+        robotLinkTimes++;
 #endif
-		this->msleep(1);
-	}
+        this->msleep(1);
+    }
 }
 
 void RobotLinkThread::sleep_m(int millis){
-	this->msleep(millis);
+    this->msleep(millis);
 }
 

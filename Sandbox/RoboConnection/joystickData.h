@@ -24,19 +24,19 @@ public:
 
 class MavlinkVisitor {
 public:
-	virtual void visitHeartBeat(MavlinkPacket* result) = 0;
-	virtual void visitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder) = 0;
-	virtual void visitRc_Channels_Override(MavlinkPacket* result, JoystickData* data) = 0;
+	virtual void VisitHeartBeat(MavlinkPacket* result) = 0;
+	virtual void VisitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder) = 0;
+	virtual void VisitRc_Channels_Override(MavlinkPacket* result, JoystickData* data) = 0;
 };
 
 class MavlinkMessage {
 public:
-	virtual void toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor) = 0;
+	virtual void ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor) = 0;
 };
 
 class HeartBeat : public MavlinkMessage{
 public:
-	virtual void toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor);
+	virtual void ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor);
 };
 
 class JoystickData : public MavlinkMessage{
@@ -49,7 +49,7 @@ public:
 	JoystickData(uint16_t a, uint16_t b, uint16_t c, uint16_t d) :rudder(a), gas(b), pitch(c), roll(d){};
 	JoystickData() :rudder(RUDDER_DEFAULT), gas(GAS_DEFAULT), pitch(PITCH_DEFAULT), roll(ROLL_DEFAULT){};
 
-	virtual void toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor);
+	virtual void ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor);
 
 	JoystickData* clone();
 

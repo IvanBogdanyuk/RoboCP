@@ -38,7 +38,7 @@ RobotLinkThread::RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, Mavli
 void RobotLinkThread::Stop()
 {
 	JoystickData* jData = new JoystickData(1500, 1000, 1500, 1500);
-	jData->toMavlinkPacket(&m_packet, m_visitor);
+	jData->ToMavlinkPacket(&m_packet, m_visitor);
 	m_link->SendPacket(&m_packet);
 }
 

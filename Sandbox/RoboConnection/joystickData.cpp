@@ -15,14 +15,14 @@ void MavlinkPacket::toString()                           //
 	std::cout << "\n";
 }
 
-void HeartBeat::toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
+void HeartBeat::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
 {
-	visitor->visitHeartBeat(result);
+	visitor->VisitHeartBeat(result);
 }
 
-void JoystickData::toMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
+void JoystickData::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
 {
-	visitor->visitRc_Channels_Override(result, pitch, roll, gas, rudder);
+	visitor->VisitRc_Channels_Override(result, pitch, roll, gas, rudder);
 }
 
 JoystickData* JoystickData::clone()
@@ -89,7 +89,7 @@ void SingleJoystickBuffer::readJoystickData(MavlinkPacket* packet, MavlinkVisito
 	mutex.lock();
 	isReading++;
 
-	jbuffers[!activeBuffer].toMavlinkPacket(packet, visitor);	//bug
+	jbuffers[!activeBuffer].ToMavlinkPacket(packet, visitor);	//bug
 
 	isReading -= 1;
 	readingCondition.wakeAll();
@@ -100,7 +100,7 @@ void SingleJoystickBuffer::read(MavlinkPacket* packet, MavlinkVisitor* visitor)
 {
 	if (heartBitTimer.elapsed() > 1000)
 	{
-		heartbeat->toMavlinkPacket(packet, visitor);
+		heartbeat->ToMavlinkPacket(packet, visitor);
 		heartBitTimer.restart();
 	}
 	else
@@ -280,12 +280,12 @@ void CircularJoystickBuffer::readJoystickData(JoystickData* midJoystickData)
 void CircularJoystickBuffer::readJoystickData(MavlinkPacket* packet, MavlinkVisitor* visitor)
 {
 	readJoystickData(&midJoystickData);
-	midJoystickData.toMavlinkPacket(packet, visitor);
+	midJoystickData.ToMavlinkPacket(packet, visitor);
 }
 void CircularJoystickBuffer::read(MavlinkPacket* packet, MavlinkVisitor* visitor){
 	if (heartBitTimer.elapsed() > 1000)
 	{
-		heartbeat->toMavlinkPacket(packet, visitor);
+		heartbeat->ToMavlinkPacket(packet, visitor);
 		heartBitTimer.restart();
 	}
 	else
@@ -402,7 +402,7 @@ JoystickData* DataSeparateController::prepareJData()
 void DataSeparateController::Read(MavlinkPacket* packet, MavlinkVisitor* visitor)
 {
 	prepareJData();
-	visitor->visitRc_Channels_Override(packet, m_meanJoystickData);
+	visitor->VisitRc_Channels_Override(packet, m_meanJoystickData);
 }
 
 DataSeparateController::~DataSeparateController()

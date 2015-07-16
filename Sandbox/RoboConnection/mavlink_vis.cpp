@@ -29,3 +29,8 @@ void ComMavlinkVisitor::VisitRc_Channels_Override(MavlinkPacket* result, unsigne
                            //Sending the message
     result->len = mavlink_msg_to_send_buffer(result->data, &msg);
 }
+
+void ComMavlinkVisitor::VisitRc_Channels_Override(MavlinkPacket* result, JoystickData* data)
+{
+    VisitRc_Channels_Override(result, data->pitch, data->roll, data->gas, data->rudder);
+}

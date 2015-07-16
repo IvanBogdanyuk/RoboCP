@@ -14,6 +14,14 @@ public:
     MockJoystick(){
         srand(time(NULL));
     }
+    bool isDanger()
+    {
+        return Danger;
+    }
+    bool hasBegun()
+    {
+        return Began;
+    }
     virtual void GetJoysticState(JoystickData* data){
         data->rudder = rand();
         data->gas = rand();

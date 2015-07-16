@@ -10,9 +10,9 @@ void ComConnection::openPort(QString name)
 	serial.setPortName(name);
 	bool errorFlag = true;
 
-	errorFlag &= serial.setBaudRate(QSerialPort::Baud57600);
+	errorFlag &= serial.setBaudRate(QSerialPort::Baud57600); //проверка скорости
 	
-	errorFlag &= serial.open(QIODevice::ReadWrite);
+	errorFlag &= serial.open(QIODevice::ReadWrite);  //проверка того, что устройство открыто
 
 	if (!errorFlag) 
 		std::cout << "error during com connection initialization \n";

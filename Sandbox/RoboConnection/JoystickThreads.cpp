@@ -15,8 +15,8 @@ void JoystickThread::run()
 #ifdef PROFILING
 		long timer = time(NULL);
 #endif
-		joystick->getJoysticState(&data);
-		int waitTime = buffer->writeJoystickData(&data);
+		joystick->getJoysticState(&data);  //получение данных
+		int waitTime = buffer->writeJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
 
 #ifdef PROFILING
 		joystickTime += time(0) - timer;
@@ -34,13 +34,13 @@ RobotLinkThread::RobotLinkThread(MavlinkBuffer* buffer, RobotLinker* link, Mavli
 }
 
 void RobotLinkThread::run(){
-	link->openPort("COM5");
+	link->openPort("COM5"); 
 	while (true)
 	{
 #ifdef PROFILING
 		long timer = time(NULL);
 #endif
-		buffer->read(&packet, visitor);
+		buffer->read(&packet, visitor);  //получение данных и отправка в виде Mavlink-пакета
 		link->sendPacket(&packet);
 		
 #ifdef PROFILING

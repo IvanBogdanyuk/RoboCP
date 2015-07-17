@@ -26,7 +26,6 @@ class MavlinkVisitor {
 public:
 	virtual void VisitHeartBeat(MavlinkPacket* result) = 0;
 	virtual void VisitRc_Channels_Override(MavlinkPacket* result, unsigned short pitch, unsigned short roll, unsigned short gas, unsigned short rudder) = 0;
-	virtual void VisitRc_Channels_Override(MavlinkPacket* result, JoystickData* data) = 0;
 };
 
 class MavlinkMessage {
@@ -60,13 +59,18 @@ public:
 	void setZero();
 };
 
-class DataController{
+class DataOutputController{
 public:
-	virtual int writeJoystickData(JoystickData* jdata) = 0;
-	virtual void read(MavlinkPacket* packet, MavlinkVisitor* visitor) = 0;
+	virtual void Read(MavlinkPacket* packet, MavlinkVisitor* visitor) = 0;
 };
 
-class SingleJoystickBuffer : public DataController{
+class DataInputController
+{
+public:
+	virtual int WriteJoystickData(JoystickData* jdata) = 0;
+};
+
+class SingleJoystickBuffer : public DataInputController, DataOutputController{
 	JoystickData* jbuffers;
 	bool activeBuffer;
 
@@ -91,7 +95,7 @@ public:
 	~SingleJoystickBuffer();
 };
 
-class CircularJoystickBuffer : public DataController
+class CircularJoystickBuffer : public DataInputController, DataOutputController
 	/*synchronized buffer with circular structure and a queue for writing*/
 {
 	JoystickData* firstBuffer;	//buffer to send
@@ -141,8 +145,8 @@ private:
 	int m_lastHandled;
 };
 
-class DataSeparateController : public DataController{
-	
+class DataSeparateController : public DataInputController, public DataOutputController
+{	
 public:
 	DataSeparateController(int size);
 	int WriteJoystickData(JoystickData* jdata);
@@ -164,7 +168,4 @@ public:
 	virtual bool isDanger() = 0;
 	virtual bool hasBegun() = 0;
 	virtual void GetJoysticState(JoystickData* data) = 0;
-protected:
-	bool Danger;
-	bool Began;
 };

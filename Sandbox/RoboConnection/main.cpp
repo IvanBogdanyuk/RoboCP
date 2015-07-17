@@ -20,18 +20,20 @@
 
 int main(int argc, char *argv[])
 {
+	
 
     Joystick* joystick = new MockJoystick();    //initializing a joystick
-    MavlinkBuffer* buffer = new CircularJoystickBuffer(10);        //buffer to send mavlink packets to the robot
+    DataInputController* inputController = new DataSeparateController(10);        
+	DataOutputController* outputController = (DataSeparateController*) inputController;
     RobotLinker* link = new MockRobotLinker();    //initializing a com-port connection
     MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();    //helps to convert different objects to mavlink packet
 
-    JoystickThread* jthread = new JoystickThread(joystick, buffer);    //thread that reads joystick state and pushes it to the buffer
-    RobotLinkThread* rthread = new RobotLinkThread(buffer, link, mavlinkvisitor);    //thread that reads the latest joystick state to a buffer and sends it via com-port
-    
+    JoystickThread* jthread = new JoystickThread(joystick, inputController);    //thread that reads joystick state and pushes it to the buffer
+    RobotLinkThread* rthread = new RobotLinkThread(outputController, link, mavlinkvisitor, joystick);    //thread that reads the latest joystick state to a buffer and sends it via com-port
     jthread->start();
     rthread->start();
-
+	
+	/*
 #pragma region CrossDetection
     // инициализация очереди на обработку изображения
     TSDataHandler* cap2proc = new TSDataHandler();
@@ -76,6 +78,8 @@ int main(int argc, char *argv[])
     std::cout << "com port writing total time: " << robotLinkTime << "\n";
     std::cout << "mean time: " << robotLinkTime / robotLinkTimes << "\n\n";
 #endif
-    getchar();
-    return 0;
+
+	*/
+    getchar();	
+    return 0;	
 }

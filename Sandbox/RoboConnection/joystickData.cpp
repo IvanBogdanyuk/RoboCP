@@ -20,11 +20,6 @@ void HeartBeat::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
 	visitor->VisitHeartBeat(result);
 }
 
-void JoystickData::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
-{
-	visitor->VisitRc_Channels_Override(result, pitch, roll, gas, rudder);
-}
-
 JoystickData* JoystickData::clone()
 {
 	return new JoystickData(rudder, gas, pitch, roll);
@@ -48,6 +43,11 @@ void JoystickData::setZero(){
 void JoystickData::print()
 {
 	std::cout << "JoystickData: \nrudder:" << rudder << "\ngas: " << gas << "\npitch: " << pitch << "\nroll: " << roll << "\n\n";
+}
+
+void JoystickData::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
+{
+	visitor->VisitRc_Channels_Override(result, pitch, roll, gas, rudder);
 }
 
 SingleJoystickBuffer::SingleJoystickBuffer()
@@ -338,7 +338,7 @@ JoystickData* JoystickDataPool::GetJoystickData()
 void JoystickDataPool::FreeJoystickData(JoystickData* data)
 {
 	int index = (data - m_data[0]) / sizeof(JoystickData*);    //computes index of a cell based on adresses difference
-	m_freeData[index] = false;
+	m_freeData[index] = true;
 }
 
 JoystickDataPool::~JoystickDataPool()
@@ -357,6 +357,7 @@ DataSeparateController::DataSeparateController(int size)
 {
 	m_dataPool = new JoystickDataPool(size);
 	m_joystickDataQueue = new TSDataHandler<JoystickData*>(size);
+	m_joystickDataQueue->Write(new JoystickData());
 	m_meanJoystickData = new JoystickData();
 	m_size = size;
 }
@@ -368,6 +369,8 @@ int DataSeparateController::WriteJoystickData(JoystickData* jdata){
 		m_joystickDataQueue->Write(toWrite);
 	}
 	else std::cout << "buffer is full \n";
+
+	return (int) floor(4.0*this->m_joystickDataQueue->Size()/this->m_size);
 }
 JoystickData* DataSeparateController::prepareJData()
 {
@@ -397,12 +400,14 @@ JoystickData* DataSeparateController::prepareJData()
 		if (m_joystickDataQueue->Size() > 1) m_joystickDataQueue->Read(m_workData);	//last object remains in queue
 		else break;
 	}
+
+	return m_meanJoystickData;
 }
 
 void DataSeparateController::Read(MavlinkPacket* packet, MavlinkVisitor* visitor)
 {
 	prepareJData();
-	visitor->VisitRc_Channels_Override(packet, m_meanJoystickData);
+	visitor->VisitRc_Channels_Override(packet, m_meanJoystickData->pitch, m_meanJoystickData->roll, m_meanJoystickData->gas, m_meanJoystickData->rudder);
 }
 
 DataSeparateController::~DataSeparateController()

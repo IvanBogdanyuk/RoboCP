@@ -16,7 +16,7 @@ uint16_t RealJoystick::convert(int JData, bool toinvert)  //перевод зн�
     else
         return (uint16_t)(1000 + (JData + 32768) / 65.536);
 }
-void RealJoystick::getJoysticState(JoystickData* data)
+void RealJoystick::GetJoysticState(JoystickData* data)
 {
     SDL_PollEvent(&event);
     data->pitch = convert(SDL_JoystickGetAxis(joy, 0), false); 

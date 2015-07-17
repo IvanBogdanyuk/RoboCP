@@ -10,7 +10,7 @@ public:
 	virtual bool isDanger();
 	virtual bool hasBegun();
 	uint16_t convert(int JData, bool toinvert);
-	virtual void getJoysticState(JoystickData* data);
+	virtual void GetJoysticState(JoystickData* data);
 private:
 	SDL_Joystick* joy;
 	SDL_Event event;

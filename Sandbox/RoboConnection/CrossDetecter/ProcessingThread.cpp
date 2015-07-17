@@ -32,7 +32,7 @@ void ProcessingThread::run()
 		}
 		// вывод времени
 		TimerElapsed();
-		sleep();
+		sleep(0);
 		
 		yieldCurrentThread();
 	}

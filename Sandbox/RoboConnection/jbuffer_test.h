@@ -13,14 +13,16 @@ class MockJoystick : public Joystick{
 public:
     MockJoystick(){
         srand(time(NULL));
+		m_danger = false;
+		m_began = false;
     }
     bool isDanger()
     {
-        return Danger;
+        return m_danger;
     }
     bool hasBegun()
     {
-        return Began;
+        return m_began;
     }
     virtual void GetJoysticState(JoystickData* data){
         data->rudder = rand();
@@ -29,7 +31,12 @@ public:
         data->roll = rand();
 
         read++;
+		m_began = true;
     }
+
+private:
+	bool m_danger;
+	bool m_began;
 };
 
 class MockRobotLinker : public RobotLinker{
@@ -50,7 +57,7 @@ public:
     }
 };
 
-class CircularBufferTestSuite{
+/*class CircularBufferTestSuite{
     CircularJoystickBuffer* testBuffer;
     JoystickData* jData;
     MavlinkPacket* packet;
@@ -83,3 +90,4 @@ public:
         return simpleTest();
     }
 };
+*/

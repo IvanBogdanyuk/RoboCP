@@ -6,8 +6,8 @@ RealJoystick::RealJoystick() //класс для настоящего джойс
     SDL_Init(SDL_INIT_JOYSTICK); //инициализация, открытие джойстика
     SDL_JoystickEventState(SDL_ENABLE);
     joy = SDL_JoystickOpen(0);
-	Began = false;
-	Danger = false;
+	m_began = false;
+	m_danger = false;
 }
 uint16_t RealJoystick::convert(int JData, bool toinvert)  //перевод значений в диапазон [1000, 2000]
 {
@@ -24,16 +24,16 @@ void RealJoystick::getJoysticState(JoystickData* data)
     data->gas = convert(SDL_JoystickGetAxis(joy, 2), true);
     data->rudder = convert(SDL_JoystickGetAxis(joy, 3), false);
 	if (data->gas > 1010)
-		Began = true;
-	if ((data->gas < 1005) && (Began))
-		Danger = true;
+		m_began = true;
+	if ((data->gas < 1005) && (m_began))
+		m_danger = true;
 }
 
 bool RealJoystick::isDanger()
 {
-	return Danger;
+	return m_danger;
 }
 bool RealJoystick::hasBegun()
 {
-	return Began;
+	return m_began;
 }

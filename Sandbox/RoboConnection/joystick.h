@@ -14,4 +14,6 @@ public:
 private:
 	SDL_Joystick* joy;
 	SDL_Event event;
+	int m_began;
+	int m_danger;
 };

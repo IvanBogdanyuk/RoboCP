@@ -1,84 +1,92 @@
 #pragma once
-#include <opencv2\highgui\highgui.hpp>
-#include <QtCore\qmutex.h>
+#include <QtCore/qmutex.h>
 #include <deque>
-#include <list>
 
 // Thread Safe Data Handler
 template <class T> class TSDataHandler
 {
 public:
-	TSDataHandler(int frameLimit = 10);
-	~TSDataHandler();
-	void Write(T input);
-	bool Read(T &output);
-	bool Peek(T &output);
+  TSDataHandler(int frameLimit = 10);
+  ~TSDataHandler();
+  void Write(T input);
+  bool Read(T &output);
+  bool Peek(T &output);
+  int Size();
 private:
-	int mCapacity;
-	// Очередь данных
-	std::deque<T> mQueue;
-
+  int mCapacity;
+  // Очередь данных
+  std::deque<T> mQueue;
+  QMutex mMutex;
 };
 
 template <class T>
-TSDataHandler<T>::TSDataHandler(int frameLimit)
+TSDataHandler<T>::TSDataHandler(int frameLimit) : mMutex()
 {
-	// лимит изображений в очереди
-	mCapacity = frameLimit;
+  // лимит изображений в очереди
+  mCapacity = frameLimit;
 }
 
 // функция записи в очередь
 template <class T>
 void TSDataHandler<T>::Write(T input)
 {
-	QMutex m;
-	m.lock();
+  mMutex.lock();
 
-	if (input.empty() || mQueue.size() > mCapacity)
-	{
-		m.unlock();
-		return;
-	}
+  if (mQueue.size() > mCapacity)
+  {
+    mMutex.unlock();
+    return;
+  }
 
-	mQueue.push_front(input);
+  mQueue.push_front(input);
 
-	m.unlock();
+  mMutex.unlock();
 }
 
 // функция считывания из очереди
 template <class T>
 bool TSDataHandler<T>::Read(T &output)
 {
-	QMutex m;
-	m.lock();
+  mMutex.lock();
 
-	if (mQueue.empty())
-	{
-		m.unlock();
-		return false;
-	}
+  if (mQueue.empty())
+  {
+    mMutex.unlock();
+    return false;
+  }
 
-	output = mQueue.back();
-	mQueue.pop_back();
+  output = mQueue.back();
+  mQueue.pop_back();
 
-	m.unlock();
-	return true;
+  mMutex.unlock();
+  return true;
+}
+
+template <class T>
+int TSDataHandler<T>::Size()
+{
+  return mQueue.size();
 }
 
 template <class T>
 bool TSDataHandler<T>::Peek(T &output)
 {
-	QMutex m;
-	m.lock();
+  mMutex.lock();
 
-	if (mQueue.empty())
-	{
-		m.unlock();
-		return false;
-	}
+  if (mQueue.empty())
+  {
+    mMutex.unlock();
+    return false;
+  }
 
-	output = mQueue.back();
-	
-	m.unlock();
-	return true;
+  output = mQueue.back();
+
+  mMutex.unlock();
+  return true;
+}
+
+template <class T>
+TSDataHandler<T>::~TSDataHandler()
+{
+
 }

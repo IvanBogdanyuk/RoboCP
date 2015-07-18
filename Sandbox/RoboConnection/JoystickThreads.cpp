@@ -12,18 +12,10 @@ void JoystickThread::run()
 {
     while (true)
     {
-#ifdef PROFILING
-        long timer = time(NULL);
-#endif
         joystick->GetJoysticState(&data);  //получение данных
-        int waitTime = buffer->WriteJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
+        buffer->WriteJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
 
-#ifdef PROFILING
-        joystickTime += time(0) - timer;
-        joystickTimes++;
-#endif
-
-        QThread::currentThread()->msleep(waitTime);
+        QThread::currentThread()->msleep(1);
     }
 }
 

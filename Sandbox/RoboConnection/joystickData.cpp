@@ -50,7 +50,7 @@ void JoystickData::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visito
 	visitor->VisitRc_Channels_Override(result, pitch, roll, gas, rudder);
 }
 
-SingleJoystickBuffer::SingleJoystickBuffer()
+/*SingleJoystickBuffer::SingleJoystickBuffer()
 {
 	jbuffers = new JoystickData[2];
 
@@ -302,16 +302,16 @@ CircularJoystickBuffer::~CircularJoystickBuffer()
 	delete[] firstSent;
 	delete[] secondSent;
 }
+*/
 
 JoystickDataPool::JoystickDataPool(int size)
 {
 	m_size = size;
 	m_freeData = new bool[size];
-	m_data = new JoystickData*[size];
+	m_data = new JoystickData[size];
 
 	for (int i = 0; i < size; i++)
 	{
-		m_data[i] = new JoystickData();
 		m_freeData[i] = true;
 	}
 
@@ -327,7 +327,9 @@ JoystickData* JoystickDataPool::GetJoystickData()
 		if (m_freeData[toHandle])    //if that cell free
 		{
 			m_lastHandled = toHandle;
-			return m_data[toHandle];   //return that cell
+			m_freeData[toHandle] = false;
+
+			return &m_data[toHandle];   //return that cell
 		}
 		
 		count++;
@@ -337,7 +339,7 @@ JoystickData* JoystickDataPool::GetJoystickData()
 }
 void JoystickDataPool::FreeJoystickData(JoystickData* data)
 {
-	int index = (data - m_data[0]) / sizeof(JoystickData*);    //computes index of a cell based on adresses difference
+	int index = (data - m_data) / sizeof(bool);    //computes index of a cell based on adresses difference
 	m_freeData[index] = true;
 }
 
@@ -345,49 +347,92 @@ JoystickDataPool::~JoystickDataPool()
 {
 	delete[] m_freeData;
 	
-	for (int i = 0; i < m_size; i++)
-	{
-		delete m_data[i];
-	}
-
 	delete[] m_data;
+}
 
-}
-DataSeparateController::DataSeparateController(int size)
-{
-	m_dataPool = new JoystickDataPool(size);
-	m_joystickDataQueue = new TSDataHandler<JoystickData*>(size);
+QueuedControlBuffer::QueuedControlBuffer(int max_size){
+	m_size = max_size;
+	m_dataPool = new JoystickDataPool(m_size);
+	m_joystickDataQueue = new TSDataHandler<JoystickData*>(m_size);
+
 	m_joystickDataQueue->Write(new JoystickData());
-	m_meanJoystickData = new JoystickData();
-	m_size = size;
 }
-int DataSeparateController::WriteJoystickData(JoystickData* jdata){
+
+JoystickData* QueuedControlBuffer::Read(){
+	bool notEmpty = m_joystickDataQueue->Peek(m_workData);
+	if (!notEmpty) return 0;
+	return m_workData;
+}
+
+void QueuedControlBuffer::Write(JoystickData* jdata){
 	if (m_joystickDataQueue->Size() < m_size)
 	{
 		JoystickData* toWrite = m_dataPool->GetJoystickData();
+		if (toWrite == 0)
+		{
+			std::cout << "something went wrong in buffer::write()\n";
+			return;
+		}
 		jdata->copy(toWrite);
 		m_joystickDataQueue->Write(toWrite);
 	}
 	else std::cout << "buffer is full \n";
-
-	return (int) floor(4.0*this->m_joystickDataQueue->Size()/this->m_size);
 }
-JoystickData* DataSeparateController::prepareJData()
+int QueuedControlBuffer::Size(){
+	return m_joystickDataQueue->Size();
+}
+
+void QueuedControlBuffer::Next()
+{
+	m_joystickDataQueue->Read(m_workData);
+	m_dataPool->FreeJoystickData(m_workData);
+}
+
+int QueuedControlBuffer::GetMaxSize()
+{
+	return m_size;
+}
+
+JoystickToBufferController::JoystickToBufferController(ControlBuffer* buffer)
+{
+	SetControlBuffer(buffer);
+}
+
+void JoystickToBufferController::WriteJoystickData(JoystickData* jdata){
+	m_buffer->Write(jdata);
+}
+
+void JoystickToBufferController::SetControlBuffer(ControlBuffer* buffer){
+	m_buffer = buffer;
+}
+
+BufferToLinkerController::BufferToLinkerController(ControlBuffer* buffer, int rate)
+{
+	SetControlBuffer(buffer);
+	m_rate = rate;
+	m_meanJoystickData = new JoystickData();
+}
+void BufferToLinkerController::Read(MavlinkPacket* packet, MavlinkVisitor* visitor)
+{
+	prepareJData();
+	visitor->VisitRc_Channels_Override(packet, m_meanJoystickData->pitch, m_meanJoystickData->roll, 
+		m_meanJoystickData->gas, m_meanJoystickData->rudder);
+}
+void BufferToLinkerController::SetControlBuffer(ControlBuffer* buffer)
+{
+	m_buffer = buffer;
+}
+
+
+JoystickData* BufferToLinkerController::prepareJData()
 {
 	m_meanJoystickData->setZero();
 	int count = 0;
-	while (count < m_size)
+		
+
+	while (count < m_rate)
 	{
-		bool notEmpty = m_joystickDataQueue->Peek(m_workData);	//reading from queue to some buffer var
-
-#ifdef DEBUG
-		if (!notEmpty) //if true - bad initialization
-		{	 
-			std::cout << "reading from empty buffer \n";
-			break;
-		}
-#endif
-
+		m_workData = m_buffer->Read();    //reading from the buffer to some buffer var
 		//finding mean in the queue in cycle
 		m_meanJoystickData->gas = (count*m_meanJoystickData->gas + m_workData->gas) / (count + 1);
 		m_meanJoystickData->pitch = (count*m_meanJoystickData->pitch + m_workData->pitch) / (count + 1);
@@ -395,24 +440,12 @@ JoystickData* DataSeparateController::prepareJData()
 		m_meanJoystickData->rudder = (count*m_meanJoystickData->rudder + m_workData->rudder) / (count + 1);
 
 		count++;
-		m_dataPool->FreeJoystickData(m_workData);    //freing memory
 
-		if (m_joystickDataQueue->Size() > 1) m_joystickDataQueue->Read(m_workData);	//last object remains in queue
+		if (m_buffer->Size() > 1) m_buffer->Next();	//last object remains in buffer
 		else break;
 	}
-
+	if (m_buffer->Size() == 0){
+		std::cout << "emptiing buffer\n";
+	}
 	return m_meanJoystickData;
-}
-
-void DataSeparateController::Read(MavlinkPacket* packet, MavlinkVisitor* visitor)
-{
-	prepareJData();
-	visitor->VisitRc_Channels_Override(packet, m_meanJoystickData->pitch, m_meanJoystickData->roll, m_meanJoystickData->gas, m_meanJoystickData->rudder);
-}
-
-DataSeparateController::~DataSeparateController()
-{
-	delete m_joystickDataQueue;
-	delete m_meanJoystickData;
-	delete m_dataPool;
 }

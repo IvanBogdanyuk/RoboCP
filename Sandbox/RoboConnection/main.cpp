@@ -23,8 +23,11 @@ int main(int argc, char *argv[])
 	
 
     Joystick* joystick = new MockJoystick();    //initializing a joystick
-    DataInputController* inputController = new DataSeparateController(10);        
-	DataOutputController* outputController = (DataSeparateController*) inputController;
+
+	ControlBuffer* controlBuffer = new QueuedControlBuffer(1000);
+	DataInputController* inputController = new JoystickToBufferController(controlBuffer);
+	DataOutputController* outputController = new BufferToLinkerController(controlBuffer, 10);
+
     RobotLinker* link = new MockRobotLinker();    //initializing a com-port connection
     MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();    //helps to convert different objects to mavlink packet
 

@@ -12,6 +12,7 @@ public:
     void openPort(QString name);
     void Write(unsigned char* message, int length);
     QByteArray readPacket();
+    void getParamList();
 private:
     QSerialPort serial;
     bool com_checksum(uint8_t *data, int32_t length); //Gets an array, length of it payload 

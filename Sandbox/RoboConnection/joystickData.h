@@ -59,18 +59,29 @@ public:
 	void setZero();
 };
 
+class ControlBuffer{
+public:
+	virtual JoystickData* Read() = 0;
+	virtual void Next() = 0;
+	virtual void Write(JoystickData* data) = 0;
+	virtual int Size() = 0;
+	virtual int GetMaxSize() = 0;
+};
+
 class DataOutputController{
 public:
 	virtual void Read(MavlinkPacket* packet, MavlinkVisitor* visitor) = 0;
+	virtual void SetControlBuffer(ControlBuffer* buffer) = 0;
 };
 
 class DataInputController
 {
 public:
-	virtual int WriteJoystickData(JoystickData* jdata) = 0;
+	virtual void WriteJoystickData(JoystickData* jdata) = 0;
+	virtual void SetControlBuffer(ControlBuffer* buffer) = 0;
 };
 
-class SingleJoystickBuffer : public DataInputController, DataOutputController{
+/*class SingleJoystickBuffer : public DataInputController, DataOutputController{
 	JoystickData* jbuffers;
 	bool activeBuffer;
 
@@ -96,7 +107,7 @@ public:
 };
 
 class CircularJoystickBuffer : public DataInputController, DataOutputController
-	/*synchronized buffer with circular structure and a queue for writing*/
+	//synchronized buffer with circular structure and a queue for writing
 {
 	JoystickData* firstBuffer;	//buffer to send
 	JoystickData* secondBuffer;	//queue to write
@@ -131,6 +142,7 @@ public:
 	void read(MavlinkPacket* packet, MavlinkVisitor* visitor);
 	~CircularJoystickBuffer();
 };
+*/
 
 class JoystickDataPool{
 public:
@@ -141,26 +153,51 @@ public:
 private:
 	int m_size;
 	bool* m_freeData;
-	JoystickData** m_data;
+	JoystickData* m_data;
 	int m_lastHandled;
 };
 
-class DataSeparateController : public DataInputController, public DataOutputController
-{	
+class QueuedControlBuffer : public ControlBuffer{
 public:
-	DataSeparateController(int size);
-	int WriteJoystickData(JoystickData* jdata);
+	QueuedControlBuffer(int max_size);
+	JoystickData* Read();
+	void Next();
+	void Write(JoystickData* data);
+	int Size();
+	int GetMaxSize();
+
+private:
+	TSDataHandler<JoystickData*>* m_joystickDataQueue;
+	JoystickDataPool* m_dataPool;
+
+	int m_size;
+	JoystickData* m_workData;
+};
+
+class JoystickToBufferController : public DataInputController{
+public:
+	JoystickToBufferController(ControlBuffer* buffer);
+	void WriteJoystickData(JoystickData* jdata);
+	void SetControlBuffer(ControlBuffer* buffer);
+
+private:
+	ControlBuffer* m_buffer;
+};
+
+class BufferToLinkerController : public DataOutputController{
+public:
+	BufferToLinkerController(ControlBuffer* buffer, int rate);
 	void Read(MavlinkPacket* packet, MavlinkVisitor* visitor);
-	~DataSeparateController();
+	void SetControlBuffer(ControlBuffer* buffer);
+
 private:
 	JoystickData* prepareJData();
 
-	TSDataHandler<JoystickData*>* m_joystickDataQueue;
+	ControlBuffer* m_buffer;
 
-	JoystickDataPool* m_dataPool;
 	JoystickData* m_meanJoystickData;
 	JoystickData* m_workData;
-	int m_size;
+	int m_rate;
 };
 
 class Joystick {

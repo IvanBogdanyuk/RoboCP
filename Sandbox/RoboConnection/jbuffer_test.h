@@ -55,10 +55,6 @@ public:
     virtual void OpenPort(QString name){
 
     }
-	virtual void GetParamList()
-	{
-
-	}
 };
 
 /*class CircularBufferTestSuite{

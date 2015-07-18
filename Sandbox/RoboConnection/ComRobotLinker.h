@@ -12,8 +12,9 @@ class ComRobotLinker : public RobotLinker
 
 public:
     ComRobotLinker();
-    virtual void sendPacket(MavlinkPacket* packet);
-    virtual void openPort(QString name);
+    virtual void SendPacket(MavlinkPacket* packet);
+    virtual void OpenPort(QString name);
+	virtual void GetParamList();
 private:
     ComConnection* copterCom;
 };

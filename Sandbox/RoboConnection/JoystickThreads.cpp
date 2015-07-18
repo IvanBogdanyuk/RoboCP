@@ -13,6 +13,8 @@ void JoystickThread::run()
     while (true)
     {
         joystick->GetJoysticState(&data);  //получение данных
+		if (joystick->isDanger())
+			break;
         buffer->WriteJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
 
         QThread::currentThread()->msleep(1);
@@ -42,13 +44,20 @@ void RobotLinkThread::run(){
         long timer = time(NULL);
 #endif
 		if (m_joystick->isDanger())
+		{
 			Stop();
+			break;
+		}
+			
 		else
 		{
 			m_buffer->Read(&m_packet, m_visitor);  //получение данных, формирование  Mavlink-пакета
 		}
 		if (m_joystick->isDanger())
+		{
 			Stop();
+			break;
+		}
 		else
 			m_link->SendPacket(&m_packet); //отправка Mavlink-пакета
         

@@ -411,12 +411,22 @@ BufferToLinkerController::BufferToLinkerController(ControlBuffer* buffer, int ra
 	SetControlBuffer(buffer);
 	m_rate = rate;
 	m_meanJoystickData = new JoystickData();
+
+	m_heartBitTimer.start();
 }
 void BufferToLinkerController::Read(MavlinkPacket* packet, MavlinkVisitor* visitor)
 {
-	prepareJData();
-	visitor->VisitRc_Channels_Override(packet, m_meanJoystickData->pitch, m_meanJoystickData->roll, 
-		m_meanJoystickData->gas, m_meanJoystickData->rudder);
+	if (m_heartBitTimer.elapsed() > 1000)
+	{
+		m_heartbeat->ToMavlinkPacket(packet, visitor);
+		m_heartBitTimer.restart();
+	}
+	else
+	{
+		prepareJData();
+		visitor->VisitRc_Channels_Override(packet, m_meanJoystickData->pitch, m_meanJoystickData->roll,
+			m_meanJoystickData->gas, m_meanJoystickData->rudder);
+	}
 }
 void BufferToLinkerController::SetControlBuffer(ControlBuffer* buffer)
 {

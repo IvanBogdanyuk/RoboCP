@@ -198,6 +198,9 @@ private:
 	JoystickData* m_meanJoystickData;
 	JoystickData* m_workData;
 	int m_rate;
+
+	QElapsedTimer m_heartBitTimer;
+	HeartBeat* m_heartbeat;
 };
 
 class Joystick {

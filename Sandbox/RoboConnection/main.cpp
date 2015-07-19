@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
 	
 
     Joystick* joystick = new MockJoystick();    //initializing a joystick
+	CrossStabilizer* stabilizer = new SimpleProportionalCrossStabilizer(1.0);
+	ControlSwitcher* switcher = new ControlSwitcher(stabilizer, joystick);
 
 	ControlBuffer* controlBuffer = new QueuedControlBuffer(1000);
 	DataInputController* inputController = new JoystickToBufferController(controlBuffer);
@@ -31,8 +33,8 @@ int main(int argc, char *argv[])
     RobotLinker* link = new MockRobotLinker();    //initializing a com-port connection
     MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();    //helps to convert different objects to mavlink packet
 
-    JoystickThread* jthread = new JoystickThread(joystick, inputController);    //thread that reads joystick state and pushes it to the buffer
-    RobotLinkThread* rthread = new RobotLinkThread(outputController, link, mavlinkvisitor, joystick);    //thread that reads the latest joystick state to a buffer and sends it via com-port
+    JoystickThread* jthread = new JoystickThread(switcher, inputController);    //thread that reads joystick state and pushes it to the buffer
+    RobotLinkThread* rthread = new RobotLinkThread(outputController, link, mavlinkvisitor, switcher);    //thread that reads the latest joystick state to a buffer and sends it via com-port
     jthread->start();
     rthread->start();
 	

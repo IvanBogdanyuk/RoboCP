@@ -235,7 +235,7 @@ private:
 	double m_x, m_y;
 };
 
-class SimpleProportionalCrossStabilizer : public Joystick
+class SimpleProportionalCrossStabilizer : public CrossStabilizer
 {
 public:
 	SimpleProportionalCrossStabilizer(double factor);

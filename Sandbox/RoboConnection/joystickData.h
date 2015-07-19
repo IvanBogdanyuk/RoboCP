@@ -50,12 +50,12 @@ public:
 
 	virtual void ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor);
 
+	bool isGasZero();
+	bool isNonZero();
+
 	JoystickData* clone();
-
 	void copy(JoystickData* to);
-
 	void print();
-
 	void setZero();
 };
 
@@ -205,7 +205,60 @@ private:
 
 class Joystick {
 public:
-	virtual bool isDanger() = 0;
-	virtual bool hasBegun() = 0;
+	bool isDanger();
+	bool hasBegun();
 	virtual void GetJoysticState(JoystickData* data) = 0;
+
+protected:
+	void checkData(JoystickData* data);
+
+	int m_began;
+	int m_danger;
+};
+
+class CrossStabilizer : public Joystick
+{
+public:
+	virtual DataHandler<CrossPoint2D>* GetPointContainer() = 0;
+};
+
+class CrossPoint2D{
+public:
+	CrossPoint2D();
+	CrossPoint2D(CrossPoint2D& point);
+	CrossPoint2D& operator=(CrossPoint2D &arg);
+
+	double GetX();
+	double GetY();
+	void SetXY(double x, double y);
+private:
+	double m_x, m_y;
+};
+
+class SimpleProportionalCrossStabilizer : public Joystick
+{
+public:
+	SimpleProportionalCrossStabilizer(double factor);
+	bool isDanger();
+	bool hasBegun();
+	void GetJoysticState(JoystickData* data);
+
+	DataHandler<CrossPoint2D>* GetPointContainer();
+
+private:
+	double m_factor;
+	DataHandler<CrossPoint2D>* m_pointContainer;
+
+	CrossPoint2D m_workPoint;
+};
+
+class ControlSwitcher : public CrossStabilizer{
+public:
+	ControlSwitcher(CrossStabilizer* stabilizer, Joystick* externJoystick);
+	DataHandler<CrossPoint2D>* GetPointContainer();
+	void GetJoysticState(JoystickData* data);
+
+private:
+	CrossStabilizer* m_stabilizer;
+	Joystick* m_externJoystick;
 };

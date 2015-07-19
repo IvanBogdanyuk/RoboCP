@@ -31,12 +31,8 @@ public:
         data->roll = rand();
 
         read++;
-		m_began = true;
+		checkData(data);
     }
-
-private:
-	bool m_danger;
-	bool m_began;
 };
 
 class MockRobotLinker : public RobotLinker{

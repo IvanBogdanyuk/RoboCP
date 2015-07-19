@@ -18,22 +18,11 @@ uint16_t RealJoystick::convert(int JData, bool toinvert)  //перевод зн�
 }
 void RealJoystick::GetJoysticState(JoystickData* data)
 {
-    SDL_PollEvent(&event);
-    data->pitch = convert(SDL_JoystickGetAxis(joy, 0), false); 
-    data->roll = convert(SDL_JoystickGetAxis(joy, 1), true);
-    data->gas = convert(SDL_JoystickGetAxis(joy, 2), true);
-    data->rudder = convert(SDL_JoystickGetAxis(joy, 3), false);
-	if (data->gas > 1010)
-		m_began = true;
-	if ((data->gas < 1005) && (m_began))
-		m_danger = true;
-}
+	SDL_PollEvent(&event);
+	data->pitch = convert(SDL_JoystickGetAxis(joy, 0), false);
+	data->roll = convert(SDL_JoystickGetAxis(joy, 1), true);
+	data->gas = convert(SDL_JoystickGetAxis(joy, 2), true);
+	data->rudder = convert(SDL_JoystickGetAxis(joy, 3), false);
 
-bool RealJoystick::isDanger()
-{
-	return m_danger;
-}
-bool RealJoystick::hasBegun()
-{
-	return m_began;
+	checkData(data);
 }

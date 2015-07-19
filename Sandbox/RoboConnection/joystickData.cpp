@@ -1,5 +1,7 @@
 #include "joystickData.h"
 
+int epsilon = 200;
+
 MavlinkPacket::MavlinkPacket()
 {
 	data = new unsigned char[MAVLINK_MAX_PACKET_LEN];    //Maximum length of the mavlink package
@@ -18,6 +20,20 @@ void MavlinkPacket::toString()                           //
 void HeartBeat::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
 {
 	visitor->VisitHeartBeat(result);
+}
+
+bool JoystickData::isGasZero()
+{
+	if (gas < 100 + epsilon) return true;
+	return false;
+}
+
+bool JoystickData::isNonZero()
+{
+	bool isNonZero = false;
+	isNonZero |= ((pitch > 1500 + epsilon) || ((pitch < 1500 - epsilon)));
+	isNonZero |= ((roll > 1500 + epsilon) || ((roll < 1500 - epsilon)));
+	isNonZero |= ((rudder > 1500 + epsilon) || ((rudder < 1500 - epsilon)));
 }
 
 JoystickData* JoystickData::clone()
@@ -458,4 +474,101 @@ JoystickData* BufferToLinkerController::prepareJData()
 		std::cout << "emptiing buffer\n";
 	}
 	return m_meanJoystickData;
+}
+
+void Joystick::checkData(JoystickData* data)
+{
+	if (data->gas > 1010)
+		m_began = true;
+	if ((data->gas < 1005) && (m_began))
+		m_danger = true;
+}
+
+CrossPoint2D::CrossPoint2D()
+{
+	m_x = 0.0;
+	m_y = 0.0;
+}
+
+CrossPoint2D::CrossPoint2D(CrossPoint2D& point)
+{
+	m_x = point.GetX();
+	m_y = point.GetY();
+}
+
+CrossPoint2D& CrossPoint2D::operator=(CrossPoint2D &arg)
+{
+	m_x = arg.GetX();
+	m_y = arg.GetY();
+
+	return *this;
+}
+
+double CrossPoint2D::GetX()
+{
+	return m_x;
+}
+
+double CrossPoint2D::GetY()
+{
+	return m_y;
+}
+
+void CrossPoint2D::SetXY(double x, double y)
+{
+	m_x = x;
+	m_y = y;
+}
+
+SimpleProportionalCrossStabilizer::SimpleProportionalCrossStabilizer(double factor)
+{
+	m_factor = factor;
+	m_pointContainer = new OneElementDataHandler<CrossPoint2D>();
+}
+
+bool SimpleProportionalCrossStabilizer::isDanger()
+{
+	//won't be used
+}
+
+bool SimpleProportionalCrossStabilizer::hasBegun()
+{
+	//won't be used
+}
+
+void SimpleProportionalCrossStabilizer::GetJoysticState(JoystickData* data)
+{
+	m_pointContainer->Read(m_workPoint);
+
+	data->gas = -1;   //should be owerwritten
+	data->pitch = 1500 + m_workPoint.GetY()*m_factor;
+	data->roll = 1500 + m_workPoint.GetX()*m_factor;
+	data->rudder = 1500;
+}
+
+DataHandler<CrossPoint2D>* SimpleProportionalCrossStabilizer::GetPointContainer()
+{
+	return m_pointContainer;
+}
+
+ControlSwitcher::ControlSwitcher(CrossStabilizer* stabilizer, Joystick* externJoystick)
+{
+	m_stabilizer = stabilizer;
+	m_externJoystick = externJoystick;
+}
+
+DataHandler<CrossPoint2D>* ControlSwitcher::GetPointContainer()
+{
+	return m_stabilizer->GetPointContainer();
+}
+
+void ControlSwitcher::GetJoysticState(JoystickData* data)
+{
+	m_externJoystick->GetJoysticState(data);	//check the real joystick first
+	checkData(data);	//needed for red button working
+
+	if (!data->isNonZero())	//if the real joystick isn't in use
+	{
+		m_stabilizer->GetJoysticState(data);	//check software control input
+	}
 }

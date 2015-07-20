@@ -2,7 +2,7 @@
 
 // отладочный замер времени
 #ifdef DEBUG_HELI_TIMINGS
-#include <QtCore\qelapsedtimer.h>
+#include <QtCore/qelapsedtimer.h>
 #define DEBUG_TIMER_VAR __QET
 #define DEBUG_TIME_ELAPSED_VAR __te
 #define TimerCreate() QElapsedTimer DEBUG_TIMER_VAR

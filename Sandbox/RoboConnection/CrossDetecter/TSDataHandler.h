@@ -12,7 +12,7 @@ public:
 	virtual void Write(T input) = 0;
 	virtual bool Read(T &output) = 0;
 	virtual bool Peek(T &output) = 0;
-	int Size() = 0;
+	virtual int Size() = 0;
 };
 
 template <class T> class TSDataHandler : public DataHandler<T>
@@ -110,8 +110,8 @@ template <class T> class OneElementDataHandler : public DataHandler<T>
 	/*Contains only most recently added element*/
 {
 public:
-	TSDataHandler();
-	~TSDataHandler();
+	OneElementDataHandler();
+	~OneElementDataHandler();
 	void Write(T input);
 	bool Read(T &output);
 	bool Peek(T &output);
@@ -124,7 +124,7 @@ private:
 template <class T>
 OneElementDataHandler<T>::OneElementDataHandler() : mMutex()
 {
-	mElement = 0;
+	
 }
 
 template <class T>
@@ -141,14 +141,13 @@ void OneElementDataHandler<T>::Write(T input)
 template <class T>
 bool OneElementDataHandler<T>::Read(T &output)
 {
-	this->Peek(output);
+	return this->Peek(output);
 }
 
 template <class T>
 int OneElementDataHandler<T>::Size()
 {
-	if (mElement == 0) return 0;
-	else return 1;
+	return 1;
 }
 
 template <class T>
@@ -156,14 +155,14 @@ bool OneElementDataHandler<T>::Peek(T &output)
 {
 	mMutex.lock();
 
-	output = mElement
+	output = mElement;
 
 	mMutex.unlock();
 	return true;
 }
 
 template <class T>
-OneElementDataHandler<T>::~TSDataHandler()
+OneElementDataHandler<T>::~OneElementDataHandler()
 {
 
 }

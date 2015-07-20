@@ -20,7 +20,7 @@ template <class T> class TSDataHandler : public DataHandler < T >
     /*Queued thread safe data container*/
 {
 public:
-  TSDataHandler(int frameLimit = 10);
+  TSDataHandler(int capacity = 10);
   ~TSDataHandler();
   void Write(T input);
   bool Read(T &output);
@@ -34,10 +34,10 @@ private:
 };
 
 template <class T>
-TSDataHandler<T>::TSDataHandler(int frameLimit) : mMutex()
+TSDataHandler<T>::TSDataHandler(int capacity) : mMutex()
 {
-  // лимит изображений в очереди
-  mCapacity = frameLimit;
+  // лимит ячеек в очереди
+  mCapacity = capacity;
 }
 
 // функция записи в очередь
@@ -141,7 +141,7 @@ void OneElementDataHandler<T>::Write(T input)
 template <class T>
 bool OneElementDataHandler<T>::Read(T &output)
 {
-  this->Peek(output);
+  return this->Peek(output);
 }
 
 template <class T>
@@ -158,12 +158,11 @@ bool OneElementDataHandler<T>::Peek(T &output)
 
   output = mElement
 
-    mMutex.unlock();
+  mMutex.unlock();
   return true;
 }
 
 template <class T>
 OneElementDataHandler<T>::~OneElementDataHandler()
 {
-
 }

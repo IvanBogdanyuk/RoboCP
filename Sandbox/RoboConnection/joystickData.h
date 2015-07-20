@@ -45,7 +45,7 @@ public:
 	uint16_t pitch;
 	uint16_t roll;
 public:
-	JoystickData(uint16_t rudder, uint16_t gas, uint16_t pitch, uint16_t roll) :rudder(rudder), gas(gas), pitch(pitch), roll(roll){};
+	JoystickData(uint16_t a, uint16_t b, uint16_t c, uint16_t d) :rudder(a), gas(b), pitch(c), roll(d){};
 	JoystickData() :rudder(RUDDER_DEFAULT), gas(GAS_DEFAULT), pitch(PITCH_DEFAULT), roll(ROLL_DEFAULT){};
 
 	virtual void ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor);
@@ -79,7 +79,6 @@ class DataInputController
 public:
 	virtual void WriteJoystickData(JoystickData* jdata) = 0;
 	virtual void SetControlBuffer(ControlBuffer* buffer) = 0;
-	virtual int MsToWait() = 0;
 };
 
 /*class SingleJoystickBuffer : public DataInputController, DataOutputController{
@@ -180,7 +179,6 @@ public:
 	JoystickToBufferController(ControlBuffer* buffer);
 	void WriteJoystickData(JoystickData* jdata);
 	void SetControlBuffer(ControlBuffer* buffer);
-	int MsToWait();
 
 private:
 	ControlBuffer* m_buffer;
@@ -202,7 +200,7 @@ private:
 	int m_rate;
 
 	QElapsedTimer m_heartBitTimer;
-	HeartBeat m_heartbeat;
+	HeartBeat* m_heartbeat;
 };
 
 class Joystick {
@@ -218,6 +216,12 @@ protected:
 	int m_danger;
 };
 
+class CrossStabilizer : public Joystick
+{
+public:
+	virtual DataHandler<CrossPoint2D>* GetPointContainer() = 0;
+};
+
 class CrossPoint2D{
 public:
 	CrossPoint2D();
@@ -230,14 +234,6 @@ public:
 private:
 	double m_x, m_y;
 };
-
-class CrossStabilizer : public Joystick
-{
-public:
-	virtual DataHandler<CrossPoint2D>* GetPointContainer() = 0;
-};
-
-
 
 class SimpleProportionalCrossStabilizer : public CrossStabilizer
 {

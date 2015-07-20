@@ -10,22 +10,14 @@ JoystickThread::JoystickThread(Joystick* joystick, DataInputController* buffer){
 // overriding the QThread's run() method
 void JoystickThread::run()
 {
-	/*while (!joystick->hasBegun())
-	{
-		sleep(1);
-		joystick->GetJoysticState(&data);
-	}
-	std::cout << "started to send joystick data\n\n\n\n\n\n\n";	*/
     while (true)
     {
         joystick->GetJoysticState(&data);  //получение данных
 		if (joystick->isDanger())
-		{
-			std::cout << "red button activated\n";
 			break;
-		}
-        buffer->WriteJoystickData(&data); 
-        QThread::currentThread()->msleep(buffer->MsToWait());
+        buffer->WriteJoystickData(&data); //ждём тем дольше, чем меньше места в буфере
+
+        QThread::currentThread()->msleep(1);
     }
 }
 
@@ -35,27 +27,25 @@ RobotLinkThread::RobotLinkThread(DataOutputController* buffer, RobotLinker* link
     this->m_link = link;
     this->m_visitor = visitor;
 	this->m_joystick = joystick;
-
-	m_count = 0;
 }
 
 void RobotLinkThread::Stop()
 {
-	JoystickData* jData = new JoystickData(1500, 1000, 1500, 1500);	//gas on zero
+	JoystickData* jData = new JoystickData(1500, 1000, 1500, 1500);
 	jData->ToMavlinkPacket(&m_packet, m_visitor);
 	m_link->SendPacket(&m_packet);
 }
 
 void RobotLinkThread::run(){
-    m_link->OpenPort("COM3"); 
-
+    m_link->OpenPort("COM5"); 
     while (true)
     {
+#ifdef PROFILING
+        long timer = time(NULL);
+#endif
 		if (m_joystick->isDanger())
 		{
 			Stop();
-			std::cout << "sending packets stopped\n";
-			std::cout << "sended: " << m_count << std::endl;
 			break;
 		}
 			
@@ -66,16 +56,15 @@ void RobotLinkThread::run(){
 		if (m_joystick->isDanger())
 		{
 			Stop();
-			std::cout << "sending packets stopped\n";
-			std::cout << "sended: " << m_count << std::endl;
 			break;
 		}
 		else
-		{
 			m_link->SendPacket(&m_packet); //отправка Mavlink-пакета
-			m_count++;
-		}
-
+        
+#ifdef PROFILING
+        robotLinkTime += time(0) - timer;
+        robotLinkTimes++;
+#endif
         this->msleep(1);
     }
 }

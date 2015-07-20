@@ -10,6 +10,43 @@ ProcessingThread::ProcessingThread(TSDataHandler<Mat> *dh_in, TSDataHandler<Mat>
     this->mDataHandler_out = this->mDataHandler_in;
   else
     this->mDataHandler_out = dh_out;
+
+  object = { Point2f(50, 0), Point2f(0, 50), Point2f(100, 50), Point2f(50, 100),
+    Point2f(45, 45), Point2f(55, 55), Point2f(45, 55), Point2f(55, 45) };
+  frame = { Point3f(0, 0, 0), Point3f(50, 0, 0), Point3f(0, 50, 0), Point3f(0, 0, 50) };
+
+  FileStorage fs;
+  fs.open("cam.xml", FileStorage::READ);
+  fs["Camera_Matrix"] >> mIntrinsics;
+  fs["Distortion_Coefficients"] >> mDistortion;
+}
+
+void cameraPoseFromHomography(const Mat& H, Mat& rvec, Mat& tvec)
+{
+  rvec = Mat::eye(3, 3, CV_32FC1);      // 3x4 matrix, the camera pose
+  tvec = Mat::zeros(3, 1, CV_32FC1);
+  float norm1 = (float)norm(H.col(0));
+  float norm2 = (float)norm(H.col(1));
+  float tnorm = (norm1 + norm2) / 2.0f; // Normalization value
+
+  Mat p1 = H.col(0);       // Pointer to first column of H
+  Mat p2 = rvec.col(0);    // Pointer to first column of pose (empty)
+
+  cv::normalize(p1, p2);   // Normalize the rotation, and copies the column to pose
+
+  p1 = H.col(1);           // Pointer to second column of H
+  p2 = rvec.col(1);        // Pointer to second column of pose (empty)
+
+  cv::normalize(p1, p2);   // Normalize the rotation and copies the column to pose
+
+  p1 = rvec.col(0);
+  p2 = rvec.col(1);
+
+  Mat p3 = p1.cross(p2);   // Computes the cross-product of p1 and p2
+  Mat c2 = rvec.col(2);    // Pointer to third column of pose
+  p3.copyTo(c2);       // Third column is the crossproduct of columns one and two
+
+  tvec.col(0) = H.col(2) / tnorm;  //vector t [R|t] is the last column of pose
 }
 
 void ProcessingThread::run()
@@ -50,7 +87,9 @@ static inline double angle(Point pt1, Point pt2, Point pt0)
   return (dx1*dx2 + dy1*dy2) / sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
 
-bool CheckCrossParams(vector<Point> cross)
+
+template<typename T>
+bool CheckCrossParams(vector<T> cross)
 {
   //фильтр контуров по параметрам углов
   if (cross.size() != 8) return false;
@@ -99,8 +138,7 @@ void ProcessingThread::mOpticalFlowHandle(Mat &previmg, Mat lastimg, vector<Poin
   vector<Point2f> next_pts, tracked_pts, orig_pts_new;
   vector<uchar> m_status;
   cvtColor(lastimg, nextimg, CV_BGR2GRAY);
-  vector<Point> prev_pts_vp(8);
-
+  Point2f center = Point2f(previmg.size().width / 2, previmg.size().height / 2);
 
   // алгоритм обнаружения на данном этапе всегда вернёт 8 точек
   if (orig_pts.size() != 8)
@@ -108,6 +146,7 @@ void ProcessingThread::mOpticalFlowHandle(Mat &previmg, Mat lastimg, vector<Poin
     prev_pts.clear();
 
     // в случае обнаружения креста задаём начальные данные для OpticalFlow
+    //goodFeaturesToTrack(nextimg, prev_pts, 8, 0.01, 2);
     if (mCrossDetect(nextimg, prev_pts))
     {
       cvtColor(lastimg, previmg, CV_BGR2GRAY);
@@ -116,12 +155,8 @@ void ProcessingThread::mOpticalFlowHandle(Mat &previmg, Mat lastimg, vector<Poin
   }
   else
   {
-    for (int i = 0; i < prev_pts.size(); i++)
-    {
-      prev_pts_vp[i] = prev_pts[i];
-    }
     // просчёт смещения точек
-    if (prev_pts.size() > 0 && !previmg.empty() && CheckCrossParams(prev_pts_vp))
+    if (prev_pts.size() > 0 && !previmg.empty() && CheckCrossParams(prev_pts))
     {
       calcOpticalFlowPyrLK(previmg, nextimg, prev_pts, next_pts, m_status, m_error);
     }
@@ -137,10 +172,20 @@ void ProcessingThread::mOpticalFlowHandle(Mat &previmg, Mat lastimg, vector<Poin
         orig_pts_new.push_back(orig_pts[i]);
       }
     }
-
+    vector<Point2f> imgpts;
     // вывод новых данных в соответствующие переменные
+    if (tracked_pts.size() == object.size())
+    {
+      Mat homo = cv::findHomography(orig_pts, tracked_pts);
+      Mat rvec, tvec;
+      cameraPoseFromHomography(homo, rvec, tvec);
 
-
+      //warpPerspective(OUTPUT_IMG_VAR, OUTPUT_IMG_VAR, homo.inv(), OUTPUT_IMG_VAR.size());
+      //solvePnP(object, tracked_pts, intrinsics,distortion);
+      //projectPoints(frame, rvec, tvec, mIntrinsics, mDistortion, imgpts);
+    }
+    for each(Point2f pt in imgpts)
+      DBG_DrawOutputCircle(pt);
     orig_pts = orig_pts_new;
     prev_pts = tracked_pts;
     nextimg.copyTo(previmg);

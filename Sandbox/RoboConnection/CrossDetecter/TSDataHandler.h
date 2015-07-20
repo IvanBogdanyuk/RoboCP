@@ -9,15 +9,15 @@ template <class T> class DataHandler
 /*An interface for thread safe data container*/
 {
 public:
-	virtual void Write(T input) = 0;
-	virtual bool Read(T &output) = 0;
-	virtual bool Peek(T &output) = 0;
-	virtual int Size() = 0;
+  virtual void Write(T input) = 0;
+  virtual bool Read(T &output) = 0;
+  virtual bool Peek(T &output) = 0;
+  virtual size_t Size() = 0;
 };
 
-template <class T> class TSDataHandler : public DataHandler<T>
+template <class T> class TSDataHandler : public DataHandler < T >
 
-	/*Queued thread safe data container*/
+    /*Queued thread safe data container*/
 {
 public:
   TSDataHandler(int frameLimit = 10);
@@ -25,7 +25,7 @@ public:
   void Write(T input);
   bool Read(T &output);
   bool Peek(T &output);
-  int Size();
+  size_t Size();
 private:
   int mCapacity;
   // Очередь данных
@@ -77,7 +77,7 @@ bool TSDataHandler<T>::Read(T &output)
 }
 
 template <class T>
-int TSDataHandler<T>::Size()
+size_t TSDataHandler<T>::Size()
 {
   return mQueue.size();
 }
@@ -105,60 +105,61 @@ TSDataHandler<T>::~TSDataHandler()
 
 }
 
-template <class T> class OneElementDataHandler : public DataHandler<T>
+template <class T> class OneElementDataHandler : public DataHandler < T >
 
-	/*Contains only most recently added element*/
+    /*Contains only most recently added element*/
 {
 public:
-	OneElementDataHandler();
-	~OneElementDataHandler();
-	void Write(T input);
-	bool Read(T &output);
-	bool Peek(T &output);
-	int Size();
+  OneElementDataHandler();
+  ~OneElementDataHandler();
+  void Write(T input);
+  bool Read(T &output);
+  bool Peek(T &output);
+  size_t Size();
 private:
-	T mElement;
-	QMutex mMutex;
+  T mElement;
+  QMutex mMutex;
 };
 
 template <class T>
 OneElementDataHandler<T>::OneElementDataHandler() : mMutex()
 {
-	
+  mElement = 0;
 }
 
 template <class T>
 void OneElementDataHandler<T>::Write(T input)
 {
-	mMutex.lock();
+  mMutex.lock();
 
-	mElement = input;
+  mElement = input;
 
-	mMutex.unlock();
+  mMutex.unlock();
 }
 
 // функция считывания из очереди
 template <class T>
 bool OneElementDataHandler<T>::Read(T &output)
 {
-	return this->Peek(output);
+  this->Peek(output);
 }
 
 template <class T>
-int OneElementDataHandler<T>::Size()
+size_t OneElementDataHandler<T>::Size()
 {
-	return 1;
+  if (mElement == 0) return 0;
+  else return 1;
 }
 
 template <class T>
 bool OneElementDataHandler<T>::Peek(T &output)
 {
-	mMutex.lock();
+  mMutex.lock();
 
-	output = mElement;
+  output = mElement
 
-	mMutex.unlock();
-	return true;
+    mMutex.unlock();
+  return true;
 }
 
 template <class T>

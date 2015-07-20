@@ -41,8 +41,8 @@ WebcamCapture::WebcamCapture(TSDataHandler<Mat> *dh_out, int cameraNum)
   if (!mVideoCapture->isOpened())
     exit(-1);
   //bool success = mVideoCapture->open(cameraNum);
-  mVideoCapture->set(CV_CAP_PROP_FRAME_HEIGHT, 240);
-  mVideoCapture->set(CV_CAP_PROP_FRAME_WIDTH, 320);
+  //mVideoCapture->set(CV_CAP_PROP_FRAME_HEIGHT, 240);
+  //mVideoCapture->set(CV_CAP_PROP_FRAME_WIDTH, 320);
   this->mDataHandler_out = dh_out;
 }
 

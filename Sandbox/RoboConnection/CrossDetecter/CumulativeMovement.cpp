@@ -6,11 +6,12 @@ inline float sqrdist(Point2f pt1, Point2f pt2)
   return relative.x*relative.x + relative.y*relative.y;
 }
 
-CumulativeMovement::CumulativeMovement(Point2f origin, Point2f target)
+CumulativeMovement::CumulativeMovement(Point2f origin, Point2f target, int roi)
 {
   mDistanceSqr = sqrdist(origin, target);
   mLastDist = mDistanceSqr;
   mLastPos = origin;
+  mRoi = roi;
 }
 
 void CumulativeMovement::Accumulate(Point2f newpos)

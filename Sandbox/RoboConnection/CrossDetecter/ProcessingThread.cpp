@@ -11,10 +11,6 @@ ProcessingThread::ProcessingThread(TSDataHandler<Mat> *dh_in, TSDataHandler<Poin
   else
     this->mDataHandler_out = dh_out;
 
-  object = { Point2f(50, 0), Point2f(0, 50), Point2f(100, 50), Point2f(50, 100),
-    Point2f(45, 45), Point2f(55, 55), Point2f(45, 55), Point2f(55, 45) };
-  frame = { Point3f(0, 0, 0), Point3f(50, 0, 0), Point3f(0, 50, 0), Point3f(0, 0, 50) };
-
   FileStorage fs;
   fs.open("cam.xml", FileStorage::READ);
   fs["Camera_Matrix"] >> mIntrinsics;
@@ -303,13 +299,14 @@ bool ProcessingThread::mCrossDetect(Mat gray, vector<Point2f> &cross)
     vector<Point> points(it.count);
 
     //line(display, vertices[0], vertices[2], Scalar(255, 255, 0));
-    int avg_sum = 0;
+    /*int avg_sum = 0;
     for (int i = 0; i < it.count; i++, ++it)
     {
       points[i] = it.pos();
       Vec3b colour = gray.at<Vec3b>(points[i]);
       avg_sum += (colour.val[0] + colour.val[1] + colour.val[2]) / 3;
       if (it.count - i - 1 == 0)  avg_sum = avg_sum / i;
-    }
+    }*/
   }
+  return false;
 }

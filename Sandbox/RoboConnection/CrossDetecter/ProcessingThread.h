@@ -27,7 +27,5 @@ private:
   void run();
   TSDataHandler<Mat> *mDataHandler_in;
   TSDataHandler<Point2f> *mDataHandler_out;
-  vector<Point2f> object;
-  vector<Point3f> frame;
   Mat mIntrinsics, mDistortion;
 };

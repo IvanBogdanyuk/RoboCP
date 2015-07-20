@@ -4,8 +4,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video/video.hpp>
-#include <opencv2/features2d/features2d.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
 #include "TSDataHandler.h"
 #include "TimingsDebug.h"
 #include "DebugOutput.h"
@@ -25,7 +23,4 @@ private:
   void mOpticalFlowHandle(Mat &previmg, Mat lastimg, vector<Point2f> &prev_pts, vector<Point2f> &orig_pts);
   void run();
   TSDataHandler<Mat> *mDataHandler_in, *mDataHandler_out;
-  vector<Point2f> object;
-  vector<Point3f> frame;
-  Mat mIntrinsics, mDistortion;
 };

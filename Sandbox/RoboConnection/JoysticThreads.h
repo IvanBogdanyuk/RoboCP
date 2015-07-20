@@ -32,6 +32,8 @@ private:
     MavlinkPacket m_packet;
     MavlinkVisitor* m_visitor;
 	Joystick* m_joystick;
+
+	int m_count;
 	void Stop();
 };
 #endif

@@ -34,6 +34,8 @@ bool JoystickData::isNonZero()
 	isNonZero |= ((pitch > 1500 + epsilon) || ((pitch < 1500 - epsilon)));
 	isNonZero |= ((roll > 1500 + epsilon) || ((roll < 1500 - epsilon)));
 	isNonZero |= ((rudder > 1500 + epsilon) || ((rudder < 1500 - epsilon)));
+
+	return isNonZero;
 }
 
 JoystickData* JoystickData::clone()
@@ -392,7 +394,7 @@ void QueuedControlBuffer::Write(JoystickData* jdata){
 		jdata->copy(toWrite);
 		m_joystickDataQueue->Write(toWrite);
 	}
-	else std::cout << "buffer is full \n";
+	else std::cout << "buffer is full" << m_joystickDataQueue->Size() << std::endl;
 }
 int QueuedControlBuffer::Size(){
 	return m_joystickDataQueue->Size();
@@ -422,7 +424,12 @@ void JoystickToBufferController::SetControlBuffer(ControlBuffer* buffer){
 	m_buffer = buffer;
 }
 
-BufferToLinkerController::BufferToLinkerController(ControlBuffer* buffer, int rate)
+int JoystickToBufferController::MsToWait()
+{
+	return (int) 75.0*m_buffer->Size() / m_buffer->GetMaxSize();
+}
+
+BufferToLinkerController::BufferToLinkerController(ControlBuffer* buffer, int rate) : m_heartbeat()
 {
 	SetControlBuffer(buffer);
 	m_rate = rate;
@@ -434,7 +441,7 @@ void BufferToLinkerController::Read(MavlinkPacket* packet, MavlinkVisitor* visit
 {
 	if (m_heartBitTimer.elapsed() > 1000)
 	{
-		m_heartbeat->ToMavlinkPacket(packet, visitor);
+		m_heartbeat.ToMavlinkPacket(packet, visitor);
 		m_heartBitTimer.restart();
 	}
 	else
@@ -478,10 +485,20 @@ JoystickData* BufferToLinkerController::prepareJData()
 
 void Joystick::checkData(JoystickData* data)
 {
-	if (data->gas > 1010)
+	if (data->gas > 1025)
 		m_began = true;
-	if ((data->gas < 1005) && (m_began))
+	if ((data->gas < 1025) && (m_began))
 		m_danger = true;
+}
+
+bool Joystick::isDanger()
+{
+	return m_danger;
+}
+
+bool Joystick::hasBegun()
+{
+	return m_began;
 }
 
 CrossPoint2D::CrossPoint2D()
@@ -528,19 +545,18 @@ SimpleProportionalCrossStabilizer::SimpleProportionalCrossStabilizer(double fact
 
 bool SimpleProportionalCrossStabilizer::isDanger()
 {
-	//won't be used
+	return false; //won't be used
 }
 
 bool SimpleProportionalCrossStabilizer::hasBegun()
 {
-	//won't be used
+	return true;	//won't be used
 }
 
 void SimpleProportionalCrossStabilizer::GetJoysticState(JoystickData* data)
 {
 	m_pointContainer->Read(m_workPoint);
 
-	data->gas = -1;   //should be owerwritten
 	data->pitch = 1500 + m_workPoint.GetY()*m_factor;
 	data->roll = 1500 + m_workPoint.GetX()*m_factor;
 	data->rudder = 1500;
@@ -555,6 +571,9 @@ ControlSwitcher::ControlSwitcher(CrossStabilizer* stabilizer, Joystick* externJo
 {
 	m_stabilizer = stabilizer;
 	m_externJoystick = externJoystick;
+
+	m_danger = false;
+	m_began = false;
 }
 
 DataHandler<CrossPoint2D>* ControlSwitcher::GetPointContainer()

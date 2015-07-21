@@ -1,6 +1,13 @@
 #include "joystickData.h"
+#include "math.h"
 
 int epsilon = 200;
+
+int weak_sign(double arg, double epsilond)
+{
+	if (arg > 0) if (arg > epsilond) return 1; else return 0;
+	else if (arg < -epsilond) return -1; else return 0;
+}
 
 MavlinkPacket::MavlinkPacket()
 {
@@ -563,6 +570,39 @@ void SimpleProportionalCrossStabilizer::GetJoysticState(JoystickData* data)
 }
 
 DataHandler<CrossPoint2D>* SimpleProportionalCrossStabilizer::GetPointContainer()
+{
+	return m_pointContainer;
+}
+
+RelayCrossStabilizer::RelayCrossStabilizer(double factor, double stableRadius)
+{
+	m_factor = factor;
+	m_stableRadius = stableRadius;
+	m_pointContainer = new OneElementDataHandler<CrossPoint2D>();
+
+	if (m_stableRadius < 0) m_stableRadius = -m_stableRadius;
+}
+
+bool RelayCrossStabilizer::isDanger()
+{
+	return false; //won't be used
+}
+
+bool RelayCrossStabilizer::hasBegun()
+{
+	return true;	//won't be used
+}
+
+void RelayCrossStabilizer::GetJoysticState(JoystickData* data)
+{
+	m_pointContainer->Read(m_workPoint);
+
+	data->pitch = 1500 + (uint16_t) weak_sign(m_workPoint.GetY(), m_stableRadius)*m_factor;
+	data->roll = 1500 + (uint16_t) weak_sign(m_workPoint.GetX(), m_stableRadius)*m_factor;
+	data->rudder = 1500;
+}
+
+DataHandler<CrossPoint2D>* RelayCrossStabilizer::GetPointContainer()
 {
 	return m_pointContainer;
 }

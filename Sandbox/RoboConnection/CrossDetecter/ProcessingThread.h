@@ -11,6 +11,8 @@
 #include "DebugOutput.h"
 #include <iostream>
 
+#include "..\joystickData.h";
+
 using namespace std;
 using namespace cv;
 using std::vector;
@@ -19,13 +21,15 @@ class ProcessingThread :
   public QThread
 {
 public:
-  ProcessingThread(TSDataHandler<Mat> *dh_in, TSDataHandler<Point2f> *dh_out = NULL);
+  ProcessingThread(TSDataHandler<Mat> *dh_in, DataHandler<CrossPoint2D> *dh_out = NULL, TSDataHandler<Mat> *dbg_outputImage = NULL);
   ~ProcessingThread();
 private:
   bool mCrossDetect(Mat img, vector<Point2f> &cross);
   void mOpticalFlowHandle(Mat &previmg, Mat lastimg, vector<Point2f> &prev_pts, vector<Point2f> &orig_pts, Point2f &offset);
   void run();
-  TSDataHandler<Mat> *mDataHandler_in;
-  TSDataHandler<Point2f> *mDataHandler_out;
+  TSDataHandler<Mat> *mDataHandler_in, *dbg_outputImage;
+  DataHandler<CrossPoint2D> *mDataHandler_out;
   Mat mIntrinsics, mDistortion;
+
+  CrossPoint2D mPoint;
 };

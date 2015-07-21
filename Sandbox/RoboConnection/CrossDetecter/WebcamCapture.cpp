@@ -37,8 +37,8 @@ WebcamCapture::WebcamCapture(TSDataHandler<Mat> *dh_out, int cameraNum)
 {
   // инициализация камеры стандартной камеры 
   // с размером выходного изображения 320x240
-  this->mVideoCapture = new VideoCapture(cameraNum);
-  this->mVideoCapture->set(CV_CAP_PROP_FPS, 150);
+  this->mVideoCapture = new VideoCapture(0);
+  //this->mVideoCapture->set(CV_CAP_PROP_FPS, 150);
   if (!mVideoCapture->isOpened())
     exit(-1);
   //bool success = mVideoCapture->open(cameraNum);

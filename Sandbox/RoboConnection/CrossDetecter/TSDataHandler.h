@@ -124,7 +124,7 @@ private:
 template <class T>
 OneElementDataHandler<T>::OneElementDataHandler() : mMutex()
 {
-  mElement = 0;
+  
 }
 
 template <class T>
@@ -141,14 +141,13 @@ void OneElementDataHandler<T>::Write(T input)
 template <class T>
 bool OneElementDataHandler<T>::Read(T &output)
 {
-  this->Peek(output);
+  return this->Peek(output);
 }
 
 template <class T>
 size_t OneElementDataHandler<T>::Size()
 {
-  if (mElement == 0) return 0;
-  else return 1;
+  return 1;
 }
 
 template <class T>
@@ -156,7 +155,7 @@ bool OneElementDataHandler<T>::Peek(T &output)
 {
   mMutex.lock();
 
-  output = mElement
+  output = mElement;
 
     mMutex.unlock();
   return true;

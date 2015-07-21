@@ -256,6 +256,24 @@ private:
 	CrossPoint2D m_workPoint;
 };
 
+class RelayCrossStabilizer : public CrossStabilizer
+{
+public:
+	RelayCrossStabilizer(double factor, double stableRadius);
+	bool isDanger();
+	bool hasBegun();
+	void GetJoysticState(JoystickData* data);
+
+	DataHandler<CrossPoint2D>* GetPointContainer();
+
+private:
+	double m_factor;
+	double m_stableRadius;
+	DataHandler<CrossPoint2D>* m_pointContainer;
+
+	CrossPoint2D m_workPoint;
+};
+
 class ControlSwitcher : public CrossStabilizer{
 public:
 	ControlSwitcher(CrossStabilizer* stabilizer, Joystick* externJoystick);

@@ -34,19 +34,32 @@ int main(int argc, char *argv[])
     MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();    //helps to convert different objects to mavlink packet
 
     //MockCrossDetector* crossDetector = new MockCrossDetector(switcher->GetPointContainer());
+	TSDataHandler<Mat>* dbg_outputImage = new TSDataHandler<Mat>();
     TSDataHandler<Mat>* cap2proc = new TSDataHandler<Mat>();
-    TSDataHandler<CrossPoint2D>* proc2out = switcher->GetPointContainer();
+    DataHandler<CrossPoint2D>* proc2out = switcher->GetPointContainer();
     WebcamCapture capThread(cap2proc, 0);
-    ProcessingThread procThread(cap2proc, proc2out);
+	ProcessingThread procThread(cap2proc, proc2out, dbg_outputImage);
     capThread.start();
     procThread.start();
-    
+	cv::Mat img;
+
     JoystickThread* jthread = new JoystickThread(switcher, inputController);    //thread that reads joystick state and pushes it to the buffer
     RobotLinkThread* rthread = new RobotLinkThread(outputController, link, mavlinkvisitor, switcher);    //thread that reads the latest joystick state to a buffer and sends it via com-port
-    crossDetector->start();
+    //crossDetector->start();
     jthread->start();
     rthread->start();
     
+	while (true)
+	{
+		CrossPoint2D out;
+		if (proc2out->Peek(out) && dbg_outputImage->Read(img))
+		{
+			cout << "[" << out.GetX() << ';' << out.GetY() << "]" <<  endl;
+			imshow("OUTPUT", img);
+			waitKey(1);
+		}
+	}
+
     getchar();	
     return 0;	
 }

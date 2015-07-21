@@ -1,10 +1,11 @@
 #include "ProcessingThread.h"
 
-ProcessingThread::ProcessingThread(TSDataHandler<Mat> *dh_in, TSDataHandler<Point2f> *dh_out)
+
+ProcessingThread::ProcessingThread(TSDataHandler<Mat> *dh_in, DataHandler<CrossPoint2D> *dh_out, TSDataHandler<Mat> *dbg_outputImage)
 {
   // инициализация
   this->mDataHandler_in = dh_in;
-
+  this->dbg_outputImage = dbg_outputImage;
   // если выходной буфер не указан, пишем во входной
   if (dh_out == NULL)
     this->mDataHandler_out = NULL;
@@ -166,26 +167,25 @@ void ProcessingThread::mOpticalFlowHandle(Mat &previmg, Mat lastimg, vector<Poin
         orig_pts_new.push_back(orig_pts[i]);
       }
     }
-    vector<Point2f> imgpts;
-    // вывод новых данных в соответствующие переменные
-    if (tracked_pts.size() == object.size())
+    //vector<Point2f> imgpts;
+    // вывод новых данных 
+    if (next_pts.size() == 5)
     {
-      //Mat homo = cv::findHomography(orig_pts, tracked_pts);
-      Mat rvec, tvec;
-      //cameraPoseFromHomography(homo, rvec, tvec);
-
-      //warpPerspective(OUTPUT_IMG_VAR, OUTPUT_IMG_VAR, homo.inv(), OUTPUT_IMG_VAR.size());
-      //solvePnP(object, tracked_pts, intrinsics,distortion);
-      //projectPoints(frame, rvec, tvec, mIntrinsics, mDistortion, imgpts);
+      DBG_DrawOutputLine(next_pts[0], next_pts[3]);
+      DBG_DrawOutputCircle(next_pts[0]);
+      DBG_DrawOutputCircle(next_pts[1]);
+      DBG_DrawOutputCircle(next_pts[2]);
+      DBG_DrawOutputCircle(next_pts[3]);
+      DBG_DrawOutputCircle(next_pts[4]);
+      DBG_DrawOutputLine(next_pts[1], next_pts[4]);
     }
-    for each(Point2f pt in imgpts)
-      DBG_DrawOutputCircle(pt);
     orig_pts = orig_pts_new;
     prev_pts = tracked_pts;
     nextimg.copyTo(previmg);
   }
-  //DBG_WriteFrame(mDataHandler_out);
-  mDataHandler_out->Write(offset);
+  DBG_WriteFrame(dbg_outputImage);
+  mPoint.SetXY(offset.x, offset.y);
+  mDataHandler_out->Write(mPoint);
 
 }
 

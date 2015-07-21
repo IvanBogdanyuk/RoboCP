@@ -5,7 +5,7 @@
 #include "com_connection.h"
 #include <robo_mavlink_test\mavlink.h>
 
-//bool com_checksum(uint8_t *data, int32_t length); //Gets an array, length of its payload 
+
 
 class ComRobotLinker : public RobotLinker
 {

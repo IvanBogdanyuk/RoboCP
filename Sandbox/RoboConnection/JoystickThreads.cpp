@@ -2,9 +2,11 @@
 
 
 
-JoystickThread::JoystickThread(Joystick* joystick, DataInputController* buffer){
+JoystickThread::JoystickThread(Joystick* joystick, JoystickToBufferController* buffer, ArducopterControlSystem* controlSystem){
     this->joystick = joystick;
     this->buffer = buffer;
+
+	this->m_controlSystem = controlSystem;
 }
 
 // overriding the QThread's run() method
@@ -19,10 +21,14 @@ void JoystickThread::run()
     while (true)
     {
         joystick->GetJoysticState(&data);  //получение данных
-		if (joystick->isDanger())
+		if (m_controlSystem->isRedButtonPressed())
 		{
 			std::cout << "red button activated\n";
-			break;
+			while (m_controlSystem->isRedButtonPressed())
+			{
+				this->msleep(1);
+			}
+			std::cout << "red button deactivated\n";
 		}
         buffer->WriteJoystickData(&data); 
         QThread::currentThread()->msleep(buffer->MsToWait());
@@ -30,11 +36,12 @@ void JoystickThread::run()
 }
 
 
-RobotLinkThread::RobotLinkThread(DataOutputController* buffer, RobotLinker* link, MavlinkVisitor* visitor, Joystick* joystick){
+RobotLinkThread::RobotLinkThread(DataOutputController* buffer, RobotLinker* link, MavlinkVisitor* visitor, ArducopterControlSystem* controlSystem)
+{
     this->m_buffer = buffer;
     this->m_link = link;
     this->m_visitor = visitor;
-	this->m_joystick = joystick;
+	this->m_controlSystem = controlSystem;
 
 	m_count = 0;
 }
@@ -51,27 +58,22 @@ void RobotLinkThread::run(){
 
     while (true)
     {
-		if (m_joystick->isDanger())
+		if (m_controlSystem->isRedButtonPressed())
 		{
 			Stop();
 			std::cout << "sending packets stopped\n";
 			std::cout << "sended: " << m_count << std::endl;
-			break;
+			
+			while (m_controlSystem->isRedButtonPressed())
+			{
+				this->msleep(1);
+			}
 		}
 			
 		else
 		{
 			m_buffer->Read(&m_packet, m_visitor);  //получение данных, формирование  Mavlink-пакета
-		}
-		if (m_joystick->isDanger())
-		{
-			Stop();
-			std::cout << "sending packets stopped\n";
-			std::cout << "sended: " << m_count << std::endl;
-			break;
-		}
-		else
-		{
+		
 			m_link->SendPacket(&m_packet); //отправка Mavlink-пакета
 			m_count++;
 		}
@@ -84,3 +86,36 @@ void RobotLinkThread::sleep_m(int millis){
     this->msleep(millis);
 }
 
+RobotLinkerReadingThread::RobotLinkerReadingThread(RobotLinker* linker, DataInputController* controller)
+{
+	m_inputController = controller;
+	m_robotLinker = linker;
+	m_packet = new MavlinkPacket();
+}
+
+void RobotLinkerReadingThread::run()
+{
+	while (true){
+		m_robotLinker->ReadPacket(m_packet);
+		m_inputController->WriteMavlinkPacket(m_packet);
+	}
+}
+
+CameraDbgThread::CameraDbgThread(DataHandler<CrossPoint2D> *dh_out, TSDataHandler<Mat> *dbg_outputImage)
+{
+	m_DataHandler_out = dh_out;
+	m_dbg_outputImage = dbg_outputImage;
+}
+void CameraDbgThread::run()
+{
+	while (true)
+	{
+		CrossPoint2D out;
+		if (m_DataHandler_out->Peek(out) && m_dbg_outputImage->Read(img))
+		{
+			//cout << "[" << out.GetX() << ';' << out.GetY() << "]" <<  endl;
+			imshow("OUTPUT", img);
+			waitKey(1);
+		}
+	}
+}

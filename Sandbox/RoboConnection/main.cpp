@@ -17,48 +17,50 @@
 #include "WebcamCapture.h"
 #include "ProcessingThread.h"
 #include "TSDataHandler.h"
+#include "ControlSystem.h"
+#include "GUI\arducopterGUI.h"
 
 int main(int argc, char *argv[])
 {
 	
+	RobotLinker* linker = new MockRobotLinker();	//connection with robot
 
-    Joystick* joystick = new RealJoystick();    //initializing a joystick
-    CrossStabilizer* stabilizer = new SimpleProportionalCrossStabilizer(1.0);
-    ControlSwitcher* switcher = new ControlSwitcher(stabilizer, joystick);
+	ArducopterControlSystemImpl* controlSystem = new ArducopterControlSystemImpl(linker);	//control producing system
 
-    ControlBuffer* controlBuffer = new QueuedControlBuffer(1000);
-    DataInputController* inputController = new JoystickToBufferController(controlBuffer);
-    DataOutputController* outputController = new BufferToLinkerController(controlBuffer, 10);
+	CopterOutputBuffer* copterOutputBuffer = new OneElementCopterOutputBuffer();	//responce reading system
+	CopterOutputController* copterOutputController = new CopterOutputControllerImpl(copterOutputBuffer);
+	DataInputController* linkerToBufferController = new LinkerToBufferController(copterOutputBuffer);
+	RobotLinkerReadingThread* linkReadingThread = new RobotLinkerReadingThread(linker, linkerToBufferController);
 
-    RobotLinker* link = new ComRobotLinker();    //initializing a com-port connection
-    MavlinkVisitor* mavlinkvisitor = new ComMavlinkVisitor();    //helps to convert different objects to mavlink packet
-
-    //MockCrossDetector* crossDetector = new MockCrossDetector(switcher->GetPointContainer());
+	ArducopterGUI* gui = new ArducopterGUI(argc, argv, controlSystem);
+	
 	TSDataHandler<Mat>* dbg_outputImage = new TSDataHandler<Mat>();
     TSDataHandler<Mat>* cap2proc = new TSDataHandler<Mat>();
-    DataHandler<CrossPoint2D>* proc2out = switcher->GetPointContainer();
+    DataHandler<CrossPoint2D>* proc2out = controlSystem->GetPointContainer();
     WebcamCapture capThread(cap2proc, 0);
 	ProcessingThread procThread(cap2proc, proc2out, dbg_outputImage);
     capThread.start();
     procThread.start();
-	cv::Mat img;
 
-    JoystickThread* jthread = new JoystickThread(switcher, inputController);    //thread that reads joystick state and pushes it to the buffer
-    RobotLinkThread* rthread = new RobotLinkThread(outputController, link, mavlinkvisitor, switcher);    //thread that reads the latest joystick state to a buffer and sends it via com-port
-    //crossDetector->start();
-    jthread->start();
-    rthread->start();
-    
-	while (true)
+	CameraDbgThread* camera_dbg = new CameraDbgThread(proc2out, dbg_outputImage);
+
+	
+	controlSystem->start();
+	//linkReadingThread->start();
+	//camera_dbg->start();
+	gui->show();
+
+	//debug cycle
+	/*while (true)
 	{
 		CrossPoint2D out;
 		if (proc2out->Peek(out) && dbg_outputImage->Read(img))
 		{
-			cout << "[" << out.GetX() << ';' << out.GetY() << "]" <<  endl;
+			//cout << "[" << out.GetX() << ';' << out.GetY() << "]" <<  endl;
 			imshow("OUTPUT", img);
 			waitKey(1);
 		}
-	}
+	}	*/
 
     getchar();	
     return 0;	

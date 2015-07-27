@@ -38,12 +38,31 @@ public:
 	virtual void ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor);
 };
 
+class CopterAttitude : public MavlinkMessage
+{
+public:
+
+	CopterAttitude();
+	CopterAttitude& operator=(CopterAttitude &arg);
+	void ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor);
+	
+	unsigned int timeSinceBootMs;
+	float roll;
+	float pitch;
+	float yaw;
+	float rollspeed;
+	float pitchspeed;
+	float yawspeed;
+};
+
 class JoystickData : public MavlinkMessage{
 public:
 	uint16_t rudder;
 	uint16_t gas;
 	uint16_t pitch;
 	uint16_t roll;
+
+	bool redButtonPressed;
 public:
 	JoystickData(uint16_t rudder, uint16_t gas, uint16_t pitch, uint16_t roll) :rudder(rudder), gas(gas), pitch(pitch), roll(roll){};
 	JoystickData() :rudder(RUDDER_DEFAULT), gas(GAS_DEFAULT), pitch(PITCH_DEFAULT), roll(ROLL_DEFAULT){};
@@ -59,6 +78,26 @@ public:
 	void setZero();
 };
 
+class ArducopterControlSystem : public QObject{
+	Q_OBJECT
+public:
+	virtual void redButtonPressed(bool pressed) = 0;
+	virtual void keyPressed(char key) = 0;
+	virtual void joystickButtonPressed(char button) = 0;
+	virtual void setLastSendedJoystickData(JoystickData* data) = 0;
+	virtual void switchControl(int control) = 0;
+	virtual int arm(bool* ready) = 0;
+	virtual void reconnect(bool* ready) = 0;
+
+	virtual void start() = 0;
+
+	virtual bool isRedButtonPressed() = 0;
+	virtual JoystickData* lastSendedJDataPointer() = 0;
+
+signals:
+	void controlSended(JoystickData* control);
+};
+
 class ControlBuffer{
 public:
 	virtual JoystickData* Read() = 0;
@@ -72,9 +111,10 @@ class DataOutputController{
 public:
 	virtual void Read(MavlinkPacket* packet, MavlinkVisitor* visitor) = 0;
 	virtual void SetControlBuffer(ControlBuffer* buffer) = 0;
+	virtual int sendArmingMessages(bool* ready) = 0;
 };
 
-class DataInputController
+class JoystickToBufferController
 {
 public:
 	virtual void WriteJoystickData(JoystickData* jdata) = 0;
@@ -112,9 +152,9 @@ private:
 	JoystickData* m_workData;
 };
 
-class JoystickToBufferController : public DataInputController{
+class JoystickToBufferControllerImpl : public JoystickToBufferController{
 public:
-	JoystickToBufferController(ControlBuffer* buffer);
+	JoystickToBufferControllerImpl(ControlBuffer* buffer);
 	void WriteJoystickData(JoystickData* jdata);
 	void SetControlBuffer(ControlBuffer* buffer);
 	int MsToWait();
@@ -125,34 +165,34 @@ private:
 
 class BufferToLinkerController : public DataOutputController{
 public:
-	BufferToLinkerController(ControlBuffer* buffer, int rate);
+	BufferToLinkerController(ControlBuffer* buffer, int rate, ArducopterControlSystem* controlSystem);
 	void Read(MavlinkPacket* packet, MavlinkVisitor* visitor);
 	void SetControlBuffer(ControlBuffer* buffer);
+	int sendArmingMessages(bool* ready);
 
 private:
 	JoystickData* prepareJData();
 
 	ControlBuffer* m_buffer;
 
-	JoystickData* m_meanJoystickData;
-	JoystickData* m_workData;
+	JoystickData* m_meanJoystickData;	//needed for mean message computing
+	JoystickData* m_armingData;
+	JoystickData* m_workData;	//is not initialized, used as a pointer
 	int m_rate;
 
 	QElapsedTimer m_heartBitTimer;
 	HeartBeat m_heartbeat;
+
+	long m_lastStartedArming;
+	const long m_armingTime = 4000;
+	bool* m_isArmingDone;
+
+	ArducopterControlSystem* m_controlSystem;
 };
 
 class Joystick {
 public:
-	bool isDanger();
-	bool hasBegun();
 	virtual void GetJoysticState(JoystickData* data) = 0;
-
-protected:
-	void checkData(JoystickData* data);
-
-	int m_began;
-	int m_danger;
 };
 
 class CrossPoint2D{
@@ -217,7 +257,15 @@ public:
 	DataHandler<CrossPoint2D>* GetPointContainer();
 	void GetJoysticState(JoystickData* data);
 
+	void setControl(int control);
+
+	static const int JOYSTICK = 0;
+	static const int AUTO = 1;
+	static const int CROSS = 2;
+
 private:
 	CrossStabilizer* m_stabilizer;
 	Joystick* m_externJoystick;
+
+	int m_currentControl;
 };

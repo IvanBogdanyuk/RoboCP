@@ -1,13 +1,13 @@
 ﻿#include "joystick.h"
 
 
-RealJoystick::RealJoystick() //класс для настоящего джойстика
+RealJoystick::RealJoystick(ArducopterControlSystem* controlSystem) //класс для настоящего джойстика
 {
     SDL_Init(SDL_INIT_JOYSTICK); //инициализация, открытие джойстика
     SDL_JoystickEventState(SDL_ENABLE);
     joy = SDL_JoystickOpen(0);
-	m_began = false;
-	m_danger = false;
+
+	m_controlSystem = controlSystem;
 }
 uint16_t RealJoystick::convert(int JData, bool toinvert)  //перевод значений в диапазон [1000, 2000]
 {
@@ -18,11 +18,21 @@ uint16_t RealJoystick::convert(int JData, bool toinvert)  //перевод зн�
 }
 void RealJoystick::GetJoysticState(JoystickData* data)
 {
-	SDL_PollEvent(&event);
+	bool polled = SDL_PollEvent(&event);
+
 	data->pitch = convert(SDL_JoystickGetAxis(joy, 0), false);
 	data->roll = convert(SDL_JoystickGetAxis(joy, 1), true);
 	data->gas = convert(SDL_JoystickGetAxis(joy, 2), true);
 	data->rudder = convert(SDL_JoystickGetAxis(joy, 3), false);
 
-	checkData(data);
+	if (polled)
+	{
+		switch (event.type)
+		{
+			case SDL_KEYDOWN:	{m_controlSystem->keyPressed(event.key.keysym.sym); break; }
+			case SDL_JOYBUTTONDOWN: {m_controlSystem->joystickButtonPressed(event.jbutton.button); break; }
+		}
+	}
+
+
 }

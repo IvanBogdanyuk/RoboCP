@@ -6,24 +6,12 @@
 
 #include <SDL.h>
 
-int sent = 0, read = 0;
-
 //mock implementations of a joysick and com-port connection
 
 class MockJoystick : public Joystick{
 public:
     MockJoystick(){
         srand(time(NULL));
-		m_danger = false;
-		m_began = false;
-    }
-    bool isDanger()
-    {
-        return m_danger;
-    }
-    bool hasBegun()
-    {
-        return m_began;
     }
     virtual void GetJoysticState(JoystickData* data){
         data->rudder = rand() % 1000 + 1000;
@@ -31,29 +19,33 @@ public:
 		data->pitch = rand() % 1000 + 1000;
 		data->roll = rand() % 1000 + 1000;
 
-        read++;
-		checkData(data);
     }
 };
 
 class MockRobotLinker : public RobotLinker{
-    long timer;
+	long timer;
 public:
-    MockRobotLinker(){ timer = time(NULL); }
-    virtual void SendPacket(MavlinkPacket* packet){
-        sent++;
-        if (time(0) > timer + 3){
-            std::cout << "rate: " << (1.0*read) / sent << "\n";
-            timer = time(0);
-        }
-            
-        (QThread::currentThread())->msleep(4);
-    }
-    virtual void OpenPort(QString name)
+
+	MockRobotLinker(){ timer = time(NULL); }
+	virtual void SendPacket(MavlinkPacket* packet){
+		(QThread::currentThread())->msleep(4);
+	}
+	virtual void GetParamList()
 	{
 
-    }
-	virtual void GetParamList()
+	}
+	virtual bool ReadPacket(MavlinkPacket* packet)
+	{
+		(QThread::currentThread())->msleep(4);
+		return true;
+	}
+
+	virtual void OpenPort(QString name)
+	{
+
+	}
+
+	virtual void SetControlSystem(ArducopterControlSystem* system)
 	{
 
 	}

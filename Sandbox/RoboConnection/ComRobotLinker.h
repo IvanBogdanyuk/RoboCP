@@ -11,10 +11,15 @@ class ComRobotLinker : public RobotLinker
 {
 
 public:
-    ComRobotLinker();
+	ComRobotLinker();
     virtual void SendPacket(MavlinkPacket* packet);
+	bool ReadPacket(MavlinkPacket* packet);
+
     virtual void OpenPort(QString name);
 	virtual void GetParamList();
+
+	void SetControlSystem(ArducopterControlSystem* system);
 private:
+	ArducopterControlSystem* m_controlSystem;
     ComConnection* copterCom;
 };

@@ -31,5 +31,6 @@ private:
   DataHandler<CrossPoint2D> *mDataHandler_out;
   Mat mIntrinsics, mDistortion;
 
+ 
   CrossPoint2D mPoint;
 };

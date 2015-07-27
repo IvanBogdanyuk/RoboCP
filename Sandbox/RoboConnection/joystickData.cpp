@@ -1,6 +1,8 @@
 #include "joystickData.h"
 #include "math.h"
 
+#include "moc_joystickData.moc";
+
 int epsilon = 200;
 
 int weak_sign(double arg, double epsilond)
@@ -22,6 +24,32 @@ void MavlinkPacket::toString()                           //
 	}
 
 	std::cout << "\n";
+}
+
+CopterAttitude::CopterAttitude()
+{
+	timeSinceBootMs = roll = pitch = yaw = rollspeed = pitchspeed = yawspeed = 0;
+}
+
+CopterAttitude& CopterAttitude::operator=(CopterAttitude &arg)
+{
+	timeSinceBootMs = arg.timeSinceBootMs;
+
+	roll = arg.roll;
+	pitch = arg.pitch;
+	yaw = arg.yaw;
+
+	rollspeed = arg.rollspeed;
+	pitchspeed = arg.pitchspeed;
+	yawspeed = arg.yawspeed;
+
+	return *this;
+}
+
+void CopterAttitude::ToMavlinkPacket(MavlinkPacket* packet, MavlinkVisitor* visitor)
+{
+	std::cout << "converting CopterAttitude to mavlink packet is not implemented";
+	//TODO: throw an exception
 }
 
 void HeartBeat::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
@@ -47,7 +75,10 @@ bool JoystickData::isNonZero()
 
 JoystickData* JoystickData::clone()
 {
-	return new JoystickData(rudder, gas, pitch, roll);
+	JoystickData* toReturn = new JoystickData(rudder, gas, pitch, roll);
+	toReturn->redButtonPressed = this->redButtonPressed;
+
+	return toReturn;
 }
 
 void JoystickData::copy(JoystickData* to)
@@ -56,6 +87,8 @@ void JoystickData::copy(JoystickData* to)
 	to->gas = gas;
 	to->pitch = pitch;
 	to->roll = roll;
+
+	to->redButtonPressed = redButtonPressed;
 }
 
 void JoystickData::setZero(){
@@ -63,11 +96,14 @@ void JoystickData::setZero(){
 	this->pitch = 0;
 	this->roll = 0;
 	this->rudder = 0;
+
+	this->redButtonPressed = false;
 }
 
 void JoystickData::print()
 {
-	std::cout << "JoystickData: \nrudder:" << rudder << "\ngas: " << gas << "\npitch: " << pitch << "\nroll: " << roll << "\n\n";
+	std::cout << "JoystickData: \nrudder:" << rudder << "\ngas: " << gas << "\npitch: " << pitch << "\nroll: " << roll << "\n" 
+		<< "red button: " << redButtonPressed <<"\n\n";
 }
 
 void JoystickData::ToMavlinkPacket(MavlinkPacket* result, MavlinkVisitor* visitor)
@@ -147,7 +183,7 @@ void QueuedControlBuffer::Write(JoystickData* jdata){
 		jdata->copy(toWrite);
 		m_joystickDataQueue->Write(toWrite);
 	}
-	else std::cout << "buffer is full" << m_joystickDataQueue->Size() << std::endl;
+	//else std::cout << "buffer is full" << m_joystickDataQueue->Size() << std::endl;
 }
 int QueuedControlBuffer::Size(){
 	return m_joystickDataQueue->Size();
@@ -164,35 +200,50 @@ int QueuedControlBuffer::GetMaxSize()
 	return m_size;
 }
 
-JoystickToBufferController::JoystickToBufferController(ControlBuffer* buffer)
+JoystickToBufferControllerImpl::JoystickToBufferControllerImpl(ControlBuffer* buffer)
 {
 	SetControlBuffer(buffer);
 }
 
-void JoystickToBufferController::WriteJoystickData(JoystickData* jdata){
+void JoystickToBufferControllerImpl::WriteJoystickData(JoystickData* jdata){
 	m_buffer->Write(jdata);
 }
 
-void JoystickToBufferController::SetControlBuffer(ControlBuffer* buffer){
+void JoystickToBufferControllerImpl::SetControlBuffer(ControlBuffer* buffer){
 	m_buffer = buffer;
 }
 
-int JoystickToBufferController::MsToWait()
+int JoystickToBufferControllerImpl::MsToWait()
 {
 	return (int) 75.0*m_buffer->Size() / m_buffer->GetMaxSize();
 }
 
-BufferToLinkerController::BufferToLinkerController(ControlBuffer* buffer, int rate) : m_heartbeat()
+BufferToLinkerController::BufferToLinkerController(ControlBuffer* buffer, int rate, ArducopterControlSystem* controlSystem) : m_heartbeat()
 {
-	SetControlBuffer(buffer);
-	m_rate = rate;
-	m_meanJoystickData = new JoystickData();
+	SetControlBuffer(buffer);	//buffer the joystick packets to get from
+	m_rate = rate;	//how mush joystick events one packet accumulate
+	m_meanJoystickData = new JoystickData();	//a container to accumulate some joystick events
+
+	m_controlSystem = controlSystem;
+
+	m_armingData = new JoystickData(2000, 1000, 1500, 1500);	//right turning state of a joystick
+	m_isArmingDone = 0;	//a flag that contains information about arming state
+	m_lastStartedArming = 0;	//time moment when arming started
 
 	m_heartBitTimer.start();
 }
 void BufferToLinkerController::Read(MavlinkPacket* packet, MavlinkVisitor* visitor)
 {
-	if (m_heartBitTimer.elapsed() > 1000)
+	if ((m_isArmingDone != 0))	//if arming is in process
+	{
+		m_armingData->ToMavlinkPacket(packet, visitor);	//send arming-joystick data packet
+		if (m_lastStartedArming + m_armingTime < m_heartBitTimer.elapsed())	//check for completion
+		{
+			*m_isArmingDone = true;
+			m_isArmingDone = 0;
+		}
+	}
+	else if (m_heartBitTimer.elapsed() > 1000)
 	{
 		m_heartbeat.ToMavlinkPacket(packet, visitor);
 		m_heartBitTimer.restart();
@@ -200,6 +251,7 @@ void BufferToLinkerController::Read(MavlinkPacket* packet, MavlinkVisitor* visit
 	else
 	{
 		prepareJData();
+		m_controlSystem->setLastSendedJoystickData(m_meanJoystickData);
 		visitor->VisitRc_Channels_Override(packet, m_meanJoystickData->pitch, m_meanJoystickData->roll,
 			m_meanJoystickData->gas, m_meanJoystickData->rudder);
 	}
@@ -207,6 +259,16 @@ void BufferToLinkerController::Read(MavlinkPacket* packet, MavlinkVisitor* visit
 void BufferToLinkerController::SetControlBuffer(ControlBuffer* buffer)
 {
 	m_buffer = buffer;
+}
+
+int BufferToLinkerController::sendArmingMessages(bool* ready)
+{
+	m_isArmingDone = ready;
+	*m_isArmingDone = false;
+
+	m_lastStartedArming = m_heartBitTimer.elapsed();
+
+	return m_armingTime;
 }
 
 
@@ -234,24 +296,6 @@ JoystickData* BufferToLinkerController::prepareJData()
 		std::cout << "emptiing buffer\n";
 	}
 	return m_meanJoystickData;
-}
-
-void Joystick::checkData(JoystickData* data)
-{
-	if (data->gas > 1025)
-		m_began = true;
-	if ((data->gas < 1025) && (m_began))
-		m_danger = true;
-}
-
-bool Joystick::isDanger()
-{
-	return m_danger;
-}
-
-bool Joystick::hasBegun()
-{
-	return m_began;
 }
 
 CrossPoint2D::CrossPoint2D()
@@ -357,9 +401,6 @@ ControlSwitcher::ControlSwitcher(CrossStabilizer* stabilizer, Joystick* externJo
 {
 	m_stabilizer = stabilizer;
 	m_externJoystick = externJoystick;
-
-	m_danger = false;
-	m_began = false;
 }
 
 DataHandler<CrossPoint2D>* ControlSwitcher::GetPointContainer()
@@ -367,13 +408,21 @@ DataHandler<CrossPoint2D>* ControlSwitcher::GetPointContainer()
 	return m_stabilizer->GetPointContainer();
 }
 
+void ControlSwitcher::setControl(int control)
+{
+	if ((control > 0)&&(control < 3)) m_currentControl = control;
+}
+
 void ControlSwitcher::GetJoysticState(JoystickData* data)
 {
 	m_externJoystick->GetJoysticState(data);	//check the real joystick first
-	checkData(data);	//needed for red button working
 
-	if (!data->isNonZero())	//if the real joystick isn't in use
+	if (m_currentControl == JOYSTICK)
 	{
-		m_stabilizer->GetJoysticState(data);	//check software control input
+		
+	}
+	else if ((m_currentControl == CROSS) || (!data->isNonZero()))
+	{
+		m_stabilizer->GetJoysticState(data);	//check software control input, does not override gas component
 	}
 }

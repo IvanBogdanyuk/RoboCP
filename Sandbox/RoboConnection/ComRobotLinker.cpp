@@ -5,6 +5,11 @@ ComRobotLinker::ComRobotLinker(){
     copterCom = new ComConnection();
 }
 
+void ComRobotLinker::SetControlSystem(ArducopterControlSystem* system)
+{
+	m_controlSystem = system;
+}
+
 void ComRobotLinker::SendPacket(MavlinkPacket* packet){
 
 
@@ -20,6 +25,16 @@ void ComRobotLinker::SendPacket(MavlinkPacket* packet){
         std::cout << "got obj with id: " << idd << std::endl;
     }
 }
+
+bool ComRobotLinker::ReadPacket(MavlinkPacket* packet)
+{
+	QByteArray& byteArray = copterCom->readPacket();
+	memcpy(packet->data, byteArray.data(), byteArray.size());
+
+	//TODO: return false if the packet is empty
+	return true;
+}
+
 void ComRobotLinker::GetParamList()
 {
 	mavlink_system_t mavlink_system;

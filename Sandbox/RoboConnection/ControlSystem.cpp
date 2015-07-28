@@ -16,10 +16,13 @@ ArducopterControlSystemImpl::ArducopterControlSystemImpl(RobotLinker* linker)
 
 	m_mavlinkvisitor = new ComMavlinkVisitor();    //helps to convert different objects to mavlink packet
 
-	m_jthread = new JoystickThread(m_joystick, m_inputController, this);    //thread that reads joystick state and pushes it to the buffer
+	m_jthread = new JoystickThread(m_switcher, m_inputController, this);    //thread that reads joystick state and pushes it to the buffer
 	m_rthread = new RobotLinkThread(m_outputController, m_link, m_mavlinkvisitor, this);    //thread that reads the latest joystick state to a buffer and sends it via com-port
 
 	m_redButtonPressed = false;
+
+	m_lastControlSended = -1;
+	m_timer.start();
 }
 
 void ArducopterControlSystemImpl::redButtonPressed(bool pressed)
@@ -39,7 +42,11 @@ void ArducopterControlSystemImpl::joystickButtonPressed(char button)
 void ArducopterControlSystemImpl::setLastSendedJoystickData(JoystickData* data)
 {
 	data->copy(&m_jdata);
-	emit controlSended(&m_jdata);
+	if (m_lastControlSended + 100 < m_timer.elapsed())
+	{
+		emit controlSended(&m_jdata);
+		m_lastControlSended = m_timer.elapsed();
+	}
 }
 
 void ArducopterControlSystemImpl::switchControl(int control)

@@ -48,4 +48,7 @@ private:
 
 	JoystickThread* m_jthread;
 	RobotLinkThread* m_rthread;
+
+	long m_lastControlSended;
+	QElapsedTimer m_timer;
 };

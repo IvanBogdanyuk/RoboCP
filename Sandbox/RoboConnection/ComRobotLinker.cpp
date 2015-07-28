@@ -22,7 +22,7 @@ void ComRobotLinker::SendPacket(MavlinkPacket* packet){
         if ((idd == 22) && (com_checksum(packet->data, 9)))
             std::cout << "checked:" << std::endl;
 
-        std::cout << "got obj with id: " << idd << std::endl;
+        std::cout << "got obj with id: " << idd << std::endl;	
     }
 }
 
@@ -69,7 +69,7 @@ void ComRobotLinker::GetParamList()
 			std::cout << "status val";
 		int idd = (unsigned char)buffer[5];
 		std::cout << "got obj with id: " << idd << std::endl;
-	} while (packets<50);
+	} while (packets<50);	
 }
 
 void ComRobotLinker::OpenPort(QString name)

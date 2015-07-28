@@ -23,7 +23,7 @@
 int main(int argc, char *argv[])
 {
 	
-	RobotLinker* linker = new MockRobotLinker();	//connection with robot
+	RobotLinker* linker = new ComRobotLinker();	//connection with robot
 
 	ArducopterControlSystemImpl* controlSystem = new ArducopterControlSystemImpl(linker);	//control producing system
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 	
 	controlSystem->start();
 	//linkReadingThread->start();
-	//camera_dbg->start();
+	camera_dbg->start();
 	gui->show();
 
 	//debug cycle

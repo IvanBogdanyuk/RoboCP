@@ -31,7 +31,16 @@ LinkerToBufferController::LinkerToBufferController(CopterOutputBuffer* buffer)
 }
 void LinkerToBufferController::WriteMavlinkPacket(MavlinkPacket* packet)
 {
-	switch (packet->data[5])
+	unsigned char type = packet->data[5];
+	
+	if (type == 22) //mavlink param value
+		std::cout << "param val";
+	if (type == 253) //status text
+		std::cout << "status val";
+	int idd = type;
+	std::cout << "read packet with id: " << idd << std::endl;
+
+	switch (type)
 	{
 	case 30: {writeAttitudePacket(packet); break;}
 	}

@@ -111,6 +111,7 @@ QByteArray ComConnection::readPacket()
             {
                 if (serial.waitForReadyRead(-1))
                 {
+					if (length < 4) std::cout << "maxSize<0 in com_connection::readPacket\n\n";
                     buffer.append(serial.read(length - 4));
                 }
                 count = length + 2;

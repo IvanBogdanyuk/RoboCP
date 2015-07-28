@@ -66,7 +66,7 @@ ArducopterGUI::ArducopterGUI(int& argc, char** argv, ArducopterControlSystem* co
 
 	void(ArducopterGUI::*control_changed_receiver)(JoystickData*) = &ArducopterGUI::lastSendedControl;
 	void(ArducopterControlSystem::*control_changed_sender)(JoystickData*) = &ArducopterControlSystem::controlSended;
-	//QObject::connect(m_controlSystem, control_changed_sender, this, control_changed_receiver);
+	QObject::connect(m_controlSystem, control_changed_sender, this, control_changed_receiver);
 }
 
 void ArducopterGUI::show()

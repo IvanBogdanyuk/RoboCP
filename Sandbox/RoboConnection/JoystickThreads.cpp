@@ -12,12 +12,6 @@ JoystickThread::JoystickThread(Joystick* joystick, JoystickToBufferController* b
 // overriding the QThread's run() method
 void JoystickThread::run()
 {
-	/*while (!joystick->hasBegun())
-	{
-		sleep(1);
-		joystick->GetJoysticState(&data);
-	}
-	std::cout << "started to send joystick data\n\n\n\n\n\n\n";	*/
     while (true)
     {
         joystick->GetJoysticState(&data);  //получение данных
@@ -34,7 +28,6 @@ void JoystickThread::run()
         QThread::currentThread()->msleep(buffer->MsToWait());
     }
 }
-
 
 RobotLinkThread::RobotLinkThread(DataOutputController* buffer, RobotLinker* link, MavlinkVisitor* visitor, ArducopterControlSystem* controlSystem)
 {
@@ -113,7 +106,7 @@ void CameraDbgThread::run()
 		CrossPoint2D out;
 		if (m_DataHandler_out->Peek(out) && m_dbg_outputImage->Read(img))
 		{
-			//cout << "[" << out.GetX() << ';' << out.GetY() << "]" <<  endl;
+			//std::cout << "[" << out.GetX() << ';' << out.GetY() << "]" <<  std::endl;
 			imshow("OUTPUT", img);
 			waitKey(1);
 		}

@@ -1,6 +1,6 @@
 #pragma once
 #include "controller.h"
-#include "XMLConfig.h"
+
 #include "KinectData.h"
 #include "KinectBuffer.h"
 #include <pcl/point_cloud.h>
@@ -27,6 +27,7 @@ class KinectController :
 public:
   void Start ();
   void FakeStart (); // For testing with no kinect
+
   KinectController(KinectBuffer * buf);
   ~KinectController(void);
 private:

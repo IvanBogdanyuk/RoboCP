@@ -1,4 +1,25 @@
+/*
+
+
+
+
+
+
+
+
 //WARNING!!!!!!!! This is a template file. Do not change it without necessity.
+
+
+
+
+
+
+
+
+
+
+*/
+
 #include "CameraConfig.h"
 
 CameraConfig::CameraConfig():Number(0), FramesPerSecond(0), FrameWidth(0), FrameHeight(0)  {

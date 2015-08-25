@@ -1,14 +1,36 @@
+/*
+
+
+
+
+
+
+
+
 //WARNING!!!!!!!! This is a template file. Do not change it without necessity.
+
+
+
+
+
+
+
+
+
+
+*/
 #pragma once
 #include "Config.h"
 #include "configFactory.h"
-class CarduinoConfig : public Config{
+class SendConfig : public Config{
 public:
-  CarduinoConfig();
+  SendConfig();
   friend class configFactory;
-  ~CarduinoConfig();
-  string getPort();
+  ~SendConfig();
+  int getPort();
+  bool getIsAvailable();
 
 private:
-  string Port;
+  int Port;
+  bool IsAvailable;
 };

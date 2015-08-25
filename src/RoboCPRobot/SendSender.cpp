@@ -1,10 +1,16 @@
 #include "SendSender.h"
 
+#include "SendConfig.h"
 
-SendSender::SendSender (XMLConfig * x, SendBuffer * buf)
+SendSender::SendSender (SendBuffer * buf)
 {
-  port = atoi(x->SendPort.toStdString().c_str() ); //reading port from config
   buffer = buf;
+}
+
+void SendSender::Configure(Config* sendConfig)
+{
+	SendConfig* x = (SendConfig*) sendConfig;
+	port = x->getPort(); //reading port from config
 }
 
 SendSender::~SendSender (void)
@@ -33,7 +39,7 @@ void SendSender::Start ()
 	
 	  while (!socketStream.fail() ) {
 		//boost::archive::xml_oarchive oa (socketStream); // We want to send objects in XML
-	    QSharedPointer<Send> sendData;
+	    boost::shared_ptr<Send> sendData;
 	    sendData = buffer->Dequeue(); // Reading Send object from buffer
 		QByteArray block;
         QDataStream sendStream(&block, QIODevice::ReadWrite);

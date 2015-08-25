@@ -5,6 +5,7 @@
 //#define MOTION_TEST
 
 #include <stdarg.h>
+
 #include "KinectController.h"
 #include "KinectDownsampler.h"
 #include "KinectSender.h"
@@ -15,19 +16,11 @@
 #include "ClientReceiver.h"
 #include "SendProcessing.h"
 #include "SendSender.h"
+#include "Config.h"
 #include "configFactory.h"
-#include "XMLConfig.h"
-#include "c:\Users\Svetlana\Documents\GitHub\RoboCP\src\RoboCPRobot\CameraMock.h"
+
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include <cv.h>
-#include <highgui.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include "QtCore\qsharedpointer.h"
-
-
-using namespace cv;
 
 #ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
@@ -99,12 +92,7 @@ int main(char *args[], int count)
   return 0;
   #endif
 
-  configFactory config1;
-  {
-      config1.Parse();
-  }
-
-
+  /*
   XMLConfig config;
   { // Loading config from "config.xml" 
     std::ifstream ifs("config.xml");
@@ -114,59 +102,66 @@ int main(char *args[], int count)
 	}
 	else
 	  cout << "Can't find config.xml! Default config used." << endl; // No config.xml found
-  }
+  }	*/
+
+  configFactory cfgFactory;
+  cfgFactory.Parse();
 
   KinectBuffer kinectBuffer1 (10);
   KinectBuffer kinectBuffer2 (10);
   KinectController kinectController (&kinectBuffer1);
   KinectDownsampler kinectDownsampler (&kinectBuffer1, &kinectBuffer2);
-  KinectSender kinectSender (&config, &kinectBuffer2);
-  ClientReceiver commandReceiver (&config);
+
+  KinectSender kinectSender (&kinectBuffer2);
+  kinectSender.Configure(cfgFactory.ConfigByName("Kinect"), cfgFactory.ConfigByName("OctreeEncoder"));
+
+  ClientReceiver commandReceiver;
+  commandReceiver.Configure(cfgFactory.ConfigByName("Command"));
 
   NanoReceivedBuffer NanoBuffer(1000);
-  NanoController  NanoControl(&config, &NanoBuffer);
+  NanoController  NanoControl(&NanoBuffer);
+  NanoControl.Configure(cfgFactory.ConfigByName("Carduino"));
 
   ArduCopterBuffer CopterBuffer(1000);
-  ArduCopterController CopterControl = ArduCopterController();
-  CopterControl.Configure(config1.ConfigByName("Arducopter"), &CopterBuffer);
+  ArduCopterController CopterControl(&CopterBuffer);
+  CopterControl.Configure(cfgFactory.ConfigByName("Arducopter"));
 
   CameraReceivedBuffer CameraBuffer(1000);
-  CameraController CameraControl(&config, &CameraBuffer);
+  CameraController CameraControl(&CameraBuffer);
+  CameraControl.Configure(cfgFactory.ConfigByName("Camera"));
 
   CommandBuffer ComBuffer(100);
-  CommandProcessing ComProc(&config, &ComBuffer);
+  CommandProcessing ComProc(&ComBuffer);
 
   SendBuffer sendBuffer (50);
-  SendSender sendSender (&config, &sendBuffer);
+  SendSender sendSender (&sendBuffer);
+  sendSender.Configure(cfgFactory.ConfigByName("Send"));
 
   SendProcessing sendProcessing(&NanoBuffer, &CopterBuffer, &CameraBuffer, &sendBuffer);
   
-  
+
   boost::thread_group tgroup;
-  
+
   tgroup.create_thread ( boost::bind (&KinectController::FakeStart, &kinectController) ); //don't have kinect so made FakeStart func for testing
-  
+
   tgroup.create_thread ( boost::bind (&KinectDownsampler::Start, &kinectDownsampler) );
-  
+
   tgroup.create_thread ( boost::bind (&KinectSender::Start, &kinectSender) );
-  
+
   tgroup.create_thread ( boost::bind (&ClientReceiver::Start, &commandReceiver) );
   
   tgroup.create_thread ( boost::bind (&NanoController::Start, &NanoControl) );
   
-  tgroup.create_thread ( boost::bind (&ArduCopterController::Start, &CopterControl) ); 
-  
-  tgroup.create_thread(boost::bind(&CameraMock::Start,&CamMockControl));
-  
-  //tgroup.create_thread ( boost::bind (&CameraController::Start, &CameraControl) );
-  
+  tgroup.create_thread ( boost::bind (&ArduCopterController::Start, &CopterControl) );
+
+  tgroup.create_thread ( boost::bind (&CameraController::Start, &CameraControl) );
+
   tgroup.create_thread ( boost::bind (&CommandProcessing::Start, &ComProc) );
-  
+
   tgroup.create_thread ( boost::bind (&SendProcessing::Start, &sendProcessing) );
-  
+
   tgroup.create_thread ( boost::bind (&SendSender::Start, &sendSender) );  
-  
-  
+
   #ifdef GPS_TEST
   char *UTC = new char(32);
   char *Lat = new char(32);
@@ -187,8 +182,9 @@ int main(char *args[], int count)
     NanoControl.ChangeGPSMessage(UTC,Lat,Lon,GSp,GC);
   }
   #endif
-  
+
   tgroup.join_all ();
+  
   
   return 0;
 }

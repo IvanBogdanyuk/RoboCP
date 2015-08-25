@@ -1,12 +1,32 @@
+/*
+
+
+
+
+
+
+
+
 //WARNING!!!!!!!! This is a template file. Do not change it without necessity.
+
+
+
+
+
+
+
+
+
+
+*/
 #pragma once
 #include <iostream>
-#include <qjsondocument.h>
-#include <QFile>
-#include <QString>
-#include <QByteArray>
-#include <QJsonObject>
-#include <QHash>
+#include <QtCore/QJsonDocument>
+#include <QtCore/QFile>
+#include <QtCore/QString>
+#include <QtCore/QByteArray>
+#include <QtCore/QJsonObject>
+#include <QtCore/QHash>
 #include "Config.h"
 #include "KinectConfig.h"
 #include "CommandConfig.h"
@@ -14,6 +34,7 @@
 #include "CarduinoConfig.h"
 #include "ArducopterConfig.h"
 #include "CameraConfig.h"
+#include "OctreeEncoderConfig.h"
 
 //Main class of processing config
 class configFactory{

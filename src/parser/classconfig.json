@@ -24,5 +24,14 @@
 			"FrameWidth" : "int",
 			"FrameHeight" : "int"
 		 }
-	
+	"OctreeEncoder" : {
+			"CompressionProfile" : "pcl::octree::compression_Profiles_e",
+			"ShowStatistics" : "bool",
+			"PointResolution" : "double",
+			"OctreeResolution" : "double",
+			"DoVoxelGridDownDownSampling" : "bool",
+			"IFrameRate" : "unsigned int",
+			"DoColorEncoding" : "bool",
+			"ColorBitResolution" : "unsigned int"
+	}
 }

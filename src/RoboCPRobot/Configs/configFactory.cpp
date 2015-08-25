@@ -1,4 +1,24 @@
+/*
+
+
+
+
+
+
+
+
 //WARNING!!!!!!!! This is a template file. Do not change it without necessity.
+
+
+
+
+
+
+
+
+
+
+*/
 #include "configFactory.h"
 
 configFactory::~configFactory(){
@@ -13,12 +33,13 @@ void configFactory::Parse(){
   {
     QJsonParseError  parseError;
     QJsonObject jsonDoc = QJsonDocument::fromJson(json.readAll(), &parseError).object();
-    for (auto it = jsonDoc.begin(); it != jsonDoc.end(); it++)
+    for (QJsonObject::iterator it = jsonDoc.begin(); it != jsonDoc.end(); it++)
     {
       MapOfConfigs[it.key()] = DetermineConfigObject(it.value().toObject());
     }
   }
 }
+
 Config* configFactory::DetermineConfigObject(QJsonObject treeOfObject)
 {
 QString type = treeOfObject.value("Type").toString();
@@ -40,12 +61,12 @@ QString type = treeOfObject.value("Type").toString();
   }
   if (type == "Carduino"){
     CarduinoConfig *config= new CarduinoConfig();
-    config->Port = treeOfObject.value("Port").toString().toStdString();
+    config->Port = treeOfObject.value("Port").toString().toUtf8().constData();
     return config;
   }
   if (type == "Arducopter"){
     ArducopterConfig *config= new ArducopterConfig();
-    config->Port = treeOfObject.value("Port").toString().toStdString();
+    config->Port = treeOfObject.value("Port").toString().toUtf8().constData();
     config->IsAvailable = treeOfObject.value("IsAvailable").toInt();
     config->DoFakeStart = treeOfObject.value("DoFakeStart").toInt();
     return config;
@@ -58,8 +79,17 @@ QString type = treeOfObject.value("Type").toString();
     config->FrameHeight = treeOfObject.value("FrameHeight").toInt();
     return config;
   }
+  if (type == "OctreeEncoder"){
+    OctreeEncoderConfig *config= new OctreeEncoderConfig();
+    config->ShowStatistics = treeOfObject.value("ShowStatistics").toInt();
+    config->PointResolution = treeOfObject.value("PointResolution").toDouble();
+    config->OctreeResolution = treeOfObject.value("OctreeResolution").toDouble();
+    config->DoVoxelGridDownDownSampling = treeOfObject.value("DoVoxelGridDownDownSampling").toInt();
+    config->DoColorEncoding = treeOfObject.value("DoColorEncoding").toInt();
+    return config;
+  }
 
-return nullptr;
+return NULL;
 }
 
 Config* configFactory::ConfigByName(QString configName)

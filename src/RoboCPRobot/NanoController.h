@@ -1,8 +1,9 @@
 #pragma once
 #include "Controller.h"
 #include "NanoReceivedBuffer.h"
-#include "XMLConfig.h"
+#include "Config.h"
 #include "SerialCom.h"
+
 #include <string.h>
 #include <time.h>
 
@@ -36,7 +37,8 @@ public:
   bool ChangeGPSMessage(char *UTC, char *Latitude, char *Longtitude, char *GSpeed, char *SpeedAngle);
   bool SetDefaultGPSMessage();
   NanoReceivedBuffer *GetBuffer(void);
-  NanoController(XMLConfig *x, NanoReceivedBuffer *buf);
+  NanoController(NanoReceivedBuffer *buf);
+  void Configure(Config *carduinoConfig);
   ~NanoController(void);
 };
 

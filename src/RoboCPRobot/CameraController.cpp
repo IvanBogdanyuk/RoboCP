@@ -1,22 +1,22 @@
 #include "CameraController.h"
-#include <cv.h>
-#include <highgui.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
 
-using namespace cv;
-using namespace std;
+#include "CameraConfig.h"
 
-CameraController::CameraController(XMLConfig *x, CameraReceivedBuffer *buf)
+
+CameraController::CameraController(CameraReceivedBuffer *buf)
 {
   buffer = buf;
-  cameraNum = x->CameraNumber;
-  fps = x->CameraFramesPerSecond;
-  width = x->CameraFrameWidth;
-  height = x->CameraFrameHeight;
 }
 
+void CameraController::Configure(Config *cameraConfig)
+{
+  CameraConfig* x = (CameraConfig*) cameraConfig;
+
+  cameraNum = x->getNumber();
+  fps = x->getFramesPerSecond();
+  width = x->getFrameWidth();
+  height = x->getFrameHeight();
+}
 
 CameraReceivedBuffer *CameraController::GetBuffer(void)
 {
@@ -29,12 +29,8 @@ CameraController::~CameraController(void)
 
 void CameraController::Start(void)
 {
-  
   CameraReceived *DataToStorage;
-  CvCapture *Capture;//= cvCreateCameraCapture(cameraNum);
-
-  Capture=cvCreateCameraCapture(cameraNum);
-
+  CvCapture *Capture = cvCreateCameraCapture(cameraNum);
   IplImage *Frame;
   IplImage *FrameLast = 0;
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FRAME_WIDTH,width);
@@ -42,13 +38,9 @@ void CameraController::Start(void)
   cvSetCaptureProperty(Capture,CV_CAP_PROP_FPS,fps);
   ImageFlowProcessing obj;
   DisplacementImages Displacement;
-  
-  
   while (true){
     Frame = cvQueryFrame(Capture);
-	
 	boost::shared_ptr<CameraReceived> CameraImg(new CameraReceived(Frame));
-	
     if(FrameLast != 0)
 	{
 		obj.CountDisplacement(FrameLast, Frame, &Displacement);
@@ -105,5 +97,3 @@ void CameraController::FakeStart(void)
 	FrameLast = Frame;
   }
 }
-
-

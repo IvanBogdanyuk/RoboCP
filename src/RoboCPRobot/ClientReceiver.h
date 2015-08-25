@@ -1,13 +1,12 @@
 #pragma once
-#include "XMLConfig.h"
+#include "Config.h"
 #include "Command.h"
+
 #include <iostream>
 #include <stdio.h>
 #include <sstream>
 #include <stdlib.h>
 #include <string>
-#include "QtNetwork\qtcpserver.h"
-#include "QtNetwork\qtcpsocket.h"
 
 #ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
@@ -28,9 +27,10 @@ class ClientReceiver
 {
 public:
   void Start ();
-  ClientReceiver(XMLConfig * x);
+  ClientReceiver();
+  void Configure(Config * commandConfig);
   ~ClientReceiver(void);
 private:
-  QString port;
+  string port;
 };
 

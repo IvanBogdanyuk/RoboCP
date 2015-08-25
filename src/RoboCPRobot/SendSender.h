@@ -2,11 +2,12 @@
 #include "SenderBase.h"
 #include "Send.h"
 #include "SendBuffer.h"
-#include "XMLConfig.h"
-#include <boost/asio.hpp>
+#include "Config.h"
+
 #include "QtCore\qsharedpointer.h"
 #include "QtNetwork\qtcpserver.h"
 #include "QtNetwork\qtcpsocket.h"
+#include <boost/asio.hpp>
 
 #ifdef ENABLE_LOGGING
 #define GLOG_NO_ABBREVIATED_SEVERITIES
@@ -23,7 +24,9 @@ class SendSender :
 {
 public:
   void Start(); 
-  SendSender(XMLConfig * x, SendBuffer * buf);
+
+  SendSender(SendBuffer * buf);
+  void Configure(Config* sendConfig);
   ~SendSender(void);
 private:
   SendBuffer * buffer;

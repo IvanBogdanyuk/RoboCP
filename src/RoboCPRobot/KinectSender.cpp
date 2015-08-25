@@ -1,16 +1,26 @@
 #include "KinectSender.h"
 
+#include "KinectConfig.h"
+#include "OctreeEncoderConfig.h"
 
-KinectSender::KinectSender(XMLConfig * x, KinectBuffer * buf)
+KinectSender::KinectSender(KinectBuffer * buf)
 {
-  port = atoi(x->KinectPort.c_str() ); //Reading port from config
+  buffer = buf;
+}
+
+void KinectSender::Configure(Config* kinectConfig, Config* octreeConfig)
+{
+
+  KinectConfig* kinectCfg = (KinectConfig*) kinectConfig;
+  OctreeEncoderConfig* octreeCfg = (OctreeEncoderConfig*) octreeConfig;
+
+  port = kinectCfg->getPort(); //Reading port from config
 
   // We will encode point clouds before sending via octreeCoder
   // Parameters for constructor are taken from config
-  octreeCoder = new PointCloudCompression<PointXYZ> (x->CompressionProfile, x->ShowStatistics, x->PointResolution,
-                                                         x->OctreeResolution, x->DoVoxelGridDownDownSampling, x->IFrameRate,
-                                                         x->DoColorEncoding, x->ColorBitResolution);
-  buffer = buf;
+  octreeCoder = new PointCloudCompression<PointXYZ> (octreeCfg->getCompressionProfile(), octreeCfg->getShowStatistics(), octreeCfg->getPointResolution(),
+                                                         octreeCfg->getOctreeResolution(), octreeCfg->getDoVoxelGridDownDownSampling(),
+														 octreeCfg->getIFrameRate(), octreeCfg->getDoColorEncoding(), octreeCfg->getColorBitResolution());
 }
 
 void KinectSender::Start()

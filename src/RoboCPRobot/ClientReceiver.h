@@ -1,6 +1,7 @@
 #pragma once
-#include "XMLConfig.h"
+#include "Config.h"
 #include "Command.h"
+
 #include <iostream>
 #include <stdio.h>
 #include <sstream>
@@ -26,7 +27,8 @@ class ClientReceiver
 {
 public:
   void Start ();
-  ClientReceiver(XMLConfig * x);
+  ClientReceiver();
+  void Configure(Config * commandConfig);
   ~ClientReceiver(void);
 private:
   string port;

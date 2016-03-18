@@ -1,8 +1,9 @@
 #pragma once
 #include "controller.h"
 #include "ArduCopterBuffer.h"
-#include "XMLConfig.h"
+#include "Config.h"
 #include "SerialCom.h"
+
 #include <string.h>
 #include <time.h>
 
@@ -31,7 +32,8 @@ private:
 public:
   void Start(void);
   void FakeStart(void);
-  ArduCopterController(XMLConfig *x, ArduCopterBuffer *buf);
+  ArduCopterController(ArduCopterBuffer *buf);
+  void Configure(Config *arducopterConfig);
   ~ArduCopterController(void);
 };
 

@@ -1,12 +1,18 @@
 #pragma once
 #include "ClientReceiver.h"
 
+#include "CommandConfig.h"
 
-ClientReceiver::ClientReceiver(XMLConfig * x)
+ClientReceiver::ClientReceiver()
 {
-  port = x->CommandPort; // Reading port from config
+  
 }
 
+void ClientReceiver::Configure(Config* commandConfig)
+{
+	CommandConfig* x = (CommandConfig*) commandConfig;
+	port = x->getPort(); // Reading port from config
+}
 
 ClientReceiver::~ClientReceiver(void)
 {

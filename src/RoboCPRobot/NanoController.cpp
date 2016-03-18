@@ -1,21 +1,28 @@
 #include "NanoController.h"
 
+#include "CarduinoConfig.h"
 
 NanoReceivedBuffer *NanoController::GetBuffer(void)
 {
   return buffer;
 }
 
-NanoController::NanoController(XMLConfig *x, NanoReceivedBuffer *buf)
+NanoController::NanoController(NanoReceivedBuffer *buf)
 {
   buffer = buf;
   lastReadTime = time(NULL);
-  nanoPort = x->CarduinoPort;
+  
+  dataToSend = new char(TO_SEND_BUFF_SIZE);
+  readyToNewMessage = true;
+}
+
+void NanoController::Configure(Config* carduinoConfig)
+{
+  CarduinoConfig* x = (CarduinoConfig*) carduinoConfig;
+  nanoPort = x->getPort();
   char *cstr = new char[nanoPort.length() + 1];
   strcpy(cstr, nanoPort.c_str());
   nanoCom = new SerialCom(cstr, NANO_BAUD_RATE);
-  dataToSend = new char(TO_SEND_BUFF_SIZE);
-  readyToNewMessage = true;
 }
 
 bool NanoController::SetDefaultGPSMessage()

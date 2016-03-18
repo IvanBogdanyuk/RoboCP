@@ -3,7 +3,7 @@
 #include <time.h>
 #include <cv.h>
 #include <highgui.h>
-#include "XMLConfig.h"
+#include "Config.h"
 #include "CameraReceivedBuffer.h"
 #include "ImageFlowProcessing.h"
 
@@ -18,8 +18,12 @@ private:
   CameraReceivedBuffer *buffer;
 public:
   void Start(void);
+  void FakeStart(void);
+
   CameraReceivedBuffer *GetBuffer(void);
-  CameraController(XMLConfig *x, CameraReceivedBuffer *buf);
+  CameraController(CameraReceivedBuffer *buf);
+
+  void Configure(Config *x);
   ~CameraController(void);
 };
 

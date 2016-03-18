@@ -7,4 +7,3 @@ class ArduCopterBuffer : public ReceivedBuffer < boost::shared_ptr<ArduCopterRec
 public:
 	ArduCopterBuffer (int size) : ReceivedBuffer < boost::shared_ptr<ArduCopterReceived> > (size) {}
 };
-

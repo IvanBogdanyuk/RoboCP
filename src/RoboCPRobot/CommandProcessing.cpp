@@ -1,7 +1,7 @@
 #include "CommandProcessing.h"
 
 
-CommandProcessing::CommandProcessing(XMLConfig *x, CommandBuffer *buf)
+CommandProcessing::CommandProcessing(CommandBuffer *buf)
 {
   buffer = buf;
 }

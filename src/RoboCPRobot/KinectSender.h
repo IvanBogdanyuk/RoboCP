@@ -2,7 +2,8 @@
 #include "SenderBase.h"
 #include "KinectData.h"
 #include "KinectBuffer.h"
-#include "XMLConfig.h"
+#include "Config.h"
+
 #include <boost/asio.hpp>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -27,7 +28,9 @@ class KinectSender :
 {
 public:
   void Start();
-  KinectSender(XMLConfig * x, KinectBuffer * buf);
+
+  void Configure(Config* kinectCfg, Config* octreeConfig);
+  KinectSender(KinectBuffer * buf);
   ~KinectSender(void);
 private:
   PointCloudCompression<PointXYZ>* octreeCoder;

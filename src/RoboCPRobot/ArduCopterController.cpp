@@ -1,16 +1,24 @@
 #include "ArduCopterController.h"
 
+#include "ArducopterConfig.h"
 
-ArduCopterController::ArduCopterController(XMLConfig *x, ArduCopterBuffer *buf)
+
+ArduCopterController::ArduCopterController(ArduCopterBuffer *buf)
 {
   buffer = buf;
-  copterPort = x->ArducopterPort;
-  char *cstr = new char[copterPort.length() + 1];
-  strcpy(cstr, copterPort.c_str());
-  copterCom = new SerialCom(cstr,COPTER_BAUD_RATE);
+  
   lastReadTime = time(NULL);
 }
 
+void ArduCopterController::Configure(Config *arducopterConfig)
+{
+  ArducopterConfig* x = (ArducopterConfig*) arducopterConfig;
+
+  copterPort = x->getPort();
+  char *cstr = new char[copterPort.length() + 1];
+  strcpy(cstr, copterPort.c_str());
+  copterCom = new SerialCom(cstr,COPTER_BAUD_RATE);
+}
 
 ArduCopterController::~ArduCopterController(void)
 {
